@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Jacquard+24+Charted&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import "vars";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    font-family: "Work Sans", sans-serif;
+    color: $default-text;
+}
+
+span[class|="icon"] {
+    display: block;
+    background-color: currentColor;
+    mask-position: center center;
+}
+
+.icon-16 {
+    width: 16px;
+    height: 16px;
+}
+
+.md {
+    width: 200px;
+}

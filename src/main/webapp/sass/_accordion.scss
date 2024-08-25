@@ -1,0 +1,30 @@
+@import "vars";
+
+.accordion {
+    width: 100%;
+
+    section {
+        padding: 8px 0 8px 0;
+        border-bottom: 2px solid $default-text;
+
+        .accordion-header {
+            cursor: pointer;
+
+            *[class|="icon"] {
+                transition: transform 0.8s ease;
+                transform: rotate(180deg);
+            }
+        }
+
+        .accordion-body {
+            transition: max-height 0.8s ease;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        &.active .accordion-header *[class|="icon"] {
+            transform: rotate(0deg);
+        }
+
+    }
+}

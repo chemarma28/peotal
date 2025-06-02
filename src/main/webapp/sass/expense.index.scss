@@ -1,5 +1,4 @@
-@import "common";
-@import "vars";
+@import "global";
 @import "accordion";
 @import "button";
 @import "modal";
@@ -17,9 +16,10 @@ a {
     }
 }
 
-#skeleton {
+.skeleton {
     display: grid;
     grid-template-columns: minmax(320px, 360px);
+    grid-template-rows: 80px auto;
     max-width: 1024px;
     margin: 0 auto;
     background-color: $main-background;
@@ -37,7 +37,9 @@ header {
     grid-column: 1/3;
     display: flex;
     justify-content: space-between;
-    padding: 8px;
+    align-items: center;
+    padding-left: 8px;
+    padding-right: 8px;
     margin-bottom: 16px;
 
     .office span,
@@ -50,44 +52,11 @@ header {
     }
 }
 
-.month-decimal {
-    background-color: $month-total-background;
-    padding: 2px 8px 2px 8px;
-    border: none;
-    border-radius: 10px;
-}
-
-main {
-    color: $header-text;
-    display: flex;
-    justify-content: center;
-    order: 3;
-    grid-column: 2/3;
-    padding: 8px;
-
-    .scrollable {
-        width: 100%;
-        max-height: 520px;
-        overflow-y: auto;
-        scrollbar-gutter: stable;
-        padding-right: 8px;
-    }
-
-    .accordion-header {
-        display: flex;
-        justify-content: start;
-        align-items: center;
-        font-size: 1.5rem;
-        font-weight: 500;
-
-        span {
-            margin-right: 8px;
-        }
-    }
-
+.accordion {
     .accordion-body {
         table {
             width: 100%;
+            margin-top: 12px;
             margin-bottom: 8px;
             text-align: left;
 
@@ -97,6 +66,7 @@ main {
 
             thead th {
                 padding: 8px 0 8px 0;
+                text-transform: uppercase;
 
                 &:first-child {
                     width: 10%;
@@ -122,6 +92,21 @@ main {
             }
         }
     }
+}
+
+main {
+    color: $header-text;
+    display: flex;
+    justify-content: center;
+    order: 3;
+    grid-column: 2/3;
+    padding: 8px;
+
+    .scrollable {
+        width: 100%;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+    }
 
     table {
         color: $header-text;
@@ -131,6 +116,18 @@ main {
             font-weight: 600;
         }
     }
+}
+
+%highlighted-monthly-item {
+	td {
+		background-color: $active-month-row;
+		
+		&:first-child {
+			border-left-color: $button-text;
+			color: #000000;
+			font-weight: 600;
+		}
+	}
 }
 
 aside {
@@ -166,33 +163,28 @@ aside {
                 border-left: 4px solid $default-text;
             }
         }
+		
+		tr {
+			td:first-child {
+				border-left: 4px solid transparent;
+			}
+		}
 
-        tr.active {
-            td {
-                background-color: $active-month-row;
-
-                &:first-child {
-                    border-left: 4px solid $button-text;
-                    color: #000000;
-                    font-weight: 600;
-                }
-            }
+        tbody tr.selected {
+			@extend %highlighted-monthly-item;
         }
+		
+		tbody tr:hover {
+			@extend %highlighted-monthly-item;
+		}
     }
 
-    #years {
-        color: $header-text;
-        font-weight: 600;
+    .outlined {
+        background-color: $month-total-background;
+        padding: 2px 8px 2px 8px;
+        border: none;
+        border-radius: 10px;
     }
-}
-
-textarea {
-    resize: none;
-}
-
-.label-text {
-    color: $header-text;
-    font-weight: 500;
 }
 
 label {
@@ -200,11 +192,24 @@ label {
     flex-direction: column;
     row-gap: 6px;
     margin-bottom: 10px;
-}
 
-input,
-textarea {
-    padding: 8px;
-    border: none;
-    border-radius: 5px;
+    .label-text {
+        font-weight: 500;
+        color: $header-text;
+    }
+
+    input,
+    textarea {
+        padding: 8px;
+        border: none;
+        border-radius: 5px;
+    }
+
+    input {
+        width: 200px;
+    }
+
+    textarea {
+        resize: none;
+    }
 }

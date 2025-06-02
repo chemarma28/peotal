@@ -1,7 +1,19 @@
-@import "vars";
-
 .accordion {
     width: 100%;
+
+    .accordion-header {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: 500;
+        padding-left: 8px;
+        padding-right: 8px;
+
+        span {
+            margin-right: 8px;
+        }
+    }
 
     section {
         padding: 8px 0 8px 0;
@@ -10,19 +22,21 @@
         .accordion-header {
             cursor: pointer;
 
-            *[class|="icon"] {
+            span[class|="icon"] {
                 transition: transform 0.8s ease;
-                transform: rotate(180deg);
+                transform: rotate(-90deg);
             }
         }
 
         .accordion-body {
+            padding-left: 8px;
+            padding-right: 8px;
             transition: max-height 0.8s ease;
             max-height: 0;
             overflow: hidden;
         }
 
-        &.active .accordion-header *[class|="icon"] {
+        &.active .accordion-header span[class|="icon"] {
             transform: rotate(0deg);
         }
 

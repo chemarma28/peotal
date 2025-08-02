@@ -39,7 +39,9 @@
                 </div>
 
                 <th:block th:each="monthItem : ${monthItems}">
-                    <div th:id="${monthItem.htmxElementId}" class="menu-tab">
+                    <div th:id="${monthItem.htmxElementId}"
+                        th:class="|menu-tab ${month == monthItem.monthValue ? 'selected' : ''}|" hx-trigger="click"
+                        hx-target="#layout-content" hx-swap="innerHTML" th:hx-get="|/htmx/year/${year}/month/${monthItem.monthValue}|">
                         <div th:text="${#localdates.format(monthItem.month, 'MMMM')}">January</div>
                         <div>
                             <span class="outlined"
@@ -61,52 +63,56 @@
         </div>
 
         <div id="layout-content">
-            <div class="accordion">
+            <div th:fragment="cardItemPacks" class="accordion">
                 <div th:each="cardItemPack : ${cardItemPacks}" class="accordion-item collapsed">
-                    <div id="heading-1" class="accordion-header">
-                        <span class="chevron-icon-16"></span>
-                        <span th:text="${#localdates.format(cardItemPack.cardDate, 'yyyy-MM-dd')}">2019-02-03</span>
-                    </div>
-                    <div class="accordion-body">
-                        <table class="card-table">
-                            <tr>
-                                <th></th>
-                                <th>Description</th>
-                                <th>
-                                    <div>
-                                        <span class="chevron-icon-16"></span>
-                                        <span>Amount</span>
-                                    </div>
-                                </th>
-                                <th>
-                                    <div>
-                                        <span class="chevron-icon-16"></span>
-                                        <span>Action</span>
-                                    </div>
-                                </th>
-                            </tr>
+                    <th:block th:fragment="cardItemPack">
+                        <div id="heading-1" class="accordion-header">
+                            <span class="chevron-icon-16"></span>
+                            <span th:text="${#localdates.format(cardItemPack.cardDate, 'yyyy-MM-dd')}">2019-02-03</span>
+                        </div>
 
-                            <th:block th:each="cardItem,it : ${cardItemPack.cards}">
+                        <div class="accordion-body">
+                            <table class="card-table">
                                 <tr>
-                                    <td th:text="${it.count}">1</td>
-                                    <td th:text="${cardItem.description}">Water 20L</td>
-                                    <td th:text="${#currency.formatDecimal(cardItem.amount, 2, 2, 'POINT')}">$10.00</td>
-                                    <td>
-                                        <span hx-trigger="click" hx-delete="/card/id" hx-target="closest .card-table"
-                                            hx-swap="outerHTML">Delete</span>
-                                    </td>
+                                    <th></th>
+                                    <th>Description</th>
+                                    <th>
+                                        <div>
+                                            <span class="chevron-icon-16"></span>
+                                            <span>Amount</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div>
+                                            <span class="chevron-icon-16"></span>
+                                            <span>Action</span>
+                                        </div>
+                                    </th>
                                 </tr>
-                            </th:block>
 
-                            <tr>
-                                <td></td>
-                                <td>Total:</td>
-                                <td th:text="${#currency.formatDecimal(cardItemPack.total.amount, 2, 2, 'POINT')}">
-                                    $10.00</td>
-                                <td></td>
-                            </tr>
-                        </table>
-                    </div>
+                                <th:block th:each="cardItem,it : ${cardItemPack.cards}">
+                                    <tr>
+                                        <td th:text="${it.count}">1</td>
+                                        <td th:text="${cardItem.description}">Water 20L</td>
+                                        <td th:text="${#currency.formatDecimal(cardItem.amount, 2, 2, 'POINT')}">$10.00
+                                        </td>
+                                        <td>
+                                            <span hx-trigger="click" hx-delete="/card/id"
+                                                hx-target="closest .card-table" hx-swap="outerHTML">Delete</span>
+                                        </td>
+                                    </tr>
+                                </th:block>
+
+                                <tr>
+                                    <td></td>
+                                    <td>Total:</td>
+                                    <td th:text="${#currency.formatDecimal(cardItemPack.total.amount, 2, 2, 'POINT')}">
+                                        $10.00</td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </th:block>
                 </div>
             </div>
         </div>

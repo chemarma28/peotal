@@ -38,6 +38,11 @@ const ButtonSwitchSupport = {
             $(this).toggleClass("down");
             down.toggleClass("down");
         });
+
+        $(".menu-tab:not(:last-child, :first-child)").on("click", function () {
+            $(".menu-tab.selected").toggleClass("selected");
+            $(this).toggleClass("selected");
+        });
     }
 }
 
@@ -49,4 +54,8 @@ function init() {
 $(document).ready(() => {
     client.run();
     init();
+
+    document.body.addEventListener("clientInitAccordion", function (e) {
+        AccordionSupport.init();
+    });
 });

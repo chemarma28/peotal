@@ -50,7 +50,9 @@ public class Dashboard extends HttpServlet {
         ctx.setVariables(Map.of(
                 "monthItems", annualMonthlyExpenses.annual(annual),
                 "monthTotalItem", annualMonthlyExpenses.sum(annual),
-                "cardItemPacks", monthExpenses.pack(monthExpenses.monthly(2025, 5))));
+                "cardItemPacks", monthExpenses.pack(monthExpenses.monthly(2025, 5)),
+                "year", year,
+                "month", month));
 
         String output = te.process("dashboard", ctx);
 

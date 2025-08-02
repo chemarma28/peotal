@@ -16,17 +16,17 @@ export const client = {
             for (let i = 0; i < sessionStorage.length; i++) {
                 const key = sessionStorage.key(i);
 
-                if (key.startsWith(prefix))
+                if (key.startsWith(this.prefix))
                     headers[key] = sessionStorage.getItem(key);
             }
 
             if (params["set"] === "true") {
-                for (let k of params)
-                    headers[prefix + k] = params[k];
+                for (const [name, value] of Object.entries(params))
+                    headers[this.prefix + name] = value;
             }
 
-            for (let header of headers)
-                xhr.setRequestHeader(header, headers[header]);
+            for (const [header, value] of Object.entries(headers))
+                xhr.setRequestHeader(header, value);
         });
 
         htmx.on("htmx:afterOnLoad", function (e) {
@@ -35,7 +35,7 @@ export const client = {
             xhr.getAllResponseHeaders().split("\r\n").forEach(header => {
                 let [name, value] = header.split(": ");
 
-                if (name.startsWith(prefix))
+                if (name.startsWith(this.prefix))
                     sessionStorage.setItem(name, value)
             });
         })

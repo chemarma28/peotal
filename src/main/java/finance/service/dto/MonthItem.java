@@ -20,4 +20,8 @@ public class MonthItem {
     public String htmxElementId() {
         return String.format("mi-%s", month.getMonth().hashCode());
     }
+
+    public int monthValue() {
+        return month.getMonthValue();
+    }
 }

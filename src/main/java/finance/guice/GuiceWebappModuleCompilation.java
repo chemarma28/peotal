@@ -11,6 +11,7 @@ import finance.guice.modules.Thymeleaf;
 import finance.guice.routing.GuiceServletRoutingModule;
 import finance.web.ClientContextProvider;
 import finance.web.Dashboard;
+import finance.web.HtmxMonthSwitch;
 
 public class GuiceWebappModuleCompilation extends GuiceServletContextListener {
     @Override
@@ -21,7 +22,7 @@ public class GuiceWebappModuleCompilation extends GuiceServletContextListener {
                 install(new LocalRepository(), new Mapper(), new Thymeleaf(getServletContext()));
 
                 filter("/*").through(ClientContextProvider.class);
-                autoServe(ImmutableList.of(Dashboard.class));
+                autoServe(ImmutableList.of(Dashboard.class, HtmxMonthSwitch.class));
             }
         });
     }

@@ -1,61 +1,32 @@
 package finance.service.mapper;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-
-import finance.domain.ExpenseCard;
-import finance.domain.MonthlyExpense;
-import finance.guice.modules.Format;
-import finance.service.BigDecimalSum;
-import finance.service.converter.MonthSymbol;
-import finance.service.converter.PrettyDecimal;
-import finance.service.dto.MonthlyExpenseLineItem;
+import java.math.BigDecimal;
+import java.util.List;
 
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 
-import java.math.BigDecimal;
-import java.text.DateFormatSymbols;
-import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.util.List;
+import com.google.inject.Singleton;
+
+import finance.domain.ExpenseCard;
+import finance.domain.MonthlyExpense;
+import finance.service.BigDecimalSum;
+import finance.service.dto.MonthItem;
 
 @Singleton
 public class MonthlyExpenseMapper extends ModelMapper {
-    private final NumberFormat numberFormat;
+    private final Converter<List<ExpenseCard>, BigDecimal> sumAmount = c -> new BigDecimalSum<>(c.getSource())
+            .resultByProperty(ExpenseCard::getAmount);
 
-    @Inject
-    public MonthlyExpenseMapper(DateFormatSymbols symbols, @Named(Format.DECIMAL) NumberFormat numberFormat) {
-        this.numberFormat = numberFormat;
+    public MonthlyExpenseMapper() {
+        typeMap(MonthlyExpense.class, MonthItem.class).addMappings(mapper -> {
+            mapper.map(MonthlyExpense::getMonthDate, MonthItem::setMonth);
 
-        typeMap(MonthlyExpense.class, MonthlyExpenseLineItem.class).addMappings(mapper -> {
-            mapper.using(new MonthSymbol(symbols))
-                    .map(MonthlyExpense::getMonthDate, MonthlyExpenseLineItem::setMonth);
+            mapper.map(MonthlyExpense::getBalance, MonthItem::setIncome);
 
-            Converter<LocalDate, Integer> monthValue = c -> c.getSource().getMonthValue();
-
-            mapper.using(monthValue).map(MonthlyExpense::getMonthDate, MonthlyExpenseLineItem::setMonthValue);
-
-            Converter<LocalDate, Integer> yearValue = c -> c.getSource().getYear();
-
-            mapper.using(yearValue).map(MonthlyExpense::getMonthDate, MonthlyExpenseLineItem::setYearValue);
-
-            mapper.using(new PrettyDecimal(numberFormat))
-                    .map(MonthlyExpense::getBalance, MonthlyExpenseLineItem::setIncome);
-
-            Converter<List<ExpenseCard>, String> summarazingAmount = c -> numberFormat.format(
-                    new BigDecimalSum<>(c.getSource()).resultByProperty(ExpenseCard::getAmount)
-            );
-
-            mapper.using(summarazingAmount).map(MonthlyExpense::getExpenseCards, MonthlyExpenseLineItem::setAmount);
+            mapper.using(sumAmount).map(MonthlyExpense::getExpenseCards, MonthItem::setAmount);
         });
-    }
 
-    public MonthlyExpenseLineItem map(BigDecimal amount, BigDecimal income) {
-        return MonthlyExpenseLineItem.builder()
-                .amount(numberFormat.format(amount))
-                .income(numberFormat.format(income))
-                .build();
+        this.validate();
     }
 }

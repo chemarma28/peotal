@@ -15,6 +15,6 @@
     </filter-mapping>
 
     <listener>
-        <listener-class>application.guice.GuiceWebappModuleCompilation</listener-class>
+        <listener-class>finance.guice.GuiceWebappModuleCompilation</listener-class>
     </listener>
 </web-app>

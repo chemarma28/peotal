@@ -1,5 +1,9 @@
 package application.repository;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,5 +49,10 @@ public class QueueBasedRepositoryTest {
         Assertions.assertThrows(UnsupportedOperationException.class, () -> {
             repo.put(Contact.builder().build());
         });
+    }
+
+    @Test
+    void testMonth() {
+        System.out.print(DateTimeFormatter.ofPattern("LLLL", Locale.GERMANY).format(LocalDate.of(2025, 10, 5)));
     }
 }

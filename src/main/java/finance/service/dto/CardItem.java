@@ -1,16 +1,17 @@
 package finance.service.dto;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Setter
-public class ExpenseCardLineItem {
-    public int number;
+public class CardItem {
     public String description;
-    public String amount;
+    public BigDecimal amount;
 }

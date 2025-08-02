@@ -1,6 +1,6 @@
 package finance.web;
 
-public class Client {
+public class ClientContext {
     public String officeId;
     public String contactId;
     public String year;

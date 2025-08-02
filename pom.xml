@@ -117,7 +117,7 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
-                    <scan>5</scan>
+                    <scan>2</scan>
 
                     <webApp>
                         <contextPath>/</contextPath>

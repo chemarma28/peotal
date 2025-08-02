@@ -1,24 +1,23 @@
 package application.config;
 
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
-import finance.guice.modules.Format;
 import finance.guice.modules.Mapper;
-
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
-import org.junit.jupiter.api.extension.ParameterResolver;
 
 public class GuiceExtension implements ParameterResolver {
     private final Injector injector;
 
     public GuiceExtension() {
-        injector = Guice.createInjector(new Format(), new Mapper());
+        injector = Guice.createInjector(new Mapper());
     }
 
     @Override

@@ -35,7 +35,7 @@ public class GuiceServletRoutingModule extends ServletModule {
         }
     }
 
-    protected void auto(ImmutableList<Class<? extends HttpServlet>> servlets) {
+    protected void autoServe(ImmutableList<Class<? extends HttpServlet>> servlets) {
         for (Class<? extends HttpServlet> c1ass : servlets)
             auto(c1ass);
     }

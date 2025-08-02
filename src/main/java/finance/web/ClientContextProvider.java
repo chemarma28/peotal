@@ -6,6 +6,8 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.inject.Singleton;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
@@ -13,14 +15,15 @@ import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ClientFilter extends HttpFilter {
+@Singleton
+public class ClientContextProvider extends HttpFilter {
     private final Map<String, Field> attributes = new ConcurrentHashMap<>();
-    public static final String clientHeaderPrefix = "Set-Client-";
+    public static final String clientHeaderPrefix = "Client-Context-";
     private final int offset = clientHeaderPrefix.length() + 1;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
-        Field[] fields = Client.class.getDeclaredFields();
+        Field[] fields = ClientContext.class.getDeclaredFields();
 
         for (Field f : fields)
             attributes.put(f.getName(), f);
@@ -30,7 +33,7 @@ public class ClientFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws IOException, ServletException {
 
-        Client client = new Client();
+        ClientContext client = new ClientContext();
 
         Enumeration<String> headers = req.getHeaderNames();
 
@@ -51,7 +54,7 @@ public class ClientFilter extends HttpFilter {
             }
         }
 
-        req.setAttribute("client", client);
+        req.setAttribute("clientContext", client);
 
         chain.doFilter(req, res);
     }

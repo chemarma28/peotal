@@ -1,4 +1,6 @@
 export const client = {
+    prefix: "Client-Context-",
+
     run: function () {
         htmx.on("htmx:beforeSend", function (e) {
             const xhr = e.detail.xhr;
@@ -14,13 +16,13 @@ export const client = {
             for (let i = 0; i < sessionStorage.length; i++) {
                 const key = sessionStorage.key(i);
 
-                if (key.startsWith("Set-Client-"))
-                    headers[key] = localStorage.getItem(key);
+                if (key.startsWith(prefix))
+                    headers[key] = sessionStorage.getItem(key);
             }
 
             if (params["set"] === "true") {
                 for (let k of params)
-                    headers[`Set-Client-${k}`] = params[k];
+                    headers[prefix + k] = params[k];
             }
 
             for (let header of headers)
@@ -33,7 +35,7 @@ export const client = {
             xhr.getAllResponseHeaders().split("\r\n").forEach(header => {
                 let [name, value] = header.split(": ");
 
-                if (name.startsWith("Set-Client-"))
+                if (name.startsWith(prefix))
                     sessionStorage.setItem(name, value)
             });
         })

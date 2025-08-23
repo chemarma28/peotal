@@ -1,9 +1,11 @@
 @import "layout";
 
 $button-background-color-default: #ffffff;
+$button-background-color-primary: #0466c8;
 $button-background-color-hover: #0466c8;
 
 $button-value-color-default: #0466c8;
+$button-value-color-primary: #ffffff;
 $button-value-color-hover: #ffffff;
 
 $button-border-color-default: #7d8597;
@@ -22,6 +24,8 @@ $border-line-color-default: #979dac;
 
 $outlined-text-background-color-default: #979dac;
 
+$modal-background-color-default: #cbced5;
+
 $fs-small: 8pt;
 $fs-medium: 10pt;
 $fs-large: 14pt;
@@ -30,10 +34,13 @@ $fw-regular: 400;
 $fw-bold: 700;
 $fw-bolder: bolder;
 
+$danger-color: #bb2124;
+$success-color: #22bb33;
+
 body {
     color: $font-color-default;
     margin: 0;
-    font-family: 'Lato', sans-serif;
+    font-family: "Lato", sans-serif;
 }
 
 table {
@@ -87,29 +94,25 @@ table {
     font-weight: $fw-bold;
 }
 
+.btn-primary {
+    color: $button-value-color-primary !important;
+    background-color: $button-background-color-primary !important;
+    border-color: $button-border-color-default !important;
+
+    &:hover {
+        color: $button-value-color-hover !important;
+        background-color: $button-background-color-hover !important;
+        border-color: $button-border-color-hover !important;
+    }
+}
+
 button.btn {
     box-shadow: none !important;
     outline: none !important;
 }
 
-#menu-tabs {
+#menu {
     padding-left: 12px;
-
-    #menu-header div:first-child {
-        text-transform: uppercase;
-        font-weight: $fw-bold;
-    }
-
-    #menu-footer {
-        color: $font-color-highlight;
-        font-weight: $fw-bold;
-        background-color: $menu-footer-background-color;
-    }
-
-    .menu-tab:not(#menu-header, #menu-footer) {
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
 
     .menu-tab {
         display: grid;
@@ -117,14 +120,30 @@ button.btn {
         text-align: center;
         border-left: 4px solid transparent;
         border-right: 2px solid $border-line-color-default;
-        transition: backgro;
+        transition: background;
 
-        &:not(#menu-header, #menu-footer):hover {
+        &:first-child div:first-child {
+            text-transform: uppercase;
+            font-weight: $fw-bold;
+        }
+
+        &:last-child {
+            color: $font-color-highlight;
+            font-weight: $fw-bold;
+            background-color: $menu-footer-background-color;
+        }
+
+        &:not(&:first-child, &:last-child):hover {
             cursor: pointer;
         }
 
-        &:not(#menu-header, #menu-footer):hover,
-        &:not(#menu-header, #menu-footer).selected {
+        &:not(&:first-child, &:last-child) {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        &:not(&:first-child, &:last-child):hover,
+        &:not(&:first-child, &:last-child).tab-selected {
             box-sizing: border-box;
             background-color: $menu-tab-background-color-selected;
             opacity: 0.7;
@@ -136,24 +155,24 @@ button.btn {
                 font-weight: $fw-bold;
             }
         }
-    }
 
-    .outlined {
-        display: inline-block;
-        background-color: $outlined-text-background-color-default;
-        padding-left: 8px;
-        padding-right: 8px;
-        border-radius: 8px;
+        .outlined {
+            display: inline-block;
+            background-color: $outlined-text-background-color-default;
+            padding-left: 8px;
+            padding-right: 8px;
+            border-radius: 8px;
+        }
     }
 }
 
-$assets: '../images';
+$assets: "../images";
 
 .chevron-icon-16 {
     display: inline-block;
     background-color: currentColor;
     mask-position: center center;
-    mask-image: url('#{$assets}/16-chevron.svg');
+    mask-image: url("#{$assets}/16-chevron.svg");
     width: 16px;
     height: 16px;
 }
@@ -163,13 +182,13 @@ $assets: '../images';
         border-bottom: 2px solid $border-line-color-default;
         padding: 0px 12px 4px 12px;
 
-        .accordion-header>.chevron-icon-16 {
+        .accordion-header > .chevron-icon-16 {
             transition: rotate 600ms ease-in-out;
             rotate: 0deg;
         }
 
         &.collapsed {
-            .accordion-header>.chevron-icon-16 {
+            .accordion-header > .chevron-icon-16 {
                 rotate: -90deg;
             }
 
@@ -204,7 +223,7 @@ $assets: '../images';
             margin-top: 18px;
             text-align: center;
 
-            tr th>div {
+            tr th > div {
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -223,12 +242,12 @@ $assets: '../images';
                 border-bottom: 2px solid $border-line-color-default;
             }
 
-            tr>th:first-child {
-                width: 48px
+            tr > th:first-child {
+                width: 48px;
             }
 
-            tr>td:nth-child(2),
-            tr>th:nth-child(2) {
+            tr > td:nth-child(2),
+            tr > th:nth-child(2) {
                 text-align: left;
             }
         }
@@ -284,6 +303,125 @@ $assets: '../images';
         button:last-child {
             border-top-right-radius: 4px;
             border-bottom-right-radius: 4px;
+        }
+    }
+}
+
+#modal-root {
+    .modal {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.7);
+        opacity: 0;
+        transition: opacity 400ms ease-in;
+
+        &.visible {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &.fade-in {
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: $modal-background-color-default;
+            padding-left: 8px;
+            padding-right: 8px;
+            max-width: 790px;
+            width: 790px;
+        }
+
+        .modal-header,
+        .modal-footer {
+            display: flex;
+            align-items: center;
+            height: 48px;
+            max-height: 48px;
+        }
+
+        .modal-header {
+            justify-content: center;
+            border-bottom: 2px $border-line-color-default solid;
+            font-size: $fs-large;
+            font-weight: $fw-bolder;
+        }
+
+        .modal-body {
+            max-height: 360px;
+            padding: 8px 16px 8px 16px;
+        }
+
+        .modal-footer {
+            justify-content: flex-end;
+            border-top: 2px $border-line-color-default solid;
+        }
+    }
+}
+
+form {
+    .form-error-msg {
+        color: $danger-color;
+        font-weight: $fw-bold;
+        text-align: center;
+        margin-top: 16px;
+    }
+
+    .form-input-container {
+        .form-input {
+            max-width: 280px;
+        }
+
+        &:not(:last-child) {
+            margin-bottom: 4px;
+        }
+
+        .form-input-err-msg {
+            display: none;
+            color: $danger-color;
+        }
+
+        &.error {
+            .form-input input:not(:focus) {
+                border-color: $danger-color;
+            }
+
+            .form-input-err-msg {
+                display: block;
+
+                ul {
+                    list-style-type: none;
+                    padding-left: 2px;
+                    margin: 2px 0px 2px 0px;
+                }
+            }
+        }
+
+        .form-input {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 4px;
+
+            label {
+                font-weight: $fw-bold;
+                margin-bottom: 4px;
+                margin-left: 4px;
+            }
+
+            input {
+                min-height: 28px;
+                padding-left: 8px;
+                padding-right: 8px;
+                border-style: solid;
+                border-width: 2px;
+                border-color: $border-line-color-default;
+                border-radius: 4px;
+            }
         }
     }
 }

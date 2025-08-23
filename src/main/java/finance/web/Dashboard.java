@@ -2,7 +2,6 @@ package finance.web;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 import org.thymeleaf.TemplateEngine;
@@ -11,10 +10,8 @@ import org.thymeleaf.context.Context;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import finance.domain.MonthlyExpense;
 import finance.guice.routing.Route;
-import finance.service.AnnualMonthlyExpenses;
-import finance.service.MonthExpenses;
+import finance.service.DashboardService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,36 +23,28 @@ public class Dashboard extends HttpServlet {
     @Inject
     private TemplateEngine te;
     @Inject
-    private AnnualMonthlyExpenses annualMonthlyExpenses;
-    @Inject
-    private MonthExpenses monthExpenses;
+    private DashboardService service;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final String yearParam = req.getParameter("year");
         final String monthParam = req.getParameter("month");
+        final LocalDate NOW = LocalDate.now();
 
-        final int year = yearParam == null ? LocalDate.now().getYear() : Integer.parseInt(yearParam);
-        int month = monthParam == null ? LocalDate.now().getMonthValue() : Integer.parseInt(monthParam);
+        final int year = yearParam == null ? NOW.getYear() : Integer.parseInt(yearParam);
+        final int month = monthParam == null ? NOW.getMonthValue() : Integer.parseInt(monthParam);
 
-        month = month < 1 || 12 < month ? LocalDate.now().getMonthValue() : month;
+        if (req.getHeader("HX-Request") != null)
+            resp.setHeader("HX-Redirect", String.format("/html/dashboard?year=%s&month=%s", year, month));
 
         if (yearParam == null || monthParam == null)
-            resp.sendRedirect(String.format("/html/dashboard?year=%s&month=%s&set=true", year, month));
+            resp.sendRedirect(String.format("/html/dashboard?year=%s&month=%s", year, month));
 
-        Context ctx = new Context();
+        Context thymeleaf = new Context(null, Map.of(
+                "monthParam", month,
+                "infos", service.collectMonthlyExpenses(year),
+                "folders", service.collectExpenseCardsByDate(year, month)));
 
-        List<MonthlyExpense> annual = annualMonthlyExpenses.filterAndSort(2025);
-
-        ctx.setVariables(Map.of(
-                "monthItems", annualMonthlyExpenses.annual(annual),
-                "monthTotalItem", annualMonthlyExpenses.sum(annual),
-                "cardItemPacks", monthExpenses.pack(monthExpenses.monthly(2025, 5)),
-                "year", year,
-                "month", month));
-
-        String output = te.process("dashboard", ctx);
-
-        resp.getWriter().write(output);
+        te.process("dashboard", thymeleaf, resp.getWriter());
     }
 }

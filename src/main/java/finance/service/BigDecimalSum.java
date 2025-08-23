@@ -13,11 +13,9 @@ public class BigDecimalSum<T> {
 
     public BigDecimal resultByProperty(Function<T, BigDecimal> property) {
         return elements.stream()
-                .reduce(
-                        BigDecimal.ZERO,
+                .reduce(BigDecimal.ZERO,
                         (acc, element) -> acc.add(property.apply(element)),
-                        BigDecimalSum::operation
-                );
+                        BigDecimalSum::operation);
     }
 
     public static BigDecimal operation(BigDecimal l, BigDecimal r) {

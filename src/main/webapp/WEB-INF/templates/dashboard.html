@@ -1,140 +1,219 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Finance</title>
+        <meta
+            http-equiv="Content-Type"
+            content="text/html; charset=UTF-8"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            media="all"
+            th:href="@{~/css/finance.index.css}"
+        />
+        <link
+            rel="preconnect"
+            href="https://fonts.googleapis.com"
+        />
+        <link
+            rel="preconnect"
+            href="https://fonts.gstatic.com"
+            crossorigin
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+            rel="stylesheet"
+        />
+    </head>
 
-<head>
-    <title>Finance</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" media="all" th:href="@{~/css/finance.index.css}" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
-        rel="stylesheet">
-</head>
-
-<body>
-    <div id="layout">
-        <div id="layout-header">
-            <div>
-                <a>Office name</a>
-            </div>
-
-            <div>
-                <span>Balance: <b>200$</b></span>
-            </div>
-
-            <div id="header-buttons">
-                <button class="btn">Income</button>
-                <button class="btn">New Expense</button>
-            </div>
-        </div>
-
-        <div id="layout-menu">
-            <div id="menu-tabs">
-                <div id="menu-header" class="menu-tab">
-                    <div>Months</div>
-                    <div>Amount</div>
-                    <div>Income</div>
+    <body>
+        <div id="layout">
+            <div id="layout-header">
+                <div>
+                    <a>Office name</a>
                 </div>
 
-                <th:block th:each="monthItem : ${monthItems}">
-                    <div th:id="${monthItem.htmxElementId}"
-                        th:class="|menu-tab ${month == monthItem.monthValue ? 'selected' : ''}|" hx-trigger="click"
-                        hx-target="#layout-content" hx-swap="innerHTML" th:hx-get="|/htmx/year/${year}/month/${monthItem.monthValue}|">
-                        <div th:text="${#localdates.format(monthItem.month, 'MMMM')}">January</div>
-                        <div>
-                            <span class="outlined"
-                                th:text="${#numbers.formatDecimal(monthItem.amount, 0, 2, 'POINT')}">100.0</span>
+                <div>
+                    <span>Balance: <b>200$</b></span>
+                </div>
+
+                <div id="header-buttons">
+                    <button class="btn">Income</button>
+                    <button
+                        class="btn"
+                        onclick="Modal.open('modal-card-form', '/hx/forms/card?modal')"
+                    >
+                        New Expense
+                    </button>
+                </div>
+            </div>
+
+            <div id="layout-menu">
+                <div
+                    id="menu"
+                    th:fragment="menu"
+                >
+                    <div class="menu-tab">
+                        <div>Months</div>
+                        <div>Amount</div>
+                        <div>Income</div>
+                    </div>
+
+                    <div
+                        th:each="info,it : ${infos}"
+                        th:if="${not it.last}"
+                        class="menu-tab"
+                        th:classappend="${monthParam eq #temporals.month(info.monthDate)} ? 'tab-selected'"
+                        hx-trigger="click"
+                        hx-target="#card-item-accordion"
+                        hx-swap="outerHTML"
+                        th:hx-get="|/html/dashboard?year=${#temporals.year(info.monthDate)}&month=${#temporals.month(info.monthDate)}|"
+                    >
+                        <div th:text="${#temporals.monthName(info.monthDate)}">
+                            January
                         </div>
                         <div>
-                            <span class="outlined"
-                                th:text="${#numbers.formatDecimal(monthItem.income, 0, 2, 'POINT')}">100.0</span>
+                            <span
+                                class="outlined"
+                                th:text="${#numbers.formatDecimal(info.amount, 1, 2, 'POINT')}"
+                                >100.0</span
+                            >
+                        </div>
+                        <div>
+                            <span
+                                class="outlined"
+                                th:text="${#numbers.formatDecimal(info.income, 1, 2, 'POINT')}"
+                                >100.0</span
+                            >
                         </div>
                     </div>
-                </th:block>
 
-                <div id="menu-footer" class="menu-tab">
-                    <div>Total:</div>
-                    <div th:text="${#numbers.formatDecimal(monthTotalItem.amount, 0, 2, 'POINT')}">155.0</div>
-                    <div th:text="${#numbers.formatDecimal(monthTotalItem.income, 0, 2, 'POINT')}">350.0</div>
+                    <div class="menu-tab">
+                        <div>Total:</div>
+                        <div
+                            th:text="${#numbers.formatDecimal(infos.last.amount, 1, 2, 'POINT')}"
+                        >
+                            155.0
+                        </div>
+                        <div
+                            th:text="${#numbers.formatDecimal(infos.last.income, 1, 2, 'POINT')}"
+                        >
+                            350.0
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="layout-content">
-            <div th:fragment="cardItemPacks" class="accordion">
-                <div th:each="cardItemPack : ${cardItemPacks}" class="accordion-item collapsed">
-                    <th:block th:fragment="cardItemPack">
-                        <div id="heading-1" class="accordion-header">
-                            <span class="chevron-icon-16"></span>
-                            <span th:text="${#localdates.format(cardItemPack.cardDate, 'yyyy-MM-dd')}">2019-02-03</span>
-                        </div>
+            <div id="layout-content">
+                <div
+                    id="card-item-accordion"
+                    class="accordion"
+                >
+                    <th:block th:each="folder : ${folders}">
+                        <div class="accordion-item collapsed">
+                            <div class="accordion-header">
+                                <span class="chevron-icon-16"></span>
+                                <span
+                                    th:text="${#temporals.format(folder.date, 'yyyy-MM-dd')}"
+                                    >2019-02-03</span
+                                >
+                            </div>
 
-                        <div class="accordion-body">
-                            <table class="card-table">
-                                <tr>
-                                    <th></th>
-                                    <th>Description</th>
-                                    <th>
-                                        <div>
-                                            <span class="chevron-icon-16"></span>
-                                            <span>Amount</span>
-                                        </div>
-                                    </th>
-                                    <th>
-                                        <div>
-                                            <span class="chevron-icon-16"></span>
-                                            <span>Action</span>
-                                        </div>
-                                    </th>
-                                </tr>
-
-                                <th:block th:each="cardItem,it : ${cardItemPack.cards}">
+                            <div class="accordion-body">
+                                <table class="card-table">
                                     <tr>
-                                        <td th:text="${it.count}">1</td>
-                                        <td th:text="${cardItem.description}">Water 20L</td>
-                                        <td th:text="${#currency.formatDecimal(cardItem.amount, 2, 2, 'POINT')}">$10.00
-                                        </td>
-                                        <td>
-                                            <span hx-trigger="click" hx-delete="/card/id"
-                                                hx-target="closest .card-table" hx-swap="outerHTML">Delete</span>
-                                        </td>
+                                        <th></th>
+                                        <th>Description</th>
+                                        <th>
+                                            <div>
+                                                <span
+                                                    class="chevron-icon-16"
+                                                ></span>
+                                                <span>Amount</span>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div>
+                                                <span
+                                                    class="chevron-icon-16"
+                                                ></span>
+                                                <span>Action</span>
+                                            </div>
+                                        </th>
                                     </tr>
-                                </th:block>
 
-                                <tr>
-                                    <td></td>
-                                    <td>Total:</td>
-                                    <td th:text="${#currency.formatDecimal(cardItemPack.total.amount, 2, 2, 'POINT')}">
-                                        $10.00</td>
-                                    <td></td>
-                                </tr>
-                            </table>
+                                    <th:block
+                                        th:each="card,it : ${folder.cards}"
+                                    >
+                                        <tr>
+                                            <td th:text="${it.count}">1</td>
+                                            <td th:text="${card.description}">
+                                                Water 20L
+                                            </td>
+                                            <td
+                                                th:text="|$${#numbers.formatDecimal(card.amount, 1, 2, 'POINT')}|"
+                                            >
+                                                $10.00
+                                            </td>
+                                            <td>
+                                                <span
+                                                    hx-trigger="click"
+                                                    th:hx-delete="|/hx/card/${card.id}|"
+                                                    hx-target="closest table"
+                                                    hx-swap="outerHTML"
+                                                    >Delete</span
+                                                >
+                                            </td>
+                                        </tr>
+                                    </th:block>
+
+                                    <tr>
+                                        <td></td>
+                                        <td>Total:</td>
+                                        <td
+                                            th:text="|$${#numbers.formatDecimal(folder.amount, 1, 2, 'POINT')}|"
+                                        >
+                                            $10.00
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
                     </th:block>
                 </div>
             </div>
-        </div>
 
-        <div id="layout-footer">
-            <div><span>Years</span></div>
+            <div id="layout-footer">
+                <div><span>Years</span></div>
 
-            <div class="button-switch">
-                <button>2022</button>
-                <button>2023</button>
-                <button>2024</button>
-                <button class="down">2025</button>
+                <div class="button-switch">
+                    <button>2022</button>
+                    <button>2023</button>
+                    <button>2024</button>
+                    <button class="down">2025</button>
+                </div>
             </div>
         </div>
-    </div>
-</body>
 
-<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"
-    integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm"
-    crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<script type="module" th:src="@{~/js/finance.index.js}"></script>
+        <div id="modal-root"></div>
+    </body>
 
+    <script
+        src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"
+        integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm"
+        crossorigin="anonymous"
+    ></script>
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"
+    ></script>
+    <script
+        type="text/javascript"
+        th:src="@{~/js/finance.index.js}"
+    ></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/multi-swap.js"></script>
 </html>

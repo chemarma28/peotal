@@ -16,7 +16,7 @@ public class GuiceServletRoutingModule extends ServletModule {
             install(module);
     }
 
-    protected void auto(Class<? extends HttpServlet> c1ass) {
+    protected void serve(Class<? extends HttpServlet> c1ass) {
         if (!uriTemplateListenerBinded) {
             bindListener(Matchers.any(), new UriTemplateListener());
 
@@ -31,8 +31,8 @@ public class GuiceServletRoutingModule extends ServletModule {
         }
     }
 
-    protected void autoServe(ImmutableList<Class<? extends HttpServlet>> servlets) {
+    protected void dispatch(ImmutableList<Class<? extends HttpServlet>> servlets) {
         for (Class<? extends HttpServlet> c1ass : servlets)
-            auto(c1ass);
+            serve(c1ass);
     }
 }

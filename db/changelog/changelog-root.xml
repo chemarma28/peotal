@@ -11,6 +11,6 @@
         http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
 
     <include file="changelog-1.0/v1-create-tables-changelog.xml" relativeToChangelogFile="true"></include>
-
     <include file="changelog-1.0/v1-data-changelog.xml" relativeToChangelogFile="true"></include>
+    <include file="changelog-1.0.1/v1-0-1-datetime-to-date.xml" relativeToChangelogFile="true"></include>
 </databaseChangeLog>

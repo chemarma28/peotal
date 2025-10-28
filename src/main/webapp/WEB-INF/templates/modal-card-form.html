@@ -1,6 +1,6 @@
 <div
     class="modal"
-    id="modal-card-form"
+    _="on modal:close add .fade-out then wait for animationend then remove me"
 >
     <div class="modal-dialog">
         <div class="modal-content">
@@ -13,74 +13,102 @@
                 <form
                     id="card-form"
                     th:fragment="card-form"
+                    f:vldclass="all"
                     autocomplete="off"
-                    hx-post=""
+                    hx-post="/hx/forms/card"
                     hx-target="this"
                     hx-swap="outerHTML"
                 >
                     <div
-                        th:fragment="card-amount-field"
-                        class="form-input-container"
-                        th:classappend="${form.hasError('cardAmount')} ? 'error'"
+                        th:fragment="card-amount-detail"
+                        class="field-detail"
                         hx-target="this"
-                        hx-swap="outerHTML"
+                        f:vldclass="cardAmount"
                     >
-                        <div class="form-input">
-                            <label for="cardAmount">Amount</label>
+                        <div class="field-control">
+                            <label for="card-amount">Amount</label>
                             <input
-                                id="form-card-amount"
-                                name="cardAmount"
+                                id="card-amount"
+                                f:field="cardAmount"
+                                th:value="${cardAmount_v}"
                                 placeholder="Amount..."
-                                hx-post="/hx/forms/card/cardAmount"
-                                th:value="${form.lastValue('cardAmount')}"
                                 required
+                                hx-get="/hx/forms/card"
                             />
                         </div>
-                        <div
-                            class="form-input-err-msg"
-                            th:if="${form.hasError('cardAmount')}"
-                        >
+                        <div class="field-errors">
                             <ul>
                                 <li
-                                    th:each="error : ${form.errors('cardAmount')}"
-                                    th:text="${error}"
+                                    f:eachfail="fail of cardAmount"
+                                    th:text="${fail}"
                                 ></li>
                             </ul>
                         </div>
                     </div>
 
                     <div
-                        th:fragment="cardDate"
-                        class="form-input-container"
+                        class="field-detail"
+                        th:fragment="card-date-detail"
+                        f:vldclass="cardDate"
+                        hx-target="this"
                     >
-                        <div class="form-input">
-                            <label for="cardDate">Date</label>
+                        <div class="field-control">
+                            <label for="card-date">Date</label>
                             <input
-                                id="form-card-date"
-                                name="cardDate"
+                                id="card-date"
+                                f:field="cardDate"
+                                th:value="${cardDate_v}"
                                 type="date"
-                                th:value="${form.lastValue('cardDate')}"
                                 required
+                                hx-get="/hx/forms/card"
                             />
+                        </div>
+
+                        <div class="field-errors"></div>
+                    </div>
+
+                    <div
+                        th:fragment="card-description-detail"
+                        class="field-detail"
+                        f:vldclass="cardDescription"
+                        hx-target="this"
+                    >
+                        <div class="field-control">
+                            <label for="card-description">Description</label>
+                            <textarea
+                                id="card-description"
+                                f:field="cardDescription"
+                                th:text="${cardDescription_v}"
+                                placeholder="Description..."
+                                rows="3"
+                                style="width: 268px; resize: none"
+                                hx-get="/hx/forms/card"
+                            ></textarea>
+                        </div>
+                        <div class="field-errors">
+                            <ul>
+                                <li
+                                    f:eachfail="fail of cardDescription"
+                                    th:text="${fail}"
+                                ></li>
+                            </ul>
                         </div>
                     </div>
 
-                    <div class="form-input"></div>
-
                     <div
-                        class="form-error-msg"
-                        th:if="${form.hasAnyErrors()}"
+                        class="form-errors"
+                        f:onfailvisible
                     >
-                        Form submission failed. Ensure all fields are correctly
-                        filled.
+                        Form submission failed. Ensure all fields are filled
+                        correctly
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <div class="control">
+                <div class="modal-control">
                     <button
                         class="btn"
-                        onclick="Modal.close('modal-card-form')"
+                        _="on click trigger modal:close"
                     >
                         Cancel
                     </button>

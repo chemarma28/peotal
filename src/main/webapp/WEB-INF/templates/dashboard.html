@@ -10,22 +10,25 @@
         <link
             rel="stylesheet"
             type="text/css"
-            media="all"
             th:href="@{~/css/finance.index.css}"
         />
         <link
-            rel="preconnect"
-            href="https://fonts.googleapis.com"
-        />
-        <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossorigin
-        />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
             rel="stylesheet"
+            type="text/css"
+            th:href="@{~/libcss/toastify.min.css}"
         />
+
+        <script type="text/hyperscript">
+            behavior Collapsable(parent)
+                on accordion:collapse
+                    if parent match .collapsed
+                        measure my scrollHeight then set my.style.maxHeight to `${scrollHeight}px`
+                    else
+                        set my.style.maxHeight to '0px'
+                    end
+                    then toggle .collapsed on parent
+            end
+        </script>
     </head>
 
     <body>
@@ -40,10 +43,19 @@
                 </div>
 
                 <div id="header-buttons">
-                    <button class="btn">Income</button>
                     <button
                         class="btn"
-                        onclick="Modal.open('modal-card-form', '/hx/forms/card?modal')"
+                        hx-get="/hx/forms/income?modal"
+                        hx-target="#modal-root"
+                        hx-swap="innerHTML"
+                    >
+                        Income
+                    </button>
+                    <button
+                        class="btn"
+                        hx-get="/hx/forms/card?modal"
+                        hx-target="#modal-root"
+                        hx-swap="innerHTML"
                     >
                         New Expense
                     </button>
@@ -104,6 +116,25 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="year-buttons">
+                    <div><span>Years</span></div>
+
+                    <div
+                        class="button-switch"
+                        _="on radio:say toggle .down on the .down in me then toggle .down on target"
+                    >
+                        <button _="on click trigger radio:say">2022</button>
+                        <button _="on click trigger radio:say">2023</button>
+                        <button _="on click trigger radio:say">2024</button>
+                        <button
+                            class="down"
+                            _="on click trigger radio:say"
+                        >
+                            2025
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div id="layout-content">
@@ -113,7 +144,10 @@
                 >
                     <th:block th:each="folder : ${folders}">
                         <div class="accordion-item collapsed">
-                            <div class="accordion-header">
+                            <div
+                                class="accordion-header"
+                                _="on click send accordion:collapse to the next .accordion-body"
+                            >
                                 <span class="chevron-icon-16"></span>
                                 <span
                                     th:text="${#temporals.format(folder.date, 'yyyy-MM-dd')}"
@@ -121,7 +155,10 @@
                                 >
                             </div>
 
-                            <div class="accordion-body">
+                            <div
+                                class="accordion-body"
+                                _="install Collapsable(parent: the closest .accordion-item)"
+                            >
                                 <table class="card-table">
                                     <tr>
                                         <th></th>
@@ -153,7 +190,7 @@
                                                 Water 20L
                                             </td>
                                             <td
-                                                th:text="|$${#numbers.formatDecimal(card.amount, 1, 2, 'POINT')}|"
+                                                th:text="|${#numbers.formatDecimal(card.amount, 1, 2, 'POINT')}|"
                                             >
                                                 $10.00
                                             </td>
@@ -173,7 +210,7 @@
                                         <td></td>
                                         <td>Total:</td>
                                         <td
-                                            th:text="|$${#numbers.formatDecimal(folder.amount, 1, 2, 'POINT')}|"
+                                            th:text="|${#numbers.formatDecimal(folder.amount, 1, 2, 'POINT')}|"
                                         >
                                             $10.00
                                         </td>
@@ -186,34 +223,49 @@
                 </div>
             </div>
 
-            <div id="layout-footer">
-                <div><span>Years</span></div>
-
-                <div class="button-switch">
-                    <button>2022</button>
-                    <button>2023</button>
-                    <button>2024</button>
-                    <button class="down">2025</button>
-                </div>
-            </div>
+            <div id="layout-footer"></div>
         </div>
 
         <div id="modal-root"></div>
     </body>
 
     <script
-        src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"
-        integrity="sha384-Akqfrbj/HpNVo8k11SXBb6TlBWmXXlYQrCSqEWmyKJe+hDm3Z/B2WVG4smwBkRVm"
-        crossorigin="anonymous"
-    ></script>
-    <script
-        src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-        crossorigin="anonymous"
+        type="text/javascript"
+        th:src="@{~/js/lib/htmx.min.js}"
     ></script>
     <script
         type="text/javascript"
-        th:src="@{~/js/finance.index.js}"
+        th:src="@{~/js/lib/_hyperscript.min.js}"
     ></script>
-    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/multi-swap.js"></script>
+    <script
+        type="text/javascript"
+        th:src="@{~/js/lib/toastify-js.js}"
+    ></script>
+
+    <script type="text/javascript">
+        const base = {
+            close: true,
+            position: "left",
+            gravity: "bottom",
+            duration: 5000,
+        };
+
+        document.body.addEventListener("toastify:warn", (e) => {
+            const config = Object.assign({}, base, {
+                text: e?.detail?.message ?? "Something went wrong",
+                className: "warn-toast",
+            });
+
+            Toastify(config).showToast();
+        });
+
+        document.body.addEventListener("toastify:success", (e) => {
+            const config = Object.assign({}, base, {
+                text: e?.detail?.message ?? "Operation was successful",
+                className: "success-toast",
+            });
+
+            Toastify(config).showToast();
+        });
+    </script>
 </html>

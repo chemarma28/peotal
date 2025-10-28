@@ -18,7 +18,7 @@ public class RouteTest {
         injector = Guice.createInjector(new GuiceServletRoutingModule() {
             @Override
             public void configureServlets() {
-                autoServe(ImmutableList.of(TestableServlet.class));
+                dispatch(ImmutableList.of(TestableServlet.class));
             }
         });
     }

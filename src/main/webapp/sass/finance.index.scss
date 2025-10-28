@@ -1,46 +1,12 @@
 @import "layout";
-
-$button-background-color-default: #ffffff;
-$button-background-color-primary: #0466c8;
-$button-background-color-hover: #0466c8;
-
-$button-value-color-default: #0466c8;
-$button-value-color-primary: #ffffff;
-$button-value-color-hover: #ffffff;
-
-$button-border-color-default: #7d8597;
-$button-border-color-hover: #ffffff;
-
-$font-color-default: #33415c;
-$font-color-highlight: #001233;
-
-$header-background-color: #979dac;
-
-$menu-tab-background-color-selected: #4f93d8;
-$menu-tab-border-color-selected: #0353a4;
-$menu-footer-background-color: #7d8597;
-
-$border-line-color-default: #979dac;
-
-$outlined-text-background-color-default: #979dac;
-
-$modal-background-color-default: #cbced5;
-
-$fs-small: 8pt;
-$fs-medium: 10pt;
-$fs-large: 14pt;
-
-$fw-regular: 400;
-$fw-bold: 700;
-$fw-bolder: bolder;
-
-$danger-color: #bb2124;
-$success-color: #22bb33;
+@import "font";
+@import "pretty";
+@import "button";
 
 body {
     color: $font-color-default;
     margin: 0;
-    font-family: "Lato", sans-serif;
+    font-family: "Lato";
 }
 
 table {
@@ -49,6 +15,11 @@ table {
 
 #layout-header {
     background-color: $header-background-color;
+
+    #header-buttons {
+        display: flex;
+        gap: 8px;
+    }
 }
 
 #layout-menu,
@@ -70,45 +41,6 @@ table {
 
 .uppercased {
     text-transform: uppercase;
-}
-
-.btn {
-    min-width: 120px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    color: $button-value-color-default;
-    background-color: $button-background-color-default;
-    border-color: $button-border-color-default;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 5px;
-    transition: background-color 350ms ease;
-
-    &:hover {
-        color: $button-value-color-hover;
-        background-color: $button-background-color-hover;
-        border-color: $button-border-color-hover;
-    }
-
-    font-size: $fs-medium;
-    font-weight: $fw-bold;
-}
-
-.btn-primary {
-    color: $button-value-color-primary !important;
-    background-color: $button-background-color-primary !important;
-    border-color: $button-border-color-default !important;
-
-    &:hover {
-        color: $button-value-color-hover !important;
-        background-color: $button-background-color-hover !important;
-        border-color: $button-border-color-hover !important;
-    }
-}
-
-button.btn {
-    box-shadow: none !important;
-    outline: none !important;
 }
 
 #menu {
@@ -183,7 +115,7 @@ $assets: "../images";
         padding: 0px 12px 4px 12px;
 
         .accordion-header > .chevron-icon-16 {
-            transition: rotate 600ms ease-in-out;
+            transition: rotate 350ms ease-in-out;
             rotate: 0deg;
         }
 
@@ -215,7 +147,7 @@ $assets: "../images";
     }
 
     .accordion-body {
-        transition: max-height 600ms ease-in-out;
+        transition: max-height 350ms ease-in-out;
         overflow: hidden;
 
         table.card-table {
@@ -254,7 +186,7 @@ $assets: "../images";
     }
 }
 
-#layout-footer {
+.year-buttons {
     display: flex;
     flex-direction: column;
     padding: 4px 0px 4px 16px;
@@ -290,7 +222,7 @@ $assets: "../images";
             &.down {
                 color: $button-value-color-hover;
                 background-color: $button-background-color-hover;
-                border-color: $button-border-color-hover;
+                border-color: $button-border-color-default;
             }
         }
 
@@ -307,34 +239,54 @@ $assets: "../images";
     }
 }
 
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
 #modal-root {
     .modal {
-        display: none;
         position: absolute;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
         background-color: rgba(0, 0, 0, 0.7);
-        opacity: 0;
-        transition: opacity 400ms ease-in;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-        &.visible {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        animation-name: fadeIn;
+        animation-duration: 250ms;
+        animation-timing-function: ease;
 
-        &.fade-in {
-            opacity: 1;
+        &.fade-out {
+            animation-name: fadeOut;
+            animation-duration: 250ms;
+            animation-timing-function: ease;
         }
 
         .modal-content {
             background-color: $modal-background-color-default;
             padding-left: 8px;
             padding-right: 8px;
-            max-width: 790px;
-            width: 790px;
+            max-width: 480px;
+            width: 480px;
         }
 
         .modal-header,
@@ -354,58 +306,65 @@ $assets: "../images";
 
         .modal-body {
             max-height: 360px;
+            overflow: scroll;
             padding: 8px 16px 8px 16px;
         }
 
         .modal-footer {
             justify-content: flex-end;
             border-top: 2px $border-line-color-default solid;
+
+            .modal-control {
+                display: flex;
+                gap: 8px;
+            }
         }
     }
 }
 
 form {
-    .form-error-msg {
-        color: $danger-color;
+    .form-errors {
         font-weight: $fw-bold;
         text-align: center;
         margin-top: 16px;
     }
 
-    .form-input-container {
-        .form-input {
-            max-width: 280px;
-        }
-
+    .field-detail {
         &:not(:last-child) {
             margin-bottom: 4px;
         }
 
-        .form-input-err-msg {
-            display: none;
+        &.failed {
             color: $danger-color;
-        }
 
-        &.error {
-            .form-input input:not(:focus) {
+            .field-errors {
+                visibility: visible;
+            }
+
+            .field-control input:not(:focus),
+            .field-control textarea:not(:focus) {
                 border-color: $danger-color;
             }
+        }
 
-            .form-input-err-msg {
-                display: block;
+        &.success {
+            color: $success-color;
 
-                ul {
-                    list-style-type: none;
-                    padding-left: 2px;
-                    margin: 2px 0px 2px 0px;
-                }
+            .field-errors {
+                visibility: hidden;
+            }
+
+            .field-control input:not(:focus),
+            .field-control textarea:not(:focus) {
+                border-color: $success-color;
             }
         }
 
-        .form-input {
+        .field-control {
             display: flex;
             flex-direction: column;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+            max-width: 280px;
 
             label {
                 font-weight: $fw-bold;
@@ -413,14 +372,36 @@ form {
                 margin-left: 4px;
             }
 
-            input {
-                min-height: 28px;
-                padding-left: 8px;
-                padding-right: 8px;
+            select,
+            input,
+            textarea {
                 border-style: solid;
                 border-width: 2px;
                 border-color: $border-line-color-default;
                 border-radius: 4px;
+            }
+
+            textarea {
+                padding: 4px;
+            }
+
+            select,
+            input {
+                min-height: 28px;
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+        }
+
+        .field-errors {
+            color: $danger-color;
+            min-height: 1em;
+            margin-bottom: 2px;
+
+            ul {
+                margin: 0;
+                list-style-type: none;
+                padding-left: 2px;
             }
         }
     }

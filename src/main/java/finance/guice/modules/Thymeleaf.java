@@ -1,6 +1,11 @@
 package finance.guice.modules;
 
+import java.util.Set;
+
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.dialect.AbstractProcessorDialect;
+import org.thymeleaf.processor.IProcessor;
+import org.thymeleaf.standard.StandardDialect;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
 import org.thymeleaf.web.servlet.JakartaServletWebApplication;
@@ -8,6 +13,10 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
+import finance.web.forms.thymeleaf.EachFailTagProcessor;
+import finance.web.forms.thymeleaf.FieldTagProcessor;
+import finance.web.forms.thymeleaf.OnFailVisibleTagProcessor;
+import finance.web.forms.thymeleaf.VldClassTagProcessor;
 import jakarta.servlet.ServletContext;
 
 public class Thymeleaf extends AbstractModule {
@@ -38,7 +47,23 @@ public class Thymeleaf extends AbstractModule {
     public TemplateEngine engine() {
         TemplateEngine engine = new TemplateEngine();
         engine.setTemplateResolver(resolver());
+        engine.addDialect(new FormDialect());
 
         return engine;
+    }
+
+    final class FormDialect extends AbstractProcessorDialect {
+        FormDialect() {
+            super("Form Dialect", "f", StandardDialect.PROCESSOR_PRECEDENCE);
+        }
+
+        @Override
+        public Set<IProcessor> getProcessors(String dialectPrefix) {
+            return Set.of(
+                    new FieldTagProcessor(dialectPrefix),
+                    new VldClassTagProcessor(dialectPrefix),
+                    new OnFailVisibleTagProcessor(dialectPrefix),
+                    new EachFailTagProcessor(dialectPrefix));
+        }
     }
 }

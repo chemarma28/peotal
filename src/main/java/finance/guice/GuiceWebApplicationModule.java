@@ -11,9 +11,10 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import finance.guice.modules.Thymeleaf;
 import finance.guice.routing.GuiceServletRoutingModule;
-import finance.web.Dashboard;
-import finance.web.forms.CardForm;
-import finance.web.forms.FormCardField;
+import finance.web.ConnectionProvided;
+import finance.web.html.DashboardResource;
+import finance.web.hx.forms.ExpenseCardFormResource;
+import finance.web.hx.forms.IncomeFormResource;
 
 public class GuiceWebApplicationModule extends GuiceServletContextListener {
     @Override
@@ -21,12 +22,15 @@ public class GuiceWebApplicationModule extends GuiceServletContextListener {
         return Guice.createInjector(new GuiceServletRoutingModule() {
             @Override
             public void configureServlets() {
+                filter("/*").through(ConnectionProvided.class);
                 install(new Thymeleaf(getServletContext()));
-
-                autoServe(ImmutableList.of(Dashboard.class, CardForm.class, FormCardField.class));
+                dispatch(ImmutableList.of(
+                        DashboardResource.class,
+                        ExpenseCardFormResource.class,
+                        IncomeFormResource.class));
 
                 HikariConfig hikariConfig = new HikariConfig();
-                hikariConfig.setJdbcUrl("jdbc:h2:tcp://localhost:9090/mem:dev");
+                hikariConfig.setJdbcUrl("jdbc:h2:~/Workspace/dev");
                 hikariConfig.setDriverClassName("org.h2.Driver");
                 hikariConfig.setUsername("dbuser");
                 hikariConfig.setPassword("letmein");

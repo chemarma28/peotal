@@ -1,0 +1,128 @@
+<div
+    class="modal"
+    _="on modal:close add .fade-out then wait for animationend then remove me"
+>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <span>New Income</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form
+                    id="income-form"
+                    th:fragment="income-form"
+                    f:vldclass="all"
+                    autocomplete="off"
+                    hx-post="/hx/forms/income"
+                    hx-target="this"
+                >
+                    <div
+                        th:fragment="income-year-detail"
+                        class="field-detail"
+                        f:vldclass="incomeYear"
+                        hx-target="this"
+                    >
+                        <div
+                            class="field-control"
+                            style="max-width: 140px"
+                        >
+                            <label for="income-year">Year</label>
+                            <input
+                                id="income-year"
+                                f:field="incomeYear"
+                                th:value="${incomeYear_v} ?: 2025"
+                                type="number"
+                                pattern="[0-9]{4}"
+                                min="1980"
+                                max="${#calendars.year(#calendars.createToday())}"
+                                required
+                                hx-get="/hx/forms/income"
+                            />
+                        </div>
+                        <div class="field-errors"></div>
+                    </div>
+
+                    <div
+                        th:fragment="income-month-detail"
+                        class="field-detail"
+                        f:vldclass="incomeMonth"
+                        hx-target="this"
+                    >
+                        <div class="field-control">
+                            <label for="income-month">Month</label>
+                            <select
+                                id="income-month"
+                                f:field="incomeMonth"
+                                required
+                                style="min-height: 32px; max-width: 140px"
+                            >
+                                <option
+                                    th:each="m : ${#numbers.sequence(1,12)}"
+                                    th:value="${m}"
+                                    th:text="${#calendars.monthName(#calendars.create(2000, m % 12, 1))}"
+                                ></option>
+                            </select>
+                        </div>
+
+                        <div class="field-errors"></div>
+                    </div>
+
+                    <div
+                        th:fragment="income-amount-detail"
+                        class="field-detail"
+                        f:vldclass="incomeAmount"
+                        hx-target="this"
+                    >
+                        <div class="field-control">
+                            <label for="income-amount">Amount</label>
+                            <input
+                                id="income-amount"
+                                f:field="incomeAmount"
+                                th:value="${incomeAmount_v}"
+                                placeholder="Amount..."
+                                required
+                                hx-get="/hx/forms/income"
+                                style="max-width: 120px"
+                            />
+                        </div>
+                        <div class="field-errors">
+                            <ul>
+                                <li
+                                    f:eachfail="fail of incomeAmount"
+                                    th:text="${fail}"
+                                ></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div
+                        class="form-errors"
+                        f:onfailvisible
+                    >
+                        Form submission failed. Ensure all fields are correctly
+                        filled.
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-control">
+                    <button
+                        class="btn"
+                        _="on click trigger modal:close"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        form="card-form"
+                        class="btn btn-primary"
+                    >
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+$button-background-color-default: #ffffff;
+$button-background-color-primary: #0466c8;
+$button-background-color-hover: #0466c8;
+
+$button-value-color-default: #0466c8;
+$button-value-color-primary: #ffffff;
+$button-value-color-hover: #ffffff;
+
+$button-border-color-default: #7d8597;
+$button-border-color-hover: #ffffff;
+
+$font-color-default: #33415c;
+$font-color-highlight: #001233;
+
+$header-background-color: #979dac;
+
+$menu-tab-background-color-selected: #4f93d8;
+$menu-tab-border-color-selected: #0353a4;
+$menu-footer-background-color: #7d8597;
+
+$border-line-color-default: #979dac;
+
+$outlined-text-background-color-default: #979dac;
+
+$modal-background-color-default: #cbced5;
+
+$danger-color: #bb2124;
+$success-color: #22bb33;
+
+.warn-toast {
+    background: none !important;
+    background-color: $danger-color !important;
+}
+
+.success-toast {
+    background: none !important;
+    background-color: $success-color !important;
+}

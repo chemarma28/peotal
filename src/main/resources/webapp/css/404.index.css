@@ -1,0 +1,96 @@
+@font-face {
+  font-family: "Lato";
+  src: url("/font/Lato-Regular.ttf");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Lato";
+  src: url("/font/Lato-Bold.ttf");
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Lato";
+  src: url("/font/Lato-Black.ttf");
+  font-weight: 900;
+  font-style: normal;
+}
+.warn-toast {
+  background: none !important;
+  background-color: #bb2124 !important;
+}
+
+.success-toast {
+  background: none !important;
+  background-color: #22bb33 !important;
+}
+
+.btn {
+  display: block;
+  min-width: 120px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  color: #0466c8;
+  background-color: #ffffff;
+  border-color: #7d8597;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  transition: background-color 350ms ease;
+  font-size: 10pt;
+  font-weight: 700;
+}
+.btn:hover {
+  color: #ffffff;
+  background-color: #0466c8;
+  border-color: #ffffff;
+}
+
+.btn-primary {
+  color: #ffffff !important;
+  background-color: #0466c8 !important;
+  border-color: #7d8597 !important;
+}
+.btn-primary:hover {
+  color: #ffffff !important;
+  background-color: #0466c8 !important;
+  border-color: #ffffff !important;
+}
+
+button.btn {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+body {
+  color: #33415c;
+  margin: 0;
+  font-family: "Lato";
+  font-size: 14pt;
+}
+body .container {
+  position: absolute;
+  top: 30%;
+  left: calc(50% - 140px);
+}
+body .container div {
+  min-width: 280px;
+  padding-bottom: 8px;
+  text-align: center;
+}
+body .container #message {
+  font-size: 30pt;
+  font-weight: 700;
+}
+body .container a {
+  max-width: 120px;
+  margin: 0 auto;
+  text-decoration: none;
+}
+body .container a:hover {
+  border-color: #7d8597 !important;
+  border-width: 2px;
+}
+
+/*# sourceMappingURL=404.index.css.map */

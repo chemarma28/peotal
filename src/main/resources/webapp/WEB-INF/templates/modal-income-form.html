@@ -15,8 +15,9 @@
                     th:fragment="income-form"
                     f:vldclass="all"
                     autocomplete="off"
-                    hx-post="/hx/forms/income"
+                    th:hx-post="@{~/hx/forms/income}"
                     hx-target="this"
+                    hx-swap="outerHTML"
                 >
                     <div
                         th:fragment="income-year-detail"
@@ -38,17 +39,17 @@
                                 min="1980"
                                 max="${#calendars.year(#calendars.createToday())}"
                                 required
-                                hx-get="/hx/forms/income"
+                                th:hx-get="@{~/hx/forms/income}"
                             />
                         </div>
-                        <div class="field-errors"></div>
+                        <div class="field-errors">
+                            
+                        </div>
                     </div>
 
                     <div
                         th:fragment="income-month-detail"
                         class="field-detail"
-                        f:vldclass="incomeMonth"
-                        hx-target="this"
                     >
                         <div class="field-control">
                             <label for="income-month">Month</label>
@@ -70,10 +71,11 @@
                     </div>
 
                     <div
-                        th:fragment="income-amount-detail"
                         class="field-detail"
                         f:vldclass="incomeAmount"
+                        th:fragment="income-amount-detail"
                         hx-target="this"
+                        hx-swap="outerHTML"
                     >
                         <div class="field-control">
                             <label for="income-amount">Amount</label>
@@ -83,7 +85,7 @@
                                 th:value="${incomeAmount_v}"
                                 placeholder="Amount..."
                                 required
-                                hx-get="/hx/forms/income"
+                                th:hx-get="@{~/hx/forms/income}"
                                 style="max-width: 120px"
                             />
                         </div>

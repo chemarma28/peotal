@@ -15,7 +15,7 @@
                     th:fragment="card-form"
                     f:vldclass="all"
                     autocomplete="off"
-                    hx-post="/hx/forms/card"
+                    th:hx-post="@{~/hx/forms/card}"
                     hx-target="this"
                     hx-swap="outerHTML"
                 >
@@ -33,7 +33,7 @@
                                 th:value="${cardAmount_v}"
                                 placeholder="Amount..."
                                 required
-                                hx-get="/hx/forms/card"
+                                th:hx-get="@{~/hx/forms/card}"
                             />
                         </div>
                         <div class="field-errors">
@@ -60,7 +60,7 @@
                                 th:value="${cardDate_v}"
                                 type="date"
                                 required
-                                hx-get="/hx/forms/card"
+                                th:hx-get="@{~/hx/forms/card}"
                             />
                         </div>
 
@@ -82,7 +82,7 @@
                                 placeholder="Description..."
                                 rows="3"
                                 style="width: 268px; resize: none"
-                                hx-get="/hx/forms/card"
+                                th:hx-get="@{~/hx/forms/card}"
                             ></textarea>
                         </div>
                         <div class="field-errors">

@@ -45,7 +45,7 @@
                 <div id="header-buttons">
                     <button
                         class="btn"
-                        hx-get="/hx/forms/income?modal"
+                        th:hx-get="@{~/hx/forms/income?modal}"
                         hx-target="#modal-root"
                         hx-swap="innerHTML"
                     >
@@ -53,7 +53,7 @@
                     </button>
                     <button
                         class="btn"
-                        hx-get="/hx/forms/card?modal"
+                        th:hx-get="@{~/hx/forms/card?modal}"
                         hx-target="#modal-root"
                         hx-swap="innerHTML"
                     >
@@ -81,7 +81,7 @@
                         hx-trigger="click"
                         hx-target="#card-item-accordion"
                         hx-swap="outerHTML"
-                        th:hx-get="|/html/dashboard?year=${#temporals.year(info.monthDate)}&month=${#temporals.month(info.monthDate)}|"
+                        th:hx-get="|@{~/}dashboard.html?year=${#temporals.year(info.monthDate)}&month=${#temporals.month(info.monthDate)}|"
                     >
                         <div th:text="${#temporals.monthName(info.monthDate)}">
                             January
@@ -120,19 +120,13 @@
                 <div class="year-buttons">
                     <div><span>Years</span></div>
 
-                    <div
-                        class="button-switch"
-                        _="on radio:say toggle .down on the .down in me then toggle .down on target"
-                    >
-                        <button _="on click trigger radio:say">2022</button>
-                        <button _="on click trigger radio:say">2023</button>
-                        <button _="on click trigger radio:say">2024</button>
+                    <div class="button-switch">
                         <button
-                            class="down"
-                            _="on click trigger radio:say"
-                        >
-                            2025
-                        </button>
+                            th:each="year : ${availableYears}"
+                            th:class="${yearParam eq year} ? 'down'"
+                            th:text="${year}"
+                            th:hx-get="|@{~/}dashboard.html?year=${year}&month=${monthParam}|"
+                        ></button>
                     </div>
                 </div>
             </div>
@@ -197,7 +191,7 @@
                                             <td>
                                                 <span
                                                     hx-trigger="click"
-                                                    th:hx-delete="|/hx/card/${card.id}|"
+                                                    th:hx-delete="|@{~/}hx/card/${card.id}|"
                                                     hx-target="closest table"
                                                     hx-swap="outerHTML"
                                                     >Delete</span

@@ -1,10 +1,13 @@
-package finance.guice.routing;
+package finance.guice.modules;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Module;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.servlet.ServletModule;
 
+import finance.guice.routing.Route;
+import finance.guice.routing.UriTemplateInjector;
+import finance.guice.routing.UriTemplateListener;
 import jakarta.servlet.http.HttpServlet;
 
 public class GuiceServletRoutingModule extends ServletModule {

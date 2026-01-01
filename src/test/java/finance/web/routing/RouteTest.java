@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import finance.guice.routing.GuiceServletRoutingModule;
+import finance.guice.modules.GuiceServletRoutingModule;
 
 public class RouteTest {
     private Injector injector;

@@ -9,8 +9,8 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import finance.guice.modules.GuiceServletRoutingModule;
 import finance.guice.modules.Thymeleaf;
-import finance.guice.routing.GuiceServletRoutingModule;
 import finance.web.ConnectionProvided;
 import finance.web.html.DashboardResource;
 import finance.web.hx.forms.ExpenseCardFormResource;

@@ -130,10 +130,10 @@
                     <resources>
                         <resource>
                             <source>
-                                <directory>${basedir}/src/main/webapp/sass</directory>
+                                <directory>${basedir}/src/main/resources/webapp/sass</directory>
                             </source>
 
-                            <destination>${basedir}/src/main/webapp/css</destination>
+                            <destination>${basedir}/src/main/resources/webapp/css</destination>
                         </resource>
                     </resources>
                 </configuration>                

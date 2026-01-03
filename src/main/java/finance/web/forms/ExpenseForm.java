@@ -10,7 +10,7 @@ import finance.forms.rules.impl.LocalDateValue;
 import finance.forms.rules.impl.Text;
 import jakarta.servlet.http.HttpServletRequest;
 
-public class ExpenseCardForm extends BaseForm {
+public final class ExpenseForm extends BaseForm {
     private FormField<BigDecimal> cardAmount = new FormField<>("cardAmount", new DecimalValue().min(BigDecimal.valueOf(0.01)));
 
     private FormField<LocalDate> cardDate = new FormField<>(
@@ -20,11 +20,11 @@ public class ExpenseCardForm extends BaseForm {
 
     private FormField<String> cardDescription = new FormField<>("cardDescription", new Text()).optional("");
 
-    public ExpenseCardForm() {
+    public ExpenseForm() {
         register(cardAmount, cardDate, cardDescription);
     }
 
-    public ExpenseCardForm(final HttpServletRequest req) {
+    public ExpenseForm(final HttpServletRequest req) {
         this();
         match(req);
     }

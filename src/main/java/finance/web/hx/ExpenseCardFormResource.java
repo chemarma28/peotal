@@ -13,7 +13,7 @@ import com.google.inject.Singleton;
 
 import finance.guice.modules.HttpServletPath;
 import finance.objects.ExpenseCard;
-import finance.web.forms.ExpenseCardForm;
+import finance.web.forms.ExpenseForm;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +33,7 @@ public class ExpenseCardFormResource extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        final ExpenseCardForm form = new ExpenseCardForm();
+        final ExpenseForm form = new ExpenseForm();
         final Context ctx = new Context();
         ctx.setVariable("expenseCardForm", form);
 
@@ -45,7 +45,7 @@ public class ExpenseCardFormResource extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        final ExpenseCardForm form = new ExpenseCardForm(req);
+        final ExpenseForm form = new ExpenseForm(req);
         final Context ctx = new Context();
         ctx.setVariable("expenseCardForm", form);
 

@@ -30,6 +30,10 @@ public class MonthlyExpense extends Model {
         this.set("balance", BigDecimal.ZERO);
     }
 
+    public MonthlyExpense(Long contactId, int year, int month) {
+        this(contactId, LocalDate.of(year, month, 1));
+    }
+
     public BigDecimal amount() {
         long id = this.getLong("id");
 
@@ -56,5 +60,24 @@ public class MonthlyExpense extends Model {
                 origin.set("name", String.format("ME-%07d", number));
             }
         });
+    }
+
+    public static MonthlyExpense find(final int year, final int month, final long contactId) {
+        return MonthlyExpense.findFirst(String.join(" ",
+                "YEAR(month_date) = ?1",
+                "AND MONTH(month_date) = ?2",
+                "AND contact_id = ?3"),
+                year, month, contactId);
+    }
+
+    public static MonthlyExpense topUp(final BigDecimal amount, final int year, final int month, final long contactId) {
+        final MonthlyExpense m = find(year, month, contactId);
+
+        if (null == m)
+            return null;
+
+        m.setBigDecimal("balance", m.getBigDecimal("balance").add(amount));
+
+        return m;
     }
 }

@@ -44,18 +44,31 @@ public class DecimalValue implements FieldRule<String, BigDecimal> {
         return this;
     }
 
+    private String message() {
+        final String min = this.min == null ? null : numberFormat.format(this.min);
+        final String max = this.max == null ? null : numberFormat.format(this.max);
+
+        if (null != min && null != max)
+            return format("Please provide a decimal in range from %s to %s.", min, max);
+        else if (null != min)
+            return format("Please provide a decimal greater than or equal to %s.", min);
+        else if (null != max)
+            return format("Please provide a decimal less than or equal to %s.", max);
+        else
+            return "Please provide a decimal.";
+    }
+
     @Override
     public ValidationResult<BigDecimal> apply(String value) {
         try {
             final BigDecimal val = new BigDecimal(value);
 
             if (null != min && val.compareTo(min) < 0 || null != max && max.compareTo(val) < 0)
-                return validationNegativeResult(format("Please provide a decimal value in range from %s to %s",
-                        numberFormat.format(min), numberFormat.format(max)));
+                return validationNegativeResult(message());
 
             return validationPositiveResult(val);
         } catch (Exception e) {
-            return validationNegativeResult("Please provide a decimal value.", singletonList(e.getMessage()));
+            return validationNegativeResult(message(), singletonList(e.getMessage()));
         }
     }
 }

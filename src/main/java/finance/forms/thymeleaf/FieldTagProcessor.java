@@ -34,7 +34,8 @@ public class FieldTagProcessor extends AbstractAttributeTagProcessor {
         final Object raw = context.getSelectionTarget();
 
         if (!(raw instanceof BaseForm))
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                    "A form object is not specified under 'th:object' attribute or of incorrect type.");
 
         final BaseForm form = (BaseForm) raw;
 

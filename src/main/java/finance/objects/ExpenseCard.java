@@ -37,14 +37,10 @@ public class ExpenseCard extends Model {
         int year = date.getYear();
         int month = date.getMonthValue();
 
-        MonthlyExpense m = MonthlyExpense.findFirst(String.join(" ",
-                "YEAR(month_date) = ?1",
-                "AND MONTH(month_date) = ?2",
-                "AND contact_id = ?3"),
-                year, month, contactId);
+        MonthlyExpense m = MonthlyExpense.find(year, month, contactId);
 
         if (null == m) {
-            m = new MonthlyExpense(contactId, LocalDate.of(year, month, 1));
+            m = new MonthlyExpense(contactId, year, month);
             m.saveIt();
         }
 

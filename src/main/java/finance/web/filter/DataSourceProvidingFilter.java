@@ -1,4 +1,4 @@
-package finance.web;
+package finance.web.filter;
 
 import java.io.IOException;
 
@@ -16,7 +16,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 
 @Singleton
-public class ConnectionProvided implements Filter {
+public class DataSourceProvidingFilter implements Filter {
     @Inject
     private DataSource ds;
 

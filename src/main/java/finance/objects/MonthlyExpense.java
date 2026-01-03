@@ -13,6 +13,13 @@ import org.javalite.common.Convert;
 
 @Table("monthly_expense")
 public class MonthlyExpense extends Model {
+    static {
+        validatePresenceOf("contact_id");
+        validatePresenceOf("name");
+        validatePresenceOf("balance");
+        validatePresenceOf("month_date");
+    }
+
     @Deprecated
     public MonthlyExpense() {
     }
@@ -20,6 +27,7 @@ public class MonthlyExpense extends Model {
     public MonthlyExpense(Long contactId, LocalDate monthDate) {
         this.set("contact_id", contactId);
         this.set("month_date", monthDate);
+        this.set("balance", BigDecimal.ZERO);
     }
 
     public BigDecimal amount() {
@@ -28,15 +36,10 @@ public class MonthlyExpense extends Model {
         return Objects.requireNonNullElse(Convert.toBigDecimal(Base.firstCell(
                 String.join(" ",
                         "SELECT SUM(expense_card.amount) FROM expense_card",
-                        "WHERE expense_card.id = ?1",
+                        "WHERE expense_card.monthly_expense_id = ?1",
                         "GROUP BY expense_card.monthly_expense_id"),
                 id)),
                 BigDecimal.ZERO);
-    }
-
-    @Override
-    protected void beforeCreate() {
-        this.set("balacne", BigDecimal.ZERO);
     }
 
     @Override

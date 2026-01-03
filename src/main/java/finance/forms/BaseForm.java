@@ -1,6 +1,5 @@
 package finance.forms;
 
-import static finance.forms.rules.ValidationResult.validationPositiveResult;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class BaseForm {
     private Map<String, FormField<?>> mappings = new HashMap<>();
-    private Map<String, ValidationResult<?>> validations = new HashMap<>();
 
     protected BaseForm() {
     }
@@ -30,44 +28,35 @@ public class BaseForm {
     public void match(final HttpServletRequest req) {
         mappings.forEach((name, field) -> {
             field.match(req);
-            validations.put(name, field.validationResult());
         });
     }
 
-    public void match() {
-        mappings.forEach((name, field) -> {
-            validations.put(name, validationPositiveResult());
-        });
-    }
-
-    public String value(String name) {
-        if (!mappings.containsKey(name))
-            return null;
-
-        return mappings.get(name).value();
-    }
-
-    public boolean isValid(String name) {
-        final ValidationResult<?> v = validations.get(name);
-
-        if (null == v)
-            return false;
-
-        return v.isValid();
+    public FormField<?> get(String name) {
+        return mappings.get(name);
     }
 
     public boolean isValid() {
-        if (validations.isEmpty())
-            return false;
-
-        return validations.entrySet().stream()
+        return mappings.entrySet().stream()
                 .map(e -> e.getValue())
+                .map(FormField::validationResult)
                 .map(ValidationResult::isValid)
                 .allMatch(b -> true == b);
     }
 
+    public boolean hasErrors(final String name) {
+        if (!mappings.containsKey(name))
+            return false;
+
+        return !mappings.get(name).validationResult().isValid();
+    }
+
     public List<String> errors(String name) {
-        final ValidationResult<?> v = validations.get(name);
+        final FormField<?> f = mappings.get(name);
+
+        if (null == f)
+            return emptyList();
+
+        final ValidationResult<?> v = f.validationResult();
 
         if (null == v || v.isValid())
             return emptyList();

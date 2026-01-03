@@ -12,92 +12,66 @@
             <div class="modal-body">
                 <form
                     id="card-form"
+                    th:object="${expenseCardForm}"
                     th:fragment="card-form"
-                    f:vldclass="all"
                     autocomplete="off"
                     th:hx-post="@{~/hx/forms/card}"
                     hx-target="this"
                     hx-swap="outerHTML"
                 >
                     <div
-                        th:fragment="card-amount-detail"
                         class="field-detail"
-                        hx-target="this"
-                        f:vldclass="cardAmount"
+                        th:classappend="*{hasErrors('cardAmount')} ? 'failed'"
                     >
                         <div class="field-control">
-                            <label for="card-amount">Amount</label>
+                            <label for="cardAmount">Amount</label>
                             <input
-                                id="card-amount"
-                                f:field="cardAmount"
-                                th:value="${cardAmount_v}"
-                                placeholder="Amount..."
-                                required
-                                th:hx-get="@{~/hx/forms/card}"
+                                th:field="cardAmount"
+                                placeholder="How much?"
                             />
                         </div>
                         <div class="field-errors">
                             <ul>
                                 <li
-                                    f:eachfail="fail of cardAmount"
-                                    th:text="${fail}"
+                                    th:each="error : *{errors('cardAmount')}"
+                                    th:text="${error}"
                                 ></li>
                             </ul>
                         </div>
                     </div>
 
-                    <div
-                        class="field-detail"
-                        th:fragment="card-date-detail"
-                        f:vldclass="cardDate"
-                        hx-target="this"
-                    >
+                    <div class="field-detail">
                         <div class="field-control">
-                            <label for="card-date">Date</label>
+                            <label for="cardDate">Date</label>
                             <input
-                                id="card-date"
-                                f:field="cardDate"
-                                th:value="${cardDate_v}"
                                 type="date"
-                                required
-                                th:hx-get="@{~/hx/forms/card}"
+                                th:field="cardDate"
                             />
                         </div>
 
                         <div class="field-errors"></div>
                     </div>
 
-                    <div
-                        th:fragment="card-description-detail"
-                        class="field-detail"
-                        f:vldclass="cardDescription"
-                        hx-target="this"
-                    >
+                    <div class="field-detail">
                         <div class="field-control">
-                            <label for="card-description">Description</label>
+                            <label for="cardDescription">Description</label>
                             <textarea
-                                id="card-description"
-                                f:field="cardDescription"
-                                th:text="${cardDescription_v}"
-                                placeholder="Description..."
+                                th:field="cardDescription"
+                                placeholder="What kind of expense?"
                                 rows="3"
                                 style="width: 268px; resize: none"
-                                th:hx-get="@{~/hx/forms/card}"
                             ></textarea>
                         </div>
                         <div class="field-errors">
                             <ul>
-                                <li
-                                    f:eachfail="fail of cardDescription"
-                                    th:text="${fail}"
-                                ></li>
+                                <li></li>
                             </ul>
                         </div>
                     </div>
 
                     <div
+                        th:if="not *{isValid}"
                         class="form-errors"
-                        f:onfailvisible
                     >
                         Form submission failed. Ensure all fields are filled
                         correctly

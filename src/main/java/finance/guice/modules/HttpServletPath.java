@@ -1,4 +1,4 @@
-package finance.guice.routing;
+package finance.guice.modules;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Route {
+public @interface HttpServletPath {
     String value();
 }

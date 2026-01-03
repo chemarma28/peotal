@@ -49,7 +49,7 @@ public class DecimalValue implements FieldRule<String, BigDecimal> {
         try {
             final BigDecimal val = new BigDecimal(value);
 
-            if (null != min && 0 < val.compareTo(min) || null != max && 0 < max.compareTo(val))
+            if (null != min && val.compareTo(min) < 0 || null != max && max.compareTo(val) < 0)
                 return validationNegativeResult(format("Please provide a decimal value in range from %s to %s",
                         numberFormat.format(min), numberFormat.format(max)));
 

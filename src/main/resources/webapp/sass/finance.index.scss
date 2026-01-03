@@ -287,6 +287,7 @@ $assets: "../images";
             padding-right: 8px;
             max-width: 480px;
             width: 480px;
+            border-radius: 5px;
         }
 
         .modal-header,
@@ -323,20 +324,12 @@ $assets: "../images";
 }
 
 form {
-    .form-errors {
-        font-weight: $fw-bold;
-        text-align: center;
-        margin-top: 16px;
-    }
-
     .field-detail {
         &:not(:last-child) {
             margin-bottom: 4px;
         }
 
         &.failed {
-            color: $danger-color;
-
             .field-errors {
                 visibility: visible;
             }
@@ -346,63 +339,57 @@ form {
                 border-color: $danger-color;
             }
         }
+    }
 
-        &.success {
-            color: $success-color;
+    .field-control {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 2px;
+        max-width: 280px;
 
-            .field-errors {
-                visibility: hidden;
-            }
-
-            .field-control input:not(:focus),
-            .field-control textarea:not(:focus) {
-                border-color: $success-color;
-            }
+        label {
+            font-weight: $fw-bold;
+            margin-bottom: 4px;
+            margin-left: 4px;
         }
 
-        .field-control {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 2px;
-            max-width: 280px;
-
-            label {
-                font-weight: $fw-bold;
-                margin-bottom: 4px;
-                margin-left: 4px;
-            }
-
-            select,
-            input,
-            textarea {
-                border-style: solid;
-                border-width: 2px;
-                border-color: $border-line-color-default;
-                border-radius: 4px;
-            }
-
-            textarea {
-                padding: 4px;
-            }
-
-            select,
-            input {
-                min-height: 28px;
-                padding-left: 8px;
-                padding-right: 8px;
-            }
+        select,
+        input,
+        textarea {
+            border-style: solid;
+            border-width: 2px;
+            border-color: $border-line-color-default;
+            border-radius: 4px;
         }
 
-        .field-errors {
-            color: $danger-color;
-            min-height: 1em;
-            margin-bottom: 2px;
+        textarea {
+            padding: 4px;
+        }
 
-            ul {
-                margin: 0;
-                list-style-type: none;
-                padding-left: 2px;
-            }
+        select,
+        input {
+            min-height: 28px;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+    }
+
+    .form-errors {
+        color: $danger-color;
+        font-weight: $fw-bold;
+        text-align: center;
+        margin-top: 16px;
+    }
+
+    .field-errors {
+        color: $danger-color;
+        min-height: 1em;
+        margin-bottom: 2px;
+
+        ul {
+            margin: 0;
+            list-style-type: none;
+            padding-left: 2px;
         }
     }
 }

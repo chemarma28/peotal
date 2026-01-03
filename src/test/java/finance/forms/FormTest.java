@@ -26,8 +26,8 @@ public class FormTest {
         final SimpleForm simpleForm = new SimpleForm(req);
 
         assertTrue(simpleForm.isValid());
-        assertTrue(simpleForm.isValid("decimal"));
-        assertTrue(simpleForm.isValid("date"));
+        assertTrue(simpleForm.get("decimal").validationResult().isValid());
+        assertTrue(simpleForm.get("date").validationResult().isValid());
 
         assertEquals(BigDecimal.valueOf(10.5), simpleForm.decimal());
         assertEquals(LocalDate.of(2025, 10, 12), simpleForm.date());
@@ -42,8 +42,8 @@ public class FormTest {
         final SimpleForm simpleForm = new SimpleForm(req);
 
         assertFalse(simpleForm.isValid());
-        assertTrue(simpleForm.isValid("decimal"));
-        assertFalse(simpleForm.isValid("date"));
+        assertTrue(simpleForm.get("decimal").validationResult().isValid());
+        assertFalse(simpleForm.get("date").validationResult().isValid());
 
         assertEquals(BigDecimal.valueOf(10.5), simpleForm.decimal());
         assertNull(simpleForm.date());
@@ -57,8 +57,8 @@ public class FormTest {
         final SimpleForm simpleForm = new SimpleForm(req);
 
         assertFalse(simpleForm.isValid());
-        assertFalse(simpleForm.isValid("decimal"));
-        assertTrue(simpleForm.isValid("date"));
+        assertFalse(simpleForm.get("decimal").validationResult().isValid());
+        assertTrue(simpleForm.get("date").validationResult().isValid());
 
         assertNull(simpleForm.decimal());
         assertEquals(LocalDate.of(2025, 10, 12), simpleForm.date());
@@ -69,8 +69,8 @@ public class FormTest {
         final SimpleForm simpleForm = new SimpleForm();
 
         assertTrue(simpleForm.isValid());
-        assertTrue(simpleForm.isValid("date"));
-        assertTrue(simpleForm.isValid("decimal"));
+        assertTrue(simpleForm.get("date").validationResult().isValid());
+        assertTrue(simpleForm.get("decimal").validationResult().isValid());
     }
 
     @Test
@@ -82,9 +82,9 @@ public class FormTest {
         final SimpleForm simpleForm = new SimpleForm(req);
 
         assertTrue(simpleForm.isValid());
-        assertTrue(simpleForm.isValid("decimal"));
-        assertTrue(simpleForm.isValid("date"));
-        assertTrue(simpleForm.isValid("optional"));
+        assertTrue(simpleForm.get("decimal").validationResult().isValid());
+        assertTrue(simpleForm.get("date").validationResult().isValid());
+        assertTrue(simpleForm.get("optional").validationResult().isValid());
 
         assertEquals(BigDecimal.valueOf(10.5), simpleForm.decimal());
         assertEquals(LocalDate.of(2025, 10, 12), simpleForm.date());
@@ -101,9 +101,9 @@ public class FormTest {
         final SimpleForm simpleForm = new SimpleForm(req);
 
         assertTrue(simpleForm.isValid());
-        assertTrue(simpleForm.isValid("decimal"));
-        assertTrue(simpleForm.isValid("date"));
-        assertTrue(simpleForm.isValid("optional"));
+        assertTrue(simpleForm.get("decimal").validationResult().isValid());
+        assertTrue(simpleForm.get("date").validationResult().isValid());
+        assertTrue(simpleForm.get("optional").validationResult().isValid());
 
         assertEquals(BigDecimal.valueOf(10.5), simpleForm.decimal());
         assertEquals(LocalDate.of(2025, 10, 12), simpleForm.date());
@@ -120,9 +120,9 @@ public class FormTest {
         final SimpleForm simpleForm = new SimpleForm(req);
 
         assertFalse(simpleForm.isValid());
-        assertTrue(simpleForm.isValid("decimal"));
-        assertTrue(simpleForm.isValid("date"));
-        assertFalse(simpleForm.isValid("optional"));
+        assertTrue(simpleForm.get("decimal").validationResult().isValid());
+        assertTrue(simpleForm.get("date").validationResult().isValid());
+        assertFalse(simpleForm.get("optional").validationResult().isValid());
 
         assertNull(simpleForm.optional());
         assertEquals(BigDecimal.valueOf(10.5), simpleForm.decimal());
@@ -139,9 +139,9 @@ public class FormTest {
         final SimpleForm simpleForm = new SimpleForm(req);
 
         assertTrue(simpleForm.isValid());
-        assertTrue(simpleForm.isValid("decimal"));
-        assertTrue(simpleForm.isValid("date"));
-        assertTrue(simpleForm.isValid("optional"));
+        assertTrue(simpleForm.get("decimal").validationResult().isValid());
+        assertTrue(simpleForm.get("date").validationResult().isValid());
+        assertTrue(simpleForm.get("optional").validationResult().isValid());
 
         assertEquals(BigDecimal.valueOf(20), simpleForm.optional());
         assertEquals(BigDecimal.valueOf(10.5), simpleForm.decimal());
@@ -156,7 +156,6 @@ public class FormTest {
 
         public SimpleForm() {
             super.register(decimal, date, optional);
-            super.match();
         }
 
         public SimpleForm(final HttpServletRequest req) {

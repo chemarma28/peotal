@@ -1,5 +1,6 @@
 package finance.forms;
 
+import static finance.forms.rules.ValidationResult.validationPositiveResult;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -20,6 +21,7 @@ public final class FormField<T> {
     public FormField(final String name, final FieldRule<String, T> rule) {
         this.name = requireNonNull(name);
         this.rule = requireNonNull(rule);
+        this.validationResult = validationPositiveResult();
     }
 
     public FormField(final String name, final String initial, final FieldRule<String, T> rule) {
@@ -42,7 +44,7 @@ public final class FormField<T> {
         String val = req.getParameter(name);
 
         if (isBlank(val) && optional)
-            validationResult = ValidationResult.validationPositiveResult(defaultValue);
+            validationResult = validationPositiveResult(defaultValue);
         else {
             this.value = val;
 

@@ -338,6 +338,7 @@ table {
   padding-right: 8px;
   max-width: 480px;
   width: 480px;
+  border-radius: 5px;
 }
 #modal-root .modal .modal-header,
 #modal-root .modal .modal-footer {
@@ -366,16 +367,8 @@ table {
   gap: 8px;
 }
 
-form .form-errors {
-  font-weight: 700;
-  text-align: center;
-  margin-top: 16px;
-}
 form .field-detail:not(:last-child) {
   margin-bottom: 4px;
-}
-form .field-detail.failed {
-  color: #bb2124;
 }
 form .field-detail.failed .field-errors {
   visibility: visible;
@@ -384,50 +377,46 @@ form .field-detail.failed .field-control input:not(:focus),
 form .field-detail.failed .field-control textarea:not(:focus) {
   border-color: #bb2124;
 }
-form .field-detail.success {
-  color: #22bb33;
-}
-form .field-detail.success .field-errors {
-  visibility: hidden;
-}
-form .field-detail.success .field-control input:not(:focus),
-form .field-detail.success .field-control textarea:not(:focus) {
-  border-color: #22bb33;
-}
-form .field-detail .field-control {
+form .field-control {
   display: flex;
   flex-direction: column;
   margin-bottom: 2px;
   max-width: 280px;
 }
-form .field-detail .field-control label {
+form .field-control label {
   font-weight: 700;
   margin-bottom: 4px;
   margin-left: 4px;
 }
-form .field-detail .field-control select,
-form .field-detail .field-control input,
-form .field-detail .field-control textarea {
+form .field-control select,
+form .field-control input,
+form .field-control textarea {
   border-style: solid;
   border-width: 2px;
   border-color: #979dac;
   border-radius: 4px;
 }
-form .field-detail .field-control textarea {
+form .field-control textarea {
   padding: 4px;
 }
-form .field-detail .field-control select,
-form .field-detail .field-control input {
+form .field-control select,
+form .field-control input {
   min-height: 28px;
   padding-left: 8px;
   padding-right: 8px;
 }
-form .field-detail .field-errors {
+form .form-errors {
+  color: #bb2124;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 16px;
+}
+form .field-errors {
   color: #bb2124;
   min-height: 1em;
   margin-bottom: 2px;
 }
-form .field-detail .field-errors ul {
+form .field-errors ul {
   margin: 0;
   list-style-type: none;
   padding-left: 2px;

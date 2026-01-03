@@ -13,10 +13,7 @@ import org.thymeleaf.web.servlet.JakartaServletWebApplication;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
-import finance.web.forms.thymeleaf.EachFailTagProcessor;
-import finance.web.forms.thymeleaf.FieldTagProcessor;
-import finance.web.forms.thymeleaf.OnFailVisibleTagProcessor;
-import finance.web.forms.thymeleaf.VldClassTagProcessor;
+import finance.forms.thymeleaf.FieldTagProcessor;
 import jakarta.servlet.ServletContext;
 
 public class Thymeleaf extends AbstractModule {
@@ -54,16 +51,12 @@ public class Thymeleaf extends AbstractModule {
 
     final class FormDialect extends AbstractProcessorDialect {
         FormDialect() {
-            super("Form Dialect", "f", StandardDialect.PROCESSOR_PRECEDENCE);
+            super("Form Dialect", "th", StandardDialect.PROCESSOR_PRECEDENCE);
         }
 
         @Override
         public Set<IProcessor> getProcessors(String dialectPrefix) {
-            return Set.of(
-                    new FieldTagProcessor(dialectPrefix),
-                    new VldClassTagProcessor(dialectPrefix),
-                    new OnFailVisibleTagProcessor(dialectPrefix),
-                    new EachFailTagProcessor(dialectPrefix));
+            return Set.of(new FieldTagProcessor(dialectPrefix));
         }
     }
 }

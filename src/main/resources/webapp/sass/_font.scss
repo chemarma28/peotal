@@ -26,3 +26,19 @@ $fs-large: 14pt;
 $fw-regular: 400;
 $fw-bold: 700;
 $fw-bolder: 900;
+
+.fs-small {
+    font-size: $fs-small;
+}
+
+.fs-medium {
+    font-size: $fs-medium;
+}
+
+.fs-large {
+    font-size: $fs-large;
+}
+
+.uppercased {
+    text-transform: uppercase;
+}

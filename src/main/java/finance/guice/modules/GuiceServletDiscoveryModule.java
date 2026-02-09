@@ -98,8 +98,8 @@ public class GuiceServletDiscoveryModule extends ServletModule {
                 final String name = classpath.relativize(file)
                         .toString()
                         .replace(".class", "")
-                        .replaceAll("/", ".");
-
+                        .replaceAll("/", ".")
+                        .replaceAll("\\\\", ".");
                 try {
                     @SuppressWarnings("rawtypes")
                     Class cl = Class.forName(name);
@@ -107,7 +107,7 @@ public class GuiceServletDiscoveryModule extends ServletModule {
                     if (HttpServlet.class.isAssignableFrom(cl) && cl.isAnnotationPresent(HttpServletPath.class)) {
                         servlets.add(cl);
 
-                        logger.debug("New servlet detected: " + cl.getName());
+                        logger.debug("New servlet detected: {}", cl.getName());
                     }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();

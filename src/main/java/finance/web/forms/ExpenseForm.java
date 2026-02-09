@@ -11,14 +11,14 @@ import finance.forms.rules.impl.Text;
 import jakarta.servlet.http.HttpServletRequest;
 
 public final class ExpenseForm extends BaseForm {
-    private FormField<BigDecimal> cardAmount = new FormField<>("cardAmount", new DecimalValue().min(BigDecimal.valueOf(0.01)));
+    private final FormField<BigDecimal> cardAmount = new FormField<>("cardAmount", new DecimalValue().min(BigDecimal.valueOf(0.01)));
 
-    private FormField<LocalDate> cardDate = new FormField<>(
+    private final FormField<LocalDate> cardDate = new FormField<>(
             "cardDate",
             LocalDate.now().toString(),
             new LocalDateValue());
 
-    private FormField<String> cardDescription = new FormField<>("cardDescription", new Text()).optional("");
+    private final FormField<String> cardDescription = new FormField<>("cardDescription", new Text()).optional("");
 
     public ExpenseForm() {
         register(cardAmount, cardDate, cardDescription);

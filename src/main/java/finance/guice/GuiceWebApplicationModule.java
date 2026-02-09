@@ -11,6 +11,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import finance.guice.modules.GuiceServletDiscoveryModule;
 import finance.guice.modules.Thymeleaf;
 import finance.web.filter.DataSourceProvidingFilter;
+import finance.web.filter.WhichAccount;
 
 public class GuiceWebApplicationModule extends GuiceServletContextListener {
     private DataSource dataSource() {
@@ -32,6 +33,7 @@ public class GuiceWebApplicationModule extends GuiceServletContextListener {
                 install(new Thymeleaf(getServletContext()));
 
                 filter("/*").through(DataSourceProvidingFilter.class);
+                filter("/*").through(WhichAccount.class);
                 setupServletsPaths("finance.web");
             }
         });

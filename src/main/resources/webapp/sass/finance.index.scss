@@ -2,16 +2,7 @@
 @import "font";
 @import "pretty";
 @import "button";
-
-body {
-    color: $font-color-default;
-    margin: 0;
-    font-family: "Lato";
-}
-
-table {
-    border-collapse: collapse;
-}
+@import "font"
 
 #layout-header {
     background-color: $header-background-color;
@@ -25,22 +16,6 @@ table {
 #layout-menu,
 #layout-content {
     background-color: #ffffff;
-}
-
-.fs-small {
-    font-size: $fs-small;
-}
-
-.fs-medium {
-    font-size: $fs-medium;
-}
-
-.fs-large {
-    font-size: $fs-large;
-}
-
-.uppercased {
-    text-transform: uppercase;
 }
 
 #menu {

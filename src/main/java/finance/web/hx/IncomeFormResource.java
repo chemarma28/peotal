@@ -12,7 +12,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import finance.guice.modules.HttpServletPath;
-import finance.objects.MonthlyExpense;
 import finance.web.forms.IncomeForm;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

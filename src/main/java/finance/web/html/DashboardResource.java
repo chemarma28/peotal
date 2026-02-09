@@ -13,10 +13,6 @@ import com.google.inject.Singleton;
 
 import finance.guice.modules.HttpServletPath;
 import finance.records.CardFolder;
-import finance.records.MonthlyInfo;
-import finance.service.AvailableYears;
-import finance.service.CardFolderFetch;
-import finance.service.MonthlyInfoFetch;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,18 +39,6 @@ public class DashboardResource extends HttpServlet {
         if (yearParam == null || monthParam == null)
             resp.sendRedirect(String.format("/dashboard.html?year=%s&month=%s", year, month));
 
-        final List<MonthlyInfo> infos = new MonthlyInfoFetch().retrieve(year);
-
-        if (infos.size() < 0)
-            resp.sendRedirect(String.format("/404.html", year, month));
-
-        final List<CardFolder> folders = new CardFolderFetch().retrieve(year, month);
-        final List<Integer> availableYears = new AvailableYears().retrieve();
-
-        Context thymeleaf = new Context(null,
-                Map.of("yearParam", year, "monthParam", month, "infos", infos, "folders", folders,
-                        "availableYears", availableYears));
-
-        te.process("dashboard", thymeleaf, resp.getWriter());
+        te.process("dashboard", new Context(), resp.getWriter());
     }
 }

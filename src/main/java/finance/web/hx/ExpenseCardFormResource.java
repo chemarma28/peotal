@@ -52,7 +52,8 @@ public class ExpenseCardFormResource extends HttpServlet {
         if (!form.isValid())
             engine.process(TEMPLATE, FORM_FRAGMENT, ctx, resp.getWriter());
         else {
-            final ExpenseCard card = new ExpenseCard(1L, form.cardAmount(), form.cardDate(), form.cardDescription());
+            //final ExpenseCard card = new ExpenseCard(1L, form.cardAmount(), form.cardDate(), form.cardDescription());
+            final var card = new ExpenseCard();
 
             try {
                 if (card.save())

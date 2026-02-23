@@ -2,8 +2,6 @@ package finance.web.html;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -12,7 +10,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import finance.guice.modules.HttpServletPath;
-import finance.records.CardFolder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

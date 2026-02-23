@@ -1,15 +1,22 @@
 package finance;
 
+import static jakarta.servlet.DispatcherType.ASYNC;
+import static jakarta.servlet.DispatcherType.ERROR;
+import static jakarta.servlet.DispatcherType.FORWARD;
+import static jakarta.servlet.DispatcherType.INCLUDE;
+import static jakarta.servlet.DispatcherType.REQUEST;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.EnumSet;
 
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Server;
 
 import com.google.inject.servlet.GuiceFilter;
 
 import finance.guice.GuiceWebApplicationModule;
-
-import static jakarta.servlet.DispatcherType.*;
 
 public class Launcher {
     public static void main(String[] args) throws Exception {
@@ -20,8 +27,17 @@ public class Launcher {
         webapp.addFilter(GuiceFilter.class, "/*", EnumSet.of(FORWARD, INCLUDE, REQUEST, ASYNC, ERROR));
         webapp.addEventListener(new GuiceWebApplicationModule());
 
+        final Path resources = Paths.get("src/main/resources/webapp");
+
+        final ServletContextHandler handler = ServletContextHandler
+                .getServletContextHandler(webapp.getServletContext());
+        server.setHandler(handler);
         server.setHandler(webapp);
+
+        final Watcher watcher = new Watcher(resources, handler);
+
         server.start();
+        watcher.start();
 
         server.join();
     }

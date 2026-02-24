@@ -12,6 +12,10 @@ public final class ValidationMessage {
         this.error = error;
     }
 
+    public boolean error() {
+        return error;
+    }
+
     public static ValidationMessage error(final String message) {
         return new ValidationMessage(message, true);
     }

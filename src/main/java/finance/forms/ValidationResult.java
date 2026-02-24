@@ -1,16 +1,12 @@
 package finance.forms;
 
-import static java.util.Collections.emptyList;
+import java.util.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import static java.util.Collections.emptyList;
 
 public final class ValidationResult {
     private final int DEFAULT_KEY = -1;
-    private Map<Object, Set<ValidationMessage>> messages = new HashMap<>();
+    private final Map<Object, Set<ValidationMessage>> messages = new HashMap<>();
 
     public ValidationResult addMessage(final String message) {
         messages.putIfAbsent(DEFAULT_KEY, new HashSet<>());
@@ -40,16 +36,25 @@ public final class ValidationResult {
         return this;
     }
 
-    public boolean hasErrors(Object key) {
+    public boolean hasErrors(final Object key) {
+        final Set<ValidationMessage> m = messages.get(key);
 
-        return false;
+        if (null == m || m.isEmpty())
+            return false;
+
+        return m.stream().filter(Objects::nonNull).anyMatch(ValidationMessage::error);
     }
 
-    public boolean hasError() {
-        return false;
+    public boolean hasErrors() {
+        return messages.values().stream().flatMap(Collection::stream).filter(Objects::nonNull).anyMatch(ValidationMessage::error);
     }
 
-    public List<ValidationMessage> getErrors() {
-        return emptyList();
+    public List<ValidationMessage> getErrors(final Object key) {
+        final Set<ValidationMessage> m = messages.get(key);
+
+        if (null == m || m.isEmpty())
+            return emptyList();
+
+        return m.stream().filter(Objects::nonNull).filter(ValidationMessage::error).toList();
     }
 }

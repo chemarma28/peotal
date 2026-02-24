@@ -23,14 +23,14 @@ public class FormTest {
         when(req.getParameter("decimal")).thenReturn("10.5");
         when(req.getParameter("date")).thenReturn("2025-10-12");
 
-        final SimpleForm simpleForm = new SimpleForm(req);
+        final Form form = new Form().field("decimal", new Number()).field("date", new Date());
+        form.bindFromRequest(req);
 
-        assertTrue(simpleForm.isValid());
-        assertTrue(simpleForm.get("decimal").validationResult().isValid());
-        assertTrue(simpleForm.get("date").validationResult().isValid());
-
-        assertEquals(BigDecimal.valueOf(10.5), simpleForm.decimal());
-        assertEquals(LocalDate.of(2025, 10, 12), simpleForm.date());
+        assertTrue(form.isValid());
+        assertEquals(BigDecimal.valueOf(10.5), form.value("decimal", BigDecimal.class));
+        assertEquals(LocalDate.of(2025,10,12), form.value("date", LocalDate.class));
+        assertFalse(form.hasError("decimal"));
+        assertFalse(form.hasError("date"));
     }
 
     @Test
@@ -39,14 +39,12 @@ public class FormTest {
         when(req.getParameter("decimal")).thenReturn("10.5");
         when(req.getParameter("date")).thenReturn("not a date");
 
-        final SimpleForm simpleForm = new SimpleForm(req);
+        final Form form = new Form().field("decimal", new Number()).field("date", new Date());
+        form.bindFromRequest(req);
 
-        assertFalse(simpleForm.isValid());
-        assertTrue(simpleForm.get("decimal").validationResult().isValid());
-        assertFalse(simpleForm.get("date").validationResult().isValid());
-
-        assertEquals(BigDecimal.valueOf(10.5), simpleForm.decimal());
-        assertNull(simpleForm.date());
+        assertFalse(form.isValid());
+        assertEquals(BigDecimal.valueOf(10.5), form.value("decimal", BigDecimal.class));
+        assertNull(form.value("date", LocalDate.class));
     }
 
     @Test

@@ -8,7 +8,7 @@ import java.text.ParseException;
 
 public class Number implements Mapping<BigDecimal> {
     @Override
-    public BigDecimal map(final HttpServletRequest req, final Object key, final ValidationResult result) {
+    public BigDecimal map(final HttpServletRequest req, final String key, final ValidationResult result) {
         final String original = req.getParameter(key.toString());
 
         if (null == original)
@@ -18,7 +18,6 @@ public class Number implements Mapping<BigDecimal> {
             return (BigDecimal) Formats.decimals.parse(
                     original.trim()
                     .replaceAll("\\s", "")
-                    .replaceAll("\\.", ",")
             );
         } catch (ParseException e) {
             result.addError(key, "Please enter a valid decimal number");

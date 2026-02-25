@@ -7,7 +7,7 @@ import java.time.format.DateTimeParseException;
 
 public class Date implements Mapping<LocalDate> {
     @Override
-    public LocalDate map(HttpServletRequest req, Object key, ValidationResult validation) {
+    public LocalDate map(HttpServletRequest req, String key, ValidationResult validation) {
         final String original = req.getParameter(key.toString());
 
         if (null == original)

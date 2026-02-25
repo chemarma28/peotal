@@ -14,7 +14,7 @@ public class Required<R> implements Mapping<R> {
     }
 
     @Override
-    public R map(HttpServletRequest req, Object key, ValidationResult validation) {
+    public R map(HttpServletRequest req, String key, ValidationResult validation) {
         final R result = this.mapping.map(req, key, validation);
 
         if (null != result)

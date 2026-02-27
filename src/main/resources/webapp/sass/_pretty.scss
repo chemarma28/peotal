@@ -27,12 +27,47 @@ $modal-background-color-default: #cbced5;
 $danger-color: #bb2124;
 $success-color: #22bb33;
 
-.warn-toast {
-    background: none !important;
-    background-color: $danger-color !important;
+@font-face {
+    font-family: "Lato";
+    src: url("/font/Lato-Regular.ttf");
+    font-weight: 400;
+    font-style: normal;
 }
 
-.success-toast {
-    background: none !important;
-    background-color: $success-color !important;
+@font-face {
+    font-family: "Lato";
+    src: url("/font/Lato-Bold.ttf");
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Lato";
+    src: url("/font/Lato-Black.ttf");
+    font-weight: 900;
+    font-style: normal;
+}
+
+$fs-small: 8pt;
+$fs-medium: 10pt;
+$fs-large: 14pt;
+
+$fw-regular: 400;
+$fw-bold: 700;
+$fw-bolder: 900;
+
+.fs-small {
+    font-size: $fs-small;
+}
+
+.fs-medium {
+    font-size: $fs-medium;
+}
+
+.fs-large {
+    font-size: $fs-large;
+}
+
+.uppercased {
+    text-transform: uppercase;
 }

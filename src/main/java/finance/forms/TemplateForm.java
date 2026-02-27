@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TemplateForm implements Form {
-    private Map<String, String> key2Value = new HashMap<>();
+    private final Map<String, String> key2Value = new HashMap<>();
 
     public TemplateForm() {}
 

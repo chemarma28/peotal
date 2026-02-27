@@ -6,6 +6,6 @@ public class Text implements Mapping<String> {
 
     @Override
     public String map(HttpServletRequest req, String key, ValidationResult validation) {
-        return req.getParameter(key.toString());
+        return req.getParameter(key);
     }
 }

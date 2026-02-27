@@ -32,7 +32,7 @@ public class Thymeleaf extends AbstractModule {
                 JakartaServletWebApplication.buildApplication(servletContext));
 
         resolver.setTemplateMode(TemplateMode.HTML);
-        resolver.setPrefix("/WEB-INF/templates/");
+        resolver.setPrefix("/WEB-INF/");
         resolver.setSuffix(".html");
         resolver.setCacheable(false);
         resolver.setCharacterEncoding("utf-8");

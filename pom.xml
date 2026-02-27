@@ -102,7 +102,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.18.0</version>
-            <scope></scope>
         </dependency>
     </dependencies>
 
@@ -137,6 +136,24 @@
                         </resource>
                     </resources>
                 </configuration>                
+            </plugin>
+
+            <plugin>
+                <groupId>com.fizzed</groupId>
+                <artifactId>watcher-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <touchFile>target/classes/watcher.txt</touchFile>
+                    <watches>
+                        <watch>
+                            <directory>${basedir}/src/main/resources/webapp</directory>
+                        </watch>
+                    </watches>
+
+                    <goals>
+                        <goal>resources:resources</goal>
+                    </goals>
+                </configuration>
             </plugin>
 
             <plugin>

@@ -38,14 +38,14 @@ public class Account extends HttpServlet {
         final int y = year(req);
         final int m = month(req);
 
-        noparams(req, resp, y, m);
+        noParams(req, resp, y, m);
 
         final Context thymeleaf = new Context(Locale.getDefault(), Map.of());
 
         te.process("account", thymeleaf ,resp.getWriter());
     }
 
-    private void noparams(final HttpServletRequest req, final HttpServletResponse resp, int year, int month) throws IOException {
+    private void noParams(final HttpServletRequest req, final HttpServletResponse resp, int year, int month) throws IOException {
         if (null != req.getParameter("y") && null != req.getParameter("m"))
             return;
 

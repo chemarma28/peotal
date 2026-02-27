@@ -5,6 +5,7 @@ import static jakarta.servlet.DispatcherType.ERROR;
 import static jakarta.servlet.DispatcherType.FORWARD;
 import static jakarta.servlet.DispatcherType.INCLUDE;
 import static jakarta.servlet.DispatcherType.REQUEST;
+import static org.eclipse.jetty.ee10.servlet.ServletContextHandler.getServletContextHandler;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,15 +30,14 @@ public class Launcher {
 
         final Path resources = Paths.get("src/main/resources/webapp");
 
-        final ServletContextHandler handler = ServletContextHandler
-                .getServletContextHandler(webapp.getServletContext());
+        final ServletContextHandler handler = getServletContextHandler(webapp.getServletContext());
         server.setHandler(handler);
         server.setHandler(webapp);
 
-        final Watcher watcher = new Watcher(resources, handler);
+//        final Watcher watcher = new Watcher(resources, handler);
 
         server.start();
-        watcher.start();
+//        watcher.start();
 
         server.join();
     }

@@ -1,37 +1,37 @@
-@import "pretty";
-@import "button";
+// @import "pretty";
+// @import "button";
 
-body {
-    color: $font-color-default;
-    margin: 0;
-    font-family: "Lato";
-    font-size: $fs-large;
+// body {
+//     color: $font-color-default;
+//     margin: 0;
+//     font-family: "Lato";
+//     font-size: $fs-large;
 
-    .container {
-        position: absolute;
-        top: 30%;
-        left: calc(50% - 140px);
+//     .container {
+//         position: absolute;
+//         top: 30%;
+//         left: calc(50% - 140px);
 
-        div {
-            min-width: 280px;
-            padding-bottom: 8px;
-            text-align: center;
-        }
+//         div {
+//             min-width: 280px;
+//             padding-bottom: 8px;
+//             text-align: center;
+//         }
 
-        #message {
-            font-size: 30pt;
-            font-weight: $fw-bold;
-        }
+//         #message {
+//             font-size: 30pt;
+//             font-weight: $fw-bold;
+//         }
 
-        a {
-            max-width: 120px;
-            margin: 0 auto;
-            text-decoration: none;
+//         a {
+//             max-width: 120px;
+//             margin: 0 auto;
+//             text-decoration: none;
             
-            &:hover {
-                border-color: $button-border-color-default !important;
-                border-width: 2px;
-            }
-        }
-    }
-}
+//             &:hover {
+//                 border-color: $button-border-color-default !important;
+//                 border-width: 2px;
+//             }
+//         }
+//     }
+// }

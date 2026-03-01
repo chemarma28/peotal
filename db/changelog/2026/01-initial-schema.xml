@@ -58,15 +58,15 @@
 
     <changeSet id="2" author="palunyach">
         <sql>
-            INSERT INTO accounts
-            VALUE ('default')
+            INSERT INTO accounts (name)
+            VALUES ('default')
         </sql>
     </changeSet>
 
     <changeSet id="3" author="palunyach">
         <sql>
-            INSERT INTO finance_categories
-            VALUE ('undefined')
+            INSERT INTO finance_categories (name)
+            VALUES ('undefined')
         </sql>
     </changeSet>
 </databaseChangeLog>

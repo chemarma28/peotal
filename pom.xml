@@ -146,11 +146,15 @@
                     <touchFile>target/classes/watcher.txt</touchFile>
                     <watches>
                         <watch>
-                            <directory>${basedir}/src/main/resources/webapp</directory>
+                            <directory>${basedir}/src/main/resources/webapp/sass</directory>
+                        </watch>
+                        <watch>
+                            <directory>${basedir}/src/main/resources/webapp/js</directory>
                         </watch>
                     </watches>
 
                     <goals>
+                        <goal>sass:update-stylesheets</goal>
                         <goal>resources:resources</goal>
                     </goals>
                 </configuration>

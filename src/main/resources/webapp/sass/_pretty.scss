@@ -1,31 +1,30 @@
-$button-background-color-default: #ffffff;
-$button-background-color-primary: #0466c8;
-$button-background-color-hover: #0466c8;
+@mixin button {
+    border-style: solid;
+    border-radius: 5px;
+    border: 0;
+    padding: 4px 8px 4px 8px;
+}
 
-$button-value-color-default: #0466c8;
-$button-value-color-primary: #ffffff;
-$button-value-color-hover: #ffffff;
+$button-primary-color: #32335C;
 
-$button-border-color-default: #7d8597;
-$button-border-color-hover: #ffffff;
+@mixin button-primary-color {
+    color: #ffffff;
+    background-color: $button-primary-color;
 
-$font-color-default: #33415c;
-$font-color-highlight: #001233;
+    &:hover {
+        background-color: darken($button-primary-color, 7%);
+    }
+}
 
-$header-background-color: #979dac;
+@mixin button-primary {
+    @include button;
+    @include button-primary-color;
+}
 
-$menu-tab-background-color-selected: #4f93d8;
-$menu-tab-border-color-selected: #0353a4;
-$menu-footer-background-color: #7d8597;
+$border-color: #979dac;
+$main-background: #cbced5;
+$header-background: darken($main-background, 10%);
 
-$border-line-color-default: #979dac;
-
-$outlined-text-background-color-default: #979dac;
-
-$modal-background-color-default: #cbced5;
-
-$danger-color: #bb2124;
-$success-color: #22bb33;
 
 @font-face {
     font-family: "Lato";
@@ -48,9 +47,12 @@ $success-color: #22bb33;
     font-style: normal;
 }
 
-$fs-small: 8pt;
-$fs-medium: 10pt;
-$fs-large: 14pt;
+$font-color-default: #33415c;
+
+$fs-small: 10pt;
+$fs-regular: 12pt;
+$fs-medium: 14pt;
+$fs-large: 16pt;
 
 $fw-regular: 400;
 $fw-bold: 700;

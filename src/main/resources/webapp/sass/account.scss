@@ -1,25 +1,181 @@
 @import "pretty";
 
+$assets: "/graphics";
+
+span.chevron-icon-16 {
+    display: block;
+    background-color: currentColor;
+    mask-position: center center;
+    mask-image: url("#{$assets}/16-chevron.svg");
+    width: 16px;
+    height: 16px;
+}
+
 body {
     color: $font-color-default;
     margin: 0;
     font-family: "Lato";
+    font-size: $fs-regular;
+    background-color: lighten($main-background, 15%);
 }
 
-table {
-    border-collapse: collapse;
-}
-
-header, main, footer {
+header,
+main,
+footer {
     padding: 0 32px 0 32px;
 }
 
-header {
-    display: flex;
-    background-color: $header-background-color;
+#header-container,
+#main-container {
+    max-width: 960px;
+    margin: 0 auto;
 }
 
-div {
-    background-color: red;
-    color: blue;
+header {
+    background-color: $header-background;
+    border-bottom: 2px solid lighten($header-background, 7%);
+
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+}
+
+#header-container {
+    max-width: 960px;
+    margin: 0 auto;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+#header-buttons {
+    display: flex;
+    column-gap: 8px;
+
+    button {
+        font-size: $fs-medium;
+        @include button-primary;
+    }
+}
+
+#dashboard {
+    background-color: #ffffff;
+    margin-top: 32px;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    border: 1px solid $border-color;
+    border-radius: 5px;
+
+    padding: 4px;
+
+    .dashboard-sub {
+        &:not(:last-child) {
+            border-right: 1px solid $border-color;
+        }
+
+        span {
+            display: block;
+            max-width: fit-content;
+            margin: 0 auto;
+
+            font-size: $fs-medium;
+            font-weight: $fw-bold;
+        }
+    }
+}
+
+#details {
+    margin-top: 32px;
+}
+
+.accordion {
+    background-color: #ffffff;
+
+    border: 1px solid $border-color;
+    border-radius: 5px;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 8px;
+
+    font-size: $fs-medium;
+    font-weight: $fw-bold;
+
+    padding: 8px;
+
+    border-bottom: 1px solid $border-color;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.accordion-item {
+    &:last-child.collapsed .accordion-header {
+        border-bottom: none;
+    }
+
+    .accordion-main {
+        padding: 8px 32px 8px 32px;
+        overflow: hidden;
+
+        transition: max-height 350ms ease-in-out;
+    }
+
+    &.collapsed .accordion-main {
+        padding: 0px;
+    }
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead,
+    tbody {
+        th,
+        td {
+            padding: 8px 0px 8px 0px;
+            border-bottom-style: solid;
+            border-bottom-color: $border-color;
+        }
+
+        th {
+            font-weight: $fw-bold;
+            text-align: left;
+            border-bottom-width: 2px;
+        }
+
+        td {
+            border-bottom-width: 1px;
+        }
+
+        tr:last-child > td {
+            border-bottom-width: 2px;
+        }
+    }
+
+    tfoot {
+        font-weight: $fw-bold;
+    }
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    height: 32px;
+
+    background-color: $header-background;
+    border-top: 2px solid lighten($header-background, 10%);
 }

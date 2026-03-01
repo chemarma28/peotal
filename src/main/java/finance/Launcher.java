@@ -28,7 +28,7 @@ public class Launcher {
         webapp.addFilter(GuiceFilter.class, "/*", EnumSet.of(FORWARD, INCLUDE, REQUEST, ASYNC, ERROR));
         webapp.addEventListener(new GuiceWebApplicationModule());
 
-        final Path resources = Paths.get("src/main/resources/webapp");
+        // final Path resources = Paths.get("src/main/resources/webapp");
 
         final ServletContextHandler handler = getServletContextHandler(webapp.getServletContext());
         server.setHandler(handler);

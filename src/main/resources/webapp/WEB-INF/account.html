@@ -16,6 +16,19 @@
     </head>
 
     <body>
+        <dialog id="my-modal">
+            <div class="dialog-header">
+                <div>Header</div>
+                <div>
+                    <button onclick="closeDialog()">close</button>
+                </div>
+            </div>
+
+            <div class="dialog-body">Body</div>
+
+            <div class="dialog-footer">Footer</div>
+        </dialog>
+
         <div id="content">
             <header>
                 <div id="header-container">
@@ -29,7 +42,7 @@
                     </div>
 
                     <div id="header-buttons">
-                        <button>Expense</button>
+                        <button onclick="dialog()">Expense</button>
                         <button>Income</button>
                     </div>
                 </div>
@@ -62,95 +75,107 @@
                                     <span>2019-05-01</span>
                                 </div>
 
-                                <div class="accordion-main">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Description</th>
-                                                <th>Amount</th>
-                                                <th>Category</th>
-                                                <th style="width: 8%">
-                                                    Actions
-                                                </th>
-                                            </tr>
-                                        </thead>
+                                <div class="accordion-collapsable">
+                                    <div class="accordion-body">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Amount</th>
+                                                    <th>Category</th>
+                                                    <th style="width: 8%">
+                                                        Actions
+                                                    </th>
+                                                </tr>
+                                            </thead>
 
-                                        <tbody>
-                                            <tr>
-                                                <td>Really long text here</td>
-                                                <td>$300</td>
-                                                <td>Fun</td>
-                                                <td>
-                                                    <a>Delete</a>
-                                                </td>
-                                            </tr>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        Really long text here
+                                                    </td>
+                                                    <td>$300</td>
+                                                    <td>Fun</td>
+                                                    <td>
+                                                        <a>Delete</a>
+                                                    </td>
+                                                </tr>
 
-                                            <tr>
-                                                <td>Really long text here</td>
-                                                <td>$300</td>
-                                                <td>Fun</td>
-                                                <td>
-                                                    <a>Delete</a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
+                                                <tr>
+                                                    <td>
+                                                        Really long text here
+                                                    </td>
+                                                    <td>$300</td>
+                                                    <td>Fun</td>
+                                                    <td>
+                                                        <a>Delete</a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
 
-                                        <tfoot>
-                                            <tr>
-                                                <td>Total:</td>
-                                                <td>300</td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Total:</td>
+                                                    <td>300</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="accordion-item">
                                 <div class="accordion-header">
                                     <span class="chevron-icon-16"></span>
-                                    <span>2019-07-10</span>
+                                    <span>2019-05-01</span>
                                 </div>
 
-                                <div class="accordion-main">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Description</th>
-                                                <th>Amount</th>
-                                                <th>Category</th>
-                                                <th style="width: 8%">
-                                                    Actions
-                                                </th>
-                                            </tr>
-                                        </thead>
+                                <div class="accordion-collapsable">
+                                    <div class="accordion-body">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Amount</th>
+                                                    <th>Category</th>
+                                                    <th style="width: 8%">
+                                                        Actions
+                                                    </th>
+                                                </tr>
+                                            </thead>
 
-                                        <tbody>
-                                            <tr>
-                                                <td>Really long text here</td>
-                                                <td>$300</td>
-                                                <td>Fun</td>
-                                                <td>
-                                                    <a>Delete</a>
-                                                </td>
-                                            </tr>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        Really long text here
+                                                    </td>
+                                                    <td>$300</td>
+                                                    <td>Fun</td>
+                                                    <td>
+                                                        <a>Delete</a>
+                                                    </td>
+                                                </tr>
 
-                                            <tr>
-                                                <td>Really long text here</td>
-                                                <td>$300</td>
-                                                <td>Fun</td>
-                                                <td>
-                                                    <a>Delete</a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
+                                                <tr>
+                                                    <td>
+                                                        Really long text here
+                                                    </td>
+                                                    <td>$300</td>
+                                                    <td>Fun</td>
+                                                    <td>
+                                                        <a>Delete</a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
 
-                                        <tfoot>
-                                            <tr>
-                                                <td>Total:</td>
-                                                <td>300</td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                                            <tfoot>
+                                                <tr>
+                                                    <td>Total:</td>
+                                                    <td>300</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -160,8 +185,6 @@
 
             <footer>Fixed footer or something else</footer>
         </div>
-
-        <div id="modal-root"></div>
     </body>
 
     <script

@@ -7,8 +7,6 @@ import static jakarta.servlet.DispatcherType.INCLUDE;
 import static jakarta.servlet.DispatcherType.REQUEST;
 import static org.eclipse.jetty.ee10.servlet.ServletContextHandler.getServletContextHandler;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.EnumSet;
 
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
@@ -34,10 +32,7 @@ public class Launcher {
         server.setHandler(handler);
         server.setHandler(webapp);
 
-//        final Watcher watcher = new Watcher(resources, handler);
-
         server.start();
-//        watcher.start();
 
         server.join();
     }

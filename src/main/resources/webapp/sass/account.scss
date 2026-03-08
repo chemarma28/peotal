@@ -1,4 +1,5 @@
 @import "pretty";
+@import "dialog";
 
 $assets: "/graphics";
 
@@ -118,20 +119,29 @@ header {
     }
 }
 
+@keyframes expand  {
+    from {
+
+    }
+}
+
 .accordion-item {
     &:last-child.collapsed .accordion-header {
         border-bottom: none;
     }
 
-    .accordion-main {
-        padding: 8px 32px 8px 32px;
+    .accordion-collapsable {
         overflow: hidden;
-
-        transition: max-height 350ms ease-in-out;
+        transition: max-height 300ms ease-in;        
+    
+        &.collapsed {
+            height: 0px;
+            max-height: 0px;
+        }
     }
 
-    &.collapsed .accordion-main {
-        padding: 0px;
+    .accordion-body {
+        padding: 8px 32px 8px 32px;
     }
 }
 

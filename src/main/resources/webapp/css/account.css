@@ -32,6 +32,39 @@
   text-transform: uppercase;
 }
 
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+dialog {
+  color: #33415c;
+  font-family: "Lato";
+  font-size: 12pt;
+  width: 480px;
+  max-width: 480px;
+  border: 2px solid #979dac;
+  border-radius: 5px;
+  padding: 0;
+}
+
+.dialog-header,
+.dialog-body,
+.dialog-footer {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #979dac;
+  font-size: 16pt;
+  font-weight: 700;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
 span.chevron-icon-16 {
   display: block;
   background-color: currentColor;
@@ -142,13 +175,16 @@ header {
 .accordion-item:last-child.collapsed .accordion-header {
   border-bottom: none;
 }
-.accordion-item .accordion-main {
-  padding: 8px 32px 8px 32px;
+.accordion-item .accordion-collapsable {
   overflow: hidden;
-  transition: max-height 350ms ease-in-out;
+  transition: max-height 300ms ease-in;
 }
-.accordion-item.collapsed .accordion-main {
-  padding: 0px;
+.accordion-item .accordion-collapsable.collapsed {
+  height: 0px;
+  max-height: 0px;
+}
+.accordion-item .accordion-body {
+  padding: 8px 32px 8px 32px;
 }
 
 table {

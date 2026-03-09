@@ -73,3 +73,23 @@ $fw-bolder: 900;
 .uppercased {
     text-transform: uppercase;
 }
+
+$assets: "/graphics";
+
+span.chevron-icon-16 {
+    display: block;
+    background-color: currentColor;
+    mask-position: center center;
+    mask-image: url("#{$assets}/16-chevron.svg");
+    width: 16px;
+    height: 16px;
+}
+
+span.cross-icon-32 {
+    display: block;
+    background-color: currentColor;
+    mask-position: center center;
+    mask-image: url("#{$assets}/32-cross.svg");
+    width: 24px;
+    height: 24px;
+}

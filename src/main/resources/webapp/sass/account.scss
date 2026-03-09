@@ -1,16 +1,6 @@
 @import "pretty";
 @import "dialog";
-
-$assets: "/graphics";
-
-span.chevron-icon-16 {
-    display: block;
-    background-color: currentColor;
-    mask-position: center center;
-    mask-image: url("#{$assets}/16-chevron.svg");
-    width: 16px;
-    height: 16px;
-}
+@import "forms";
 
 body {
     color: $font-color-default;

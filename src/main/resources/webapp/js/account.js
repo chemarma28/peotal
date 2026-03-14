@@ -42,14 +42,71 @@ function uncollapse(aitem) {
     main.style.maxHeight = `${main.scrollHeight}px`;
 }
 
-function overlay() {
-    const overlay = document.createElement("div");
+function showMakeExpenseDialog() {
+    const $dialog = dialog(
+        "make-expense-dialog",
+        "New expense card",
+        function ($body) {
+            const dialog = this.get(0);
+
+            $.get("/expense.html").done((response) => {
+                $body.html(response);
+
+                dialog.showModal();
+            });
+        },
+    );
+
+    $dialog.footer.append(
+        $(`<button>Make expense card</button>`).click((e) => {
+            const form = $dialog.self.find("form");
+
+            $.ajax({
+                url: "/expense.html",
+                type: "POST",
+                dataType: "html",
+                data: form.serialize(),
+            }).done((response) => {
+                $dialog.body.html(response);
+            });
+        }),
+    );
 }
 
-function dialog() {
-    document.getElementById("my-modal").showModal();
-}
+function dialog(id, title, initCallback) {
+    const $dialog = $(`<dialog id=${id}></dialog>`);
+    const dialog = $dialog.get(0);
 
-function closeDialog() {
-    document.getElementById("my-modal").close();
+    const $exit = $("<div></div>").append(
+        $("<button></button>")
+            .append($("<span class='cross-icon-32'></span>"))
+            .click((e) => {
+                dialog.close();
+
+                setTimeout(() => {
+                    $dialog.remove();
+                });
+            }),
+    );
+
+    const $header = $(
+        `<div class='dialog-header'>
+            <div>${title}</div>
+        </div>`,
+    ).append($exit);
+
+    const $body = $("<div class='dialog-body'>Future Dialog Body</div>");
+
+    const $footer = $("<div class='dialog-footer'></div>");
+
+    $("body").prepend($dialog.append($header).append($body).append($footer));
+
+    initCallback.call($dialog, $body);
+
+    return {
+        self: $dialog,
+        header: $header,
+        body: $body,
+        footer: $footer,
+    };
 }

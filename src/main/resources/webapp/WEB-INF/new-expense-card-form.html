@@ -1,0 +1,40 @@
+<form th:object="${form}">
+    <div class="form-group">
+        <label for="description">About</label>
+        <textarea
+            th:field="description"
+            rows="2"
+            placeholder="What kind of expense?"
+        ></textarea>
+
+        <div class="failures">
+            <span
+                th:each="error : *{errors('description')}"
+                th:text="${error}"
+            ></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="amount">How much?</label>
+        <input
+            th:field="amount"
+            placeholder="0.00"
+        />
+
+        <div class="failures">
+            <span
+                th:each="error : *{errors('amount')}"
+                th:text="${error}"
+            ></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="when">When?</label>
+        <input
+            th:field="when"
+            type="date"
+        />
+    </div>
+</form>

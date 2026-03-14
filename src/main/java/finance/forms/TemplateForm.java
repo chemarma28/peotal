@@ -1,20 +1,26 @@
 package finance.forms;
 
+import static java.util.Collections.emptyList;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TemplateForm implements Form {
-    private final Map<String, String> key2Value = new HashMap<>();
+    private final Map<String, String> ordinary = new HashMap<>();
 
-    public TemplateForm() {}
+    public TemplateForm() {
+    }
 
-    public void template(String key, String value) {
-        key2Value.put(key, value);
+    public TemplateForm ordinary(String key, String value) {
+        ordinary.put(key, value);
+
+        return this;
     }
 
     @Override
     public String requestValue(String key) {
-        return key2Value.get(key);
+        return ordinary.get(key);
     }
 
     @Override
@@ -30,5 +36,10 @@ public class TemplateForm implements Form {
     @Override
     public boolean hasErrors() {
         return false;
+    }
+
+    @Override
+    public List<String> errors(Object key) {
+        return emptyList();
     }
 }

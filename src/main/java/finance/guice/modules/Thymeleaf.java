@@ -35,7 +35,7 @@ public class Thymeleaf extends AbstractModule {
         resolver.setPrefix("/WEB-INF/");
         resolver.setSuffix(".html");
         resolver.setCacheable(false);
-        resolver.setCharacterEncoding("utf-8");
+        resolver.setCharacterEncoding("UTF-8");
 
         return resolver;
     }

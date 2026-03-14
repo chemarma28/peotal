@@ -1,5 +1,7 @@
 package finance.forms;
 
+import java.util.List;
+
 public interface Form {
     String requestValue(String key);
 
@@ -8,6 +10,8 @@ public interface Form {
     boolean hasErrors(Object key);
 
     boolean hasErrors();
+
+    List<String> errors(Object key);
 
     default boolean isValid() {
         return !hasErrors();

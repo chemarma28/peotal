@@ -19,7 +19,7 @@ public class Number implements Mapping<BigDecimal> {
                     original.trim().replaceAll("\\s", "")
             );
         } catch (ParseException e) {
-            result.addError(key, "Please enter a valid decimal number");
+            result.addError(key, "The value should be a valid number.");
         }
 
         return null;

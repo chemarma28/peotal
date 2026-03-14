@@ -3,10 +3,11 @@ package finance.forms;
 import jakarta.servlet.http.HttpServletRequest;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class Required<R> implements Mapping<R> {
     private final Mapping<? extends R> mapping;
-    private static final String defaultErrorMessage = "The field is required";
+    private static final String defaultErrorMessage = "The value is required.";
     private String errorMessage;
 
     public Required(final Mapping<? extends R> mapping) {
@@ -15,10 +16,10 @@ public class Required<R> implements Mapping<R> {
 
     @Override
     public R map(HttpServletRequest req, String key, ValidationResult validation) {
-        final R result = this.mapping.map(req, key, validation);
+        final String input = req.getParameter(key);
 
-        if (null != result)
-            return result;
+        if (!isBlank(input))
+            return mapping.map(req, key, validation);
 
         validation.addError(key, defaultIfBlank(errorMessage, defaultErrorMessage));
 

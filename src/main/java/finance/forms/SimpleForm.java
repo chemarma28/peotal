@@ -3,6 +3,7 @@ package finance.forms;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SimpleForm implements Form {
@@ -35,6 +36,11 @@ public class SimpleForm implements Form {
         }
     }
 
+    private void checkBindFromRequestCall() {
+        if (null == req)
+            throw new IllegalAccessError("No http request is binded to this form");
+    }
+
     @Override
     public String requestValue(final String parameter) {
         return req.getParameter(parameter);
@@ -54,20 +60,15 @@ public class SimpleForm implements Form {
         return validation.hasErrors(key);
     }
 
+    @Override
     public boolean hasErrors() {
         checkBindFromRequestCall();
 
         return validation.hasErrors();
     }
 
-    public boolean isValid() {
-        checkBindFromRequestCall();
-
-        return !validation.hasErrors();
-    }
-
-    private void checkBindFromRequestCall() {
-        if (null == req)
-            throw new IllegalAccessError("No http request is binded to this form");
+    @Override
+    public List<String> errors(Object key) {
+        return validation.getErrors(key).stream().map(m -> m.message).toList();
     }
 }

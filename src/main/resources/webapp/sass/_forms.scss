@@ -31,4 +31,12 @@ form {
     textarea {
         resize: none;
     }
+
+    .failures {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        color: $danger-color;
+    }
 }

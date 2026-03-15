@@ -16,4 +16,11 @@ public class ExpenseCard extends FinanceCard {
     public ExpenseCard(final Account owner, final LocalDateTime date, final BigDecimal amount, final String description) {
         super(owner, description, date, amount);
     }
+
+    public ExpenseCard(final Account owner, final LocalDateTime date, final BigDecimal amount, final String description, FinanceCategory category) {
+        this(owner, date, amount, description);
+
+        if (null != category)
+            this.setParent(category);
+    }
 }

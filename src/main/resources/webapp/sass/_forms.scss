@@ -40,3 +40,10 @@ form {
         color: $danger-color;
     }
 }
+
+.form-error-panel {
+    display: flex;
+    gap: 8px;
+
+    color: $danger-color;
+}

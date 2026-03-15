@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "sass-compile",
+            "type": "shell",
+            "command": "mvn sass:update-stylesheets",
+            "group": "build"
+        }
+    ]
+}

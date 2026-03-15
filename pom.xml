@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>novorock.expenses.application</groupId>
-    <artifactId>novorock.expenses.application</artifactId>
+    <groupId>novorock</groupId>
+    <artifactId>novorock.finance</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>finance</name>
 
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <jetty.version>12.0.30</jetty.version>
         <guice.version>7.0.0</guice.version>
     </properties>
@@ -132,7 +132,7 @@
                                 <directory>${basedir}/src/main/resources/webapp/sass</directory>
                             </source>
 
-                            <destination>${basedir}/src/main/resources/webapp/css</destination>
+                            <destination>${project.build.outputDirectory}/webapp/css</destination>
                         </resource>
                     </resources>
                 </configuration>                
@@ -150,6 +150,9 @@
                         </watch>
                         <watch>
                             <directory>${basedir}/src/main/resources/webapp/js</directory>
+                        </watch>
+                        <watch>
+                            <directory>${basedir}/src/main/resources/webapp/WEB-INF</directory>
                         </watch>
                     </watches>
 

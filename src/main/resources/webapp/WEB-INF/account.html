@@ -13,6 +13,11 @@
             th:href="@{~/css/account.css}"
             rel="stylesheet"
         />
+
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        />
     </head>
 
     <body>
@@ -24,13 +29,17 @@
                     </div>
 
                     <div>
-                        <a>May</a>
-                        <a>2026</a>
+                        <a th:text="${#temporals.monthName(yearAndMonth)}"
+                            >May</a
+                        >
+                        <a th:text="${#temporals.year(yearAndMonth)}">2026</a>
                     </div>
 
                     <div id="header-buttons">
-                        <button onclick="showMakeExpenseDialog()">Expense</button>
-                        <button>Income</button>
+                        <button onclick="showMakeExpenseDialog()">
+                            Expense
+                        </button>
+                        <button onclick="showMakeIncomeDialog()">Income</button>
                     </div>
                 </div>
             </header>
@@ -40,26 +49,42 @@
                     <div id="dashboard">
                         <div class="dashboard-sub">
                             <span>Total operations</span>
-                            <span>10</span>
+                            <span th:text="${daily.count}">10</span>
                         </div>
 
                         <div class="dashboard-sub">
                             <span>Income</span>
-                            <span>$100</span>
+                            <span
+                                th:text="${#numbers.formatDecimal(daily.incomeAmount, 1, 2)}"
+                                >$100</span
+                            >
                         </div>
 
                         <div class="dashboard-sub">
                             <span>Expenses</span>
-                            <span>$100</span>
+                            <span
+                                th:text="${#numbers.formatDecimal(daily.expenseAmount, 1, 2)}"
+                                >$100</span
+                            >
                         </div>
                     </div>
 
                     <div id="details">
-                        <div class="accordion">
-                            <div class="accordion-item collapsed">
+                        <div
+                            class="accordion"
+                            th:if="not ${#lists.isEmpty(daily.days)}"
+                        >
+                            <div
+                                th:each="day, dayStatus : ${daily.days}"
+                                class="accordion-item"
+                                th:classappend="not ${dayStatus.first} ? 'collapsed'"
+                            >
                                 <div class="accordion-header">
-                                    <span class="chevron-icon-16"></span>
-                                    <span>2019-05-01</span>
+                                    <i class="fa fa-solid fa-angle-right"></i>
+                                    <span
+                                        th:text="${#temporals.format(day, 'yyyy-MM-dd')}"
+                                        >2019-05-01</span
+                                    >
                                 </div>
 
                                 <div class="accordion-collapsable">
@@ -68,34 +93,61 @@
                                             <thead>
                                                 <tr>
                                                     <th>Description</th>
-                                                    <th>Amount</th>
-                                                    <th>Category</th>
-                                                    <th style="width: 8%">
+                                                    <th
+                                                        class="text-center"
+                                                        style="width: 10em"
+                                                    >
+                                                        Amount
+                                                    </th>
+                                                    <th
+                                                        class="text-center"
+                                                        style="width: 15em"
+                                                    >
+                                                        Category
+                                                    </th>
+                                                    <th
+                                                        class="text-center"
+                                                        style="width: 8%"
+                                                    >
                                                         Actions
                                                     </th>
                                                 </tr>
                                             </thead>
 
                                             <tbody>
-                                                <tr>
-                                                    <td>
-                                                        Really long text here
+                                                <tr
+                                                    th:classappend="*{type.displayName}"
+                                                    th:each="transaction : ${daily.day(day)}"
+                                                    th:object="${transaction}"
+                                                    th:data-type="*{type.displayName}"
+                                                    th:data-id="*{id}"
+                                                >
+                                                    <td
+                                                        th:text="*{description}"
+                                                    >
+                                                        About
                                                     </td>
-                                                    <td>$300</td>
-                                                    <td>Fun</td>
-                                                    <td>
-                                                        <a>Delete</a>
+                                                    <td class="text-center">
+                                                        <span
+                                                            th:classappend="*{type.displayName} eq 'expense' ? 'text-expense' : (*{type.displayName} eq 'income' ? 'text-income')"
+                                                            th:text="*{#numbers.formatDecimal(amount, 1, 2)}"
+                                                            >$300
+                                                        </span>
                                                     </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>
-                                                        Really long text here
+                                                    <td class="text-center">
+                                                        <span
+                                                            class="text-wrap"
+                                                            th:text="*{category}"
+                                                        >
+                                                            Category
+                                                        </span>
                                                     </td>
-                                                    <td>$300</td>
-                                                    <td>Fun</td>
-                                                    <td>
-                                                        <a>Delete</a>
+                                                    <td class="text-center">
+                                                        <button onclick="deleteCard(event)">
+                                                            <i
+                                                                class="fa fa-trash"
+                                                            ></i>
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -103,62 +155,13 @@
                                             <tfoot>
                                                 <tr>
                                                     <td>Total:</td>
-                                                    <td>300</td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="accordion-item">
-                                <div class="accordion-header">
-                                    <span class="chevron-icon-16"></span>
-                                    <span>2019-05-01</span>
-                                </div>
-
-                                <div class="accordion-collapsable">
-                                    <div class="accordion-body">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th>Description</th>
-                                                    <th>Amount</th>
-                                                    <th>Category</th>
-                                                    <th style="width: 8%">
-                                                        Actions
-                                                    </th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        Really long text here
+                                                    <td class="text-center">
+                                                        <span
+                                                            th:text="${#numbers.formatDecimal(daily.amount(day), 1, 2)}"
+                                                        >
+                                                            300
+                                                        </span>
                                                     </td>
-                                                    <td>$300</td>
-                                                    <td>Fun</td>
-                                                    <td>
-                                                        <a>Delete</a>
-                                                    </td>
-                                                </tr>
-
-                                                <tr>
-                                                    <td>
-                                                        Really long text here
-                                                    </td>
-                                                    <td>$300</td>
-                                                    <td>Fun</td>
-                                                    <td>
-                                                        <a>Delete</a>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-
-                                            <tfoot>
-                                                <tr>
-                                                    <td>Total:</td>
-                                                    <td>300</td>
                                                 </tr>
                                             </tfoot>
                                         </table>

@@ -1,26 +1,29 @@
 package finance.web.html;
 
+import static java.lang.Integer.parseInt;
+import static java.lang.String.format;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.Locale;
+
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import finance.guice.modules.HttpServletPath;
+import finance.objects.DailyTransactions;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Locale;
-import java.util.Map;
-
-import static java.lang.Integer.parseInt;
-import static java.lang.String.format;
 
 @Singleton
-@HttpServletPath("/account.html")
-public class Account extends HttpServlet {
+@HttpServletPath("/secure/account.html")
+public class AccountServlet extends HttpServlet {
     @Inject
     private TemplateEngine te;
 
@@ -33,23 +36,34 @@ public class Account extends HttpServlet {
         MONTH = NOW.getMonthValue();
     }
 
+    public static String resourceUrl(int year, int month) {
+        return format("/secure/account.html?y=%d&m=%d", year, month);
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final int y = year(req);
         final int m = month(req);
 
-        noParams(req, resp, y, m);
-
-        final Context thymeleaf = new Context(Locale.getDefault(), Map.of());
-
-        te.process("account", thymeleaf ,resp.getWriter());
-    }
-
-    private void noParams(final HttpServletRequest req, final HttpServletResponse resp, int year, int month) throws IOException {
-        if (null != req.getParameter("y") && null != req.getParameter("m"))
+        if (noParams(req, resp, y, m))
             return;
 
-        resp.sendRedirect(format("/account.html?y=%d&m=%d", year, month));
+        final Context ctx = new Context(Locale.ENGLISH);
+
+        ctx.setVariable("yearAndMonth", LocalDate.of(y, m, 1));
+        ctx.setVariable("daily", new DailyTransactions(YearMonth.of(y, m)));
+
+        te.process("account", ctx, resp.getWriter());
+    }
+
+    private boolean noParams(final HttpServletRequest req, final HttpServletResponse resp, int year, int month)
+            throws IOException {
+        if (null != req.getParameter("y") && null != req.getParameter("m"))
+            return false;
+
+        resp.sendRedirect(resourceUrl(year, month));
+
+        return true;
     }
 
     private int year(final HttpServletRequest req) {

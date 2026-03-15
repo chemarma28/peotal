@@ -1,60 +1,60 @@
 window.addEventListener("load", ready);
 
 function ready(e) {
-    accordionReady();
+    accordionSetup();
 }
 
-function accordionReady() {
-    const aitems = document.querySelectorAll(".accordion-item");
+function accordionSetup() {
+    $(".accordion-item").each(function () {
+        const $header = $(this).find(".accordion-header");
+        const $body = $(this).find(".accordion-collapsable");
 
-    for (let aitem of aitems) {
-        const h = aitem.querySelector(".accordion-header");
-        const m = aitem.querySelector(".accordion-collapsable");
+        const maxHeight = () => {
+            if ($(this).hasClass("collapsed")) return "0px";
 
-        m.style.maxHeight = isCollapsed(aitem) ? `0px` : `${m.scrollHeight}px`;
+            return `${$body.prop("scrollHeight")}px`;
+        };
 
-        h.addEventListener("selectstart", (e) => e.preventDefault());
-        h.addEventListener("mousedown", (e) => e.preventDefault());
+        $body.css("maxHeight", maxHeight);
 
-        h.addEventListener("click", (e) => {
-            if (isCollapsed(aitem)) {
-                aitem.classList.remove("collapsed");
-                uncollapse(aitem);
-            } else {
-                collapse(aitem);
-                aitem.classList.add("collapsed");
-            }
+        $header.on("selectstart", (e) => e.preventDefault());
+        $header.on("mousedown", (e) => e.preventDefault());
+
+        $header.on("click", (e) => {
+            $(this).toggleClass("collapsed");
+            $body.css("maxHeight", maxHeight);
         });
-    }
+    });
 }
 
-function isCollapsed(aitem) {
-    return aitem.classList.contains("collapsed");
-}
+function showMakeIncomeDialog() {
+    const $dialog = dialog(
+        "dialog",
+        "New income card",
+        requestDialogBody("/secure/income.html"),
+    );
 
-function collapse(aitem) {
-    aitem.querySelector(".accordion-collapsable").style.maxHeight = "0px";
-}
+    $dialog.footer.append(
+        $(`<button>Make income card</button>`).click((e) => {
+            const form = $dialog.self.find("form");
 
-function uncollapse(aitem) {
-    const main = aitem.querySelector(".accordion-collapsable");
-
-    main.style.maxHeight = `${main.scrollHeight}px`;
+            $.ajax({
+                url: "/secure/income.html",
+                type: "POST",
+                dataType: "html",
+                data: form.serialize(),
+                success: handleRedirect($dialog),
+                error: handleConflict($dialog),
+            });
+        }),
+    );
 }
 
 function showMakeExpenseDialog() {
     const $dialog = dialog(
-        "make-expense-dialog",
-        "New expense card",
-        function ($body) {
-            const dialog = this.get(0);
-
-            $.get("/expense.html").done((response) => {
-                $body.html(response);
-
-                dialog.showModal();
-            });
-        },
+        "dialog",
+        "New income card",
+        requestDialogBody("/secure/expense.html"),
     );
 
     $dialog.footer.append(
@@ -62,15 +62,56 @@ function showMakeExpenseDialog() {
             const form = $dialog.self.find("form");
 
             $.ajax({
-                url: "/expense.html",
+                url: "/secure/expense.html",
                 type: "POST",
                 dataType: "html",
                 data: form.serialize(),
-            }).done((response) => {
-                $dialog.body.html(response);
+                statusCode: {
+                    201: handleRedirect($dialog),
+                    409: handleConflict($dialog),
+                    500: handleInternalErrors($dialog),
+                },
             });
         }),
     );
+}
+
+function requestDialogBody(url) {
+    return ($dialog) => {
+        $.get(url).done((response) => {
+            $dialog.body.html(response);
+
+            $dialog.element.showModal();
+        });
+    };
+}
+
+function handleRedirect($dialog) {
+    return (resp, status, xhr) => {
+        $dialog.element.close();
+
+        redirect(resp, status, xhr);
+    };
+}
+
+function redirect(resp, status, xhr) {
+    const location = xhr.getResponseHeader("Location");
+
+    location
+        ? window.location.assign(location)
+        : console.error("Expecting Location HTTP Header specified.");
+}
+
+function handleConflict($dialog) {
+    return (xhr, status, error) => {
+        $dialog.body.html(xhr.responseText);
+    };
+}
+
+function handleInternalErrors($dialog) {
+    return (xhr, status, error) => {
+        $dialog.body.html(xhr.responseText);
+    };
 }
 
 function dialog(id, title, initCallback) {
@@ -79,7 +120,7 @@ function dialog(id, title, initCallback) {
 
     const $exit = $("<div></div>").append(
         $("<button></button>")
-            .append($("<span class='cross-icon-32'></span>"))
+            .append($("<span class='fa fa-lg fa-xmark'></span>"))
             .click((e) => {
                 dialog.close();
 
@@ -99,14 +140,33 @@ function dialog(id, title, initCallback) {
 
     const $footer = $("<div class='dialog-footer'></div>");
 
-    $("body").prepend($dialog.append($header).append($body).append($footer));
+    const $container = $dialog.append($header).append($body).append($footer);
 
-    initCallback.call($dialog, $body);
+    if ($("body").has("dialog").length)
+        $("body").find("dialog").replaceWith($container);
+    else $("body").prepend($container);
 
-    return {
+    const result = {
         self: $dialog,
+        element: dialog,
         header: $header,
         body: $body,
         footer: $footer,
     };
+
+    initCallback.call(undefined, result);
+
+    return result;
+}
+
+function deleteCard(e) {
+    const row = $(e.target).closest("tr");
+    const type = row.data("type");
+    const id = row.data("id");
+
+    $.ajax({
+        url: `/secure/card?id=${id}&type=${type}`,
+        type: "DELETE",
+        success: redirect,
+    });
 }

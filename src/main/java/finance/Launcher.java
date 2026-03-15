@@ -12,6 +12,7 @@ import java.util.EnumSet;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.eclipse.jetty.server.Server;
+import org.slf4j.simple.SimpleLogger;
 
 import com.google.inject.servlet.GuiceFilter;
 
@@ -19,6 +20,8 @@ import finance.guice.GuiceWebApplicationModule;
 
 public class Launcher {
     public static void main(String[] args) throws Exception {
+        System.setProperty(SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO");
+
         final Server server = new Server(8082);
         final WebAppContext webapp = new WebAppContext();
 

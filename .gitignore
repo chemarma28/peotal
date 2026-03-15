@@ -1,5 +1,4 @@
 target/
-/src/main/webapp/css
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -32,9 +31,6 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-
-### VS Code ###
-.vscode/
 
 ### Mac OS ###
 .DS_Store

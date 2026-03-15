@@ -43,6 +43,8 @@ public class SimpleForm implements Form {
 
     @Override
     public String requestValue(final String parameter) {
+        checkBindFromRequestCall();
+
         return req.getParameter(parameter);
     }
 

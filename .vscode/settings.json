@@ -1,0 +1,9 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.format.enabled": true,
+    "java.format.settings.url": "https://google.github.io/styleguide/intellij-java-google-style.xml",
+    "[java]": {
+        "editor.defaultFormatter": "redhat.java"
+    }
+}

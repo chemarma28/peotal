@@ -23,8 +23,7 @@ public final class ValidationResult {
     }
 
     public ValidationResult addError(final String message) {
-        messages.putIfAbsent(DEFAULT_KEY, new HashSet<>());
-        messages.get(DEFAULT_KEY).add(ValidationMessage.error(message));
+        this.addError(DEFAULT_KEY, message);
 
         return this;
     }
@@ -46,7 +45,12 @@ public final class ValidationResult {
     }
 
     public boolean hasErrors() {
-        return messages.values().stream().flatMap(Collection::stream).filter(Objects::nonNull).anyMatch(ValidationMessage::error);
+        return messages.values().stream().flatMap(Collection::stream).filter(Objects::nonNull)
+                .anyMatch(ValidationMessage::error);
+    }
+
+    public List<ValidationMessage> getErrors() {
+        return getErrors(DEFAULT_KEY);
     }
 
     public List<ValidationMessage> getErrors(final Object key) {

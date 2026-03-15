@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Jetty",
+            "request": "launch",
+            "mainClass": "finance.Launcher",
+            "preLaunchTask": "sass-compile"
+        },
+    ]
+}

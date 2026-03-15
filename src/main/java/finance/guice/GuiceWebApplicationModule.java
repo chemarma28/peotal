@@ -1,5 +1,7 @@
 package finance.guice;
 
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import com.google.inject.Guice;
@@ -32,8 +34,10 @@ public class GuiceWebApplicationModule extends GuiceServletContextListener {
                 bind(DataSource.class).toInstance(dataSource());
                 install(new Thymeleaf(getServletContext()));
 
-                filter("/*").through(DataSourceProvidingFilter.class);
-                filter("/*").through(WhichAccount.class);
+                final List<String> secure = List.of("/secure/*");
+
+                filter(secure).through(DataSourceProvidingFilter.class);
+                filter(secure).through(WhichAccount.class);
                 setupServletsPaths("finance.web");
             }
         });

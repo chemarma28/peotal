@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 
 public class Formats {
     public static final DecimalFormat decimals = new DecimalFormat("###,###,###.##");
@@ -14,7 +15,7 @@ public class Formats {
         decimals.setParseBigDecimal(true);
     }
 
-    public static String fdate(final LocalDate d) {
+    public static String fdate(final Temporal d) {
         if (null == d)
             return "";
 

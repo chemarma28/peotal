@@ -16,7 +16,7 @@ public class Date implements Mapping<LocalDate> {
         try {
             return LocalDate.parse(original);
         } catch (DateTimeParseException e) {
-            validation.addError(key, "Please enter a valid date");
+            validation.addError(key, "The value should be a date in 'yyyy-MM-dd' format.");
         }
 
         return null;

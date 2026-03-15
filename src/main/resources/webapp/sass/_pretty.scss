@@ -1,30 +1,34 @@
-@mixin button {
-    border-style: solid;
-    border-radius: 5px;
-    border: 0;
-    padding: 4px 8px 4px 8px;
-}
-
-$button-primary-color: #32335C;
-
-@mixin button-primary-color {
-    color: #ffffff;
-    background-color: $button-primary-color;
-
-    &:hover {
-        background-color: darken($button-primary-color, 7%);
-    }
-}
-
-@mixin button-primary {
-    @include button;
-    @include button-primary-color;
-}
+$font-color-default: #33415c;
 
 $border-color: #979dac;
 $main-background: #cbced5;
 $header-background: darken($main-background, 10%);
-$danger-color: #bb2124;
+$success-color: #28a745;
+$danger-color: #dc3545;
+
+@mixin button($color, $background-color) {
+    border-style: solid;
+    border-radius: 5px;
+    border: 0;
+    padding: 4px 8px 4px 8px;
+
+    color: $color;
+    background-color: $background-color;
+
+    &:hover {
+        background-color: darken($background-color, 7%);
+    }
+}
+
+$button-primary-color: #32335c;
+
+@mixin button-primary {
+    @include button(#fff, $button-primary-color);
+}
+
+@mixin button-secondary {
+    @include button(#fff, darken($main-background, 15%));
+}
 
 @font-face {
     font-family: "Lato";
@@ -46,8 +50,6 @@ $danger-color: #bb2124;
     font-weight: 900;
     font-style: normal;
 }
-
-$font-color-default: #33415c;
 
 $fs-small: 10pt;
 $fs-regular: 12pt;

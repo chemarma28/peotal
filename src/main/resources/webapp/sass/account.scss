@@ -2,6 +2,14 @@
 @import "dialog";
 @import "forms";
 
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
 body {
     color: $font-color-default;
     margin: 0;
@@ -84,6 +92,31 @@ header {
     margin-top: 32px;
 }
 
+@mixin text-wrap($color) {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: $fw-bold;
+    color: $color;
+    border: 1px solid color-mix(in oklab, $color 40%, transparent);
+    background-color: color-mix(in oklab, $color 10%, transparent);
+}
+
+.text-wrap {
+    @include text-wrap(currentColor);
+}
+
+.text-expense {
+    font-weight: $fw-bold;
+    color: $danger-color;
+}
+
+.text-income {
+    font-weight: $fw-bold;
+    color: $success-color;
+}
+
 .accordion {
     background-color: #ffffff;
 
@@ -109,25 +142,27 @@ header {
     }
 }
 
-@keyframes expand  {
-    from {
-
-    }
-}
-
 .accordion-item {
     &:last-child.collapsed .accordion-header {
         border-bottom: none;
     }
 
     .accordion-collapsable {
+        max-height: 0px;
+    }
+
+    .accordion-collapsable {
         overflow: hidden;
-        transition: max-height 300ms ease-in;        
-    
-        &.collapsed {
-            height: 0px;
-            max-height: 0px;
-        }
+        transition: max-height 300ms ease-in;
+    }
+
+    &.collapsed .accordion-header i {
+        transform: rotate(0turn);
+    }
+
+    .accordion-header i {
+        transition: transform 300ms ease-in;
+        transform: rotate(0.25turn);
     }
 
     .accordion-body {
@@ -156,6 +191,10 @@ table {
 
         td {
             border-bottom-width: 1px;
+        }
+
+        td:last-child button {
+            @include button-secondary;
         }
 
         tr:last-child > td {

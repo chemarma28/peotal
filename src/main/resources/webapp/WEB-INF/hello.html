@@ -1,0 +1,69 @@
+<!doctype html>
+<html
+    lang="en"
+    xmlns:th="http://www.thymeleaf.org"
+>
+    <head>
+        <title>@account</title>
+        <meta
+            http-equiv="Content-Type"
+            content="text/html; charset=UTF-8"
+        />
+
+        <link
+            th:href="@{~/css/hello.css}"
+            rel="stylesheet"
+        />
+
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        />
+    </head>
+
+    <body>
+        <div id="welcome">
+            <div id="title">
+                <h1>Sign in</h1>
+            </div>
+
+            <div>
+                <form>
+                    <div class="form-group">
+                        <div>
+                            <label for="username">Username</label>
+                        </div>
+
+                        <input placeholder="Who are you?"></input>
+
+                        <div class="failures"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <div>
+                            <label for="password">Password</label>
+                        </div>
+
+                        <input type="password" placeholder="Shhh..."></input>
+
+                        <div class="failures"></div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="button">
+                <button>Sign in</button>
+            </div>
+        </div>
+    </body>
+
+    <script
+        type="text/javascript"
+        th:src="@{~/js/account.js}"
+    ></script>
+
+    <script
+        type="text/javascript"
+        th:src="@{~/js/lib/jquery-4.0.0.min.js}"
+    ></script>
+</html>

@@ -11,6 +11,8 @@ public interface Form {
 
     boolean hasErrors();
 
+    List<String> errors();
+
     List<String> errors(Object key);
 
     default boolean isValid() {

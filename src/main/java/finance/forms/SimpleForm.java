@@ -71,6 +71,11 @@ public class SimpleForm implements Form {
 
     @Override
     public List<String> errors(Object key) {
-        return validation.getErrors(key).stream().map(m -> m.message).toList();
+        return validation.getErrors(key).stream().map(e -> e.message).toList();
+    }
+
+    @Override
+    public List<String> errors() {
+        return validation.getErrors().stream().map(e -> e.message).toList();
     }
 }

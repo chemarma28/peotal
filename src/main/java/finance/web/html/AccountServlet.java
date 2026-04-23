@@ -36,8 +36,17 @@ public class AccountServlet extends HttpServlet {
         MONTH = NOW.getMonthValue();
     }
 
-    public static String resourceUrl(int year, int month) {
-        return format("/secure/account.html?y=%d&m=%d", year, month);
+    public static String resourceUrl() {
+        return resourceUrl(null,null);
+    }
+
+    public static String resourceUrl(Integer year, Integer month) {
+        final String url = "/secure/account.html";
+
+        if (null == year || null == month)
+            return url;
+
+        return url + format("?y=%d&m=%d", year, month);
     }
 
     @Override

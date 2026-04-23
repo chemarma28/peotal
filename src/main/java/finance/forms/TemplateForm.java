@@ -42,4 +42,9 @@ public class TemplateForm implements Form {
     public List<String> errors(Object key) {
         return emptyList();
     }
+
+    @Override
+    public List<String> errors() {
+        return emptyList();
+    }
 }

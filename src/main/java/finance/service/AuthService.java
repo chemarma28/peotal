@@ -5,29 +5,55 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.sql.DataSource;
+
+import org.javalite.activejdbc.Base;
+
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import finance.objects.Account;
 
 @Singleton
 public class AuthService {
-    private static final Map<Long, Account> sessions = new ConcurrentHashMap<>(); 
+    public static final String SCOPE_ID = "SCOPE_ID";
 
-    public Account current(Long key) {
-        return null;
-    }
+    private static final Map<String, Account> sessions = new ConcurrentHashMap<>();
+
+    @Inject
+    private DataSource ds;
 
     public Account match(final String username, final String password) {
+        if (null == username || null == password)
+            return null;
+
+        Base.open(ds);
+
         final Account account = Account.findFirst("name = ?", username);
 
-        return null;
+        Base.close();
+
+        return account;
     }
 
-    public Long associate(final Account account, final LocalDateTime expiration) {
-        final long key = UUID.randomUUID().timestamp();
+    public String associate(final Account account) {
+        final LocalDateTime expiration = LocalDateTime.now().plusDays(1);
+
+        return associate(account, expiration);
+    }
+
+    public String associate(final Account account, final LocalDateTime expiration) {
+        if (null == account)
+            return null;
+
+        final String key = UUID.randomUUID().toString();
 
         sessions.put(key, account);
 
         return key;
+    }
+
+    public Account associated(final String key) {
+        return sessions.get(key);
     }
 }

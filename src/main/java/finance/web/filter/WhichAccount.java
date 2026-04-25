@@ -1,32 +1,54 @@
 package finance.web.filter;
 
-import static java.lang.Long.parseLong;
+import static finance.service.AuthService.SCOPE_ID;
 
 import java.io.IOException;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import finance.objects.Account;
-import jakarta.servlet.Filter;
+import finance.service.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Singleton
-public class WhichAccount implements Filter {
+public class WhichAccount extends HttpFilter {
+    @Inject
+    private AuthService authService;
+
     @Override
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
+    public void doFilter(final HttpServletRequest req, final HttpServletResponse resp, FilterChain chain)
             throws IOException, ServletException {
-        final String param = req.getParameter("account-id");
+        final String scopeId = scopeId(req, resp);
 
-        // This is a stub. Later I provide real authentication
-        // and provide current account of an user
-        long accountId = null == param ? 1L : parseLong(param);
+        if (null == scopeId) {
+            resp.sendRedirect("/hello.html");
+            return;
+        }
 
-        final Account account = Account.findById(accountId);
+        final Account account = authService.associated(scopeId);
+
+        if (null == account) {
+            resp.sendRedirect("/hello.html");
+            return;
+        }
+
         req.setAttribute("account", account);
-
         chain.doFilter(req, resp);
+    }
+
+    private String scopeId(final HttpServletRequest req, final HttpServletResponse resp) {
+        final Cookie[] cookies = req.getCookies();
+
+        for (final Cookie cookie : cookies)
+            if (SCOPE_ID.equals(cookie.getName()))
+                return cookie.getValue();
+
+        return null;
     }
 }

@@ -1,5 +1,7 @@
 package finance.web;
 
+import static finance.service.AuthService.MAX_AGE_SECONDS;
+
 import java.io.IOException;
 
 import org.thymeleaf.TemplateEngine;
@@ -11,7 +13,7 @@ import com.google.inject.Singleton;
 import finance.forms.TemplateForm;
 import finance.guice.modules.HttpServletPath;
 import finance.service.AuthService;
-import finance.web.forms.CredentialsForm;
+import finance.web.forms.HelloForm;
 import finance.web.html.AccountServlet;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
@@ -37,7 +39,7 @@ public class HelloServlet extends HttpServlet {
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
-        final CredentialsForm form = new CredentialsForm(authService, req);
+        final HelloForm form = new HelloForm(authService, req);
         final Context ctx = new Context();
         ctx.setVariable("form", form);
 
@@ -50,7 +52,7 @@ public class HelloServlet extends HttpServlet {
 
         final String scopeId = authService.associate(form.account());
         final Cookie cookie = new Cookie(AuthService.SCOPE_ID, scopeId.toString());
-        cookie.setMaxAge(3600 * 24);
+        cookie.setMaxAge(MAX_AGE_SECONDS);
 
         resp.addCookie(cookie);
         resp.sendRedirect(AccountServlet.resourceUrl());

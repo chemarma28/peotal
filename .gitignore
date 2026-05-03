@@ -3,6 +3,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+liquibase/**
+
 ### IntelliJ IDEA ###
 .idea
 .idea/modules.xml

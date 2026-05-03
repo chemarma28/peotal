@@ -25,10 +25,4 @@ public class Required<R> implements Mapping<R> {
 
         return null;
     }
-
-    public Required<R> errorMessage(final String message) {
-        this.errorMessage = message;
-
-        return this;
-    }
 }

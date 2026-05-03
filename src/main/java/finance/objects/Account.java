@@ -16,11 +16,20 @@ public class Account extends Model {
         return getString("name");
     }
 
+    public String secret() {
+        return getString("secret");
+    }
+
     public Account() {
     }
 
-    public Account(final String name) {
+    public Account(final String name, final String secret) {
         this.set("name", name);
+        this.set("secret", secret);
+    }
+
+    public Account(final String name) {
+        this(name, "unsafe");
     }
 
     public IncomeCard topUp(final String description, final LocalDateTime date, final BigDecimal amount) {

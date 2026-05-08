@@ -1,42 +1,45 @@
 package finance.objects;
 
-import static org.apache.commons.lang3.StringUtils.isAsciiPrintable;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
-import finance.errors.PasswordConstraintViolation;
-import finance.errors.PasswordsNotMathException;
+import org.apache.commons.lang3.StringUtils;
 
 public class Password {
     private final String password;
-    private final String repeated;
+    private String confirmation;
 
-    public Password(final String password, final String repeated) {
+    public Password(final String password) {
         this.password = password;
-        this.repeated = repeated;
     }
 
-    public static boolean valid(final String password) {
+    public Password(final String password, final String confirmation) {
+        this.password = password;
+        this.confirmation = confirmation;
+    }
+
+    public void validate(final String password) throws PasswordConstraintViolation {
         if (null == password)
-            return false;
-
-        boolean valid = true;
-
-        valid = valid && isAsciiPrintable(password);
-
-        valid = valid && 2 < password.length();
-
-        return valid;
-    }
-
-    public String secret() throws PasswordConstraintViolation, PasswordsNotMathException, NoSuchAlgorithmException {
-        if (!valid(password))
             throw new PasswordConstraintViolation();
 
-        if (null == repeated || !password.equals(repeated))
+        boolean valid = 5 <= password.length() && password.length() <= 20;
+
+        if (!valid)
+            throw new PasswordConstraintViolation();
+    }
+
+    public String ensuredSecrect()
+            throws PasswordConstraintViolation, PasswordsNotMathException, NoSuchAlgorithmException {
+        validate(password);
+
+        if (null == confirmation || !password.equals(confirmation))
             throw new PasswordsNotMathException();
 
+        return digest();
+    }
+
+    public String secret() throws NoSuchAlgorithmException {
         return digest();
     }
 
@@ -51,5 +54,19 @@ public class Password {
             bf.append(String.format("%x", b));
 
         return bf.toString();
+    }
+
+    public static class PasswordConstraintViolation extends Exception {
+        public List<String> requirements() {
+            return List.of("5-20 characters");
+        }
+
+        @Override
+        public String getMessage() {
+            return StringUtils.join(requirements(), ", ");
+        }
+    }
+
+    public static class PasswordsNotMathException extends Exception {
     }
 }

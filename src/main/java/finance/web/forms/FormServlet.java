@@ -8,6 +8,7 @@ import org.thymeleaf.context.Context;
 
 import com.google.inject.Inject;
 
+import finance.errors.Errors;
 import finance.forms.Form;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,7 +39,7 @@ public abstract class FormServlet extends HttpServlet {
             return false;
 
         ctx.setVariable("form", form);
-        ctx.setVariable("serverErrorsQ", true);
+        ctx.setVariable("INTERNAL_ERROR", Errors.INTERNAL);
 
         resp.setStatus(500);
 

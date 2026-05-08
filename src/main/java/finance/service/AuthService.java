@@ -9,18 +9,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.sql.DataSource;
 
 import org.javalite.activejdbc.Base;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import finance.errors.PasswordConstraintViolation;
-import finance.errors.PasswordsNotMathException;
-import finance.errors.SuchAccountAlreadyExistsException;
 import finance.objects.Account;
 import finance.objects.Password;
+import finance.objects.Password.PasswordConstraintViolation;
+import finance.objects.Password.PasswordsNotMathException;
 
 @Singleton
 public class AuthService {
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+
     public static final String SCOPE_ID = "SCOPE_ID";
     public static final int MAX_AGE_SECONDS = 3600 * 24;
 
@@ -29,27 +32,37 @@ public class AuthService {
     @Inject
     private DataSource ds;
 
-    public Account join(final String username, final Password password) throws SuchAccountAlreadyExistsException,
-            NoSuchAlgorithmException, PasswordConstraintViolation, PasswordsNotMathException {
+    public Account join(final String username, final Password password) throws NoSuchAlgorithmException,
+            SuchAccountAlreadyExistsException, PasswordConstraintViolation, PasswordsNotMathException {
+        Base.open(ds);
+
         final Account account = Account.findFirst("name = ?", username);
 
         if (null != account)
-            throw new SuchAccountAlreadyExistsException(account);
+            throw new SuchAccountAlreadyExistsException();
 
-        final Account joining = new Account(username, password.secret());
+        final Account joining = new Account(username, password.ensuredSecrect());
 
         joining.saveIt();
+
+        Base.close();
 
         return joining;
     }
 
-    public Account request(final String username, final String password) {
+    public Account request(final String username, final Password password) {
         if (null == username || null == password)
             return null;
 
+        Account account = null;
+
         Base.open(ds);
 
-        final Account account = Account.findFirst("name = ?", username);
+        try {
+            account = Account.findFirst("name = ? AND secret = ?", username, password.secret());
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("Unable verify credentials due errors: ", e);
+        }
 
         Base.close();
 
@@ -75,5 +88,8 @@ public class AuthService {
 
     public Account associated(final String key) {
         return sessions.get(key);
+    }
+
+    public static class SuchAccountAlreadyExistsException extends Exception {
     }
 }

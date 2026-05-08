@@ -5,13 +5,13 @@
     <changeSet id="1" author="palunyach">
         <sql>
             ALTER TABLE accounts
-            ADD COLUMN IF NOT EXISTS secret VARCHAR(32);
+            ADD COLUMN IF NOT EXISTS secret VARCHAR(64);
 
             UPDATE accounts
             SET secret = 'letmein';
 
             ALTER TABLE accounts
-            ALTER COLUMN secret VARCHAR(32) NOT NULL;
+            ALTER COLUMN secret VARCHAR(64) NOT NULL;
         </sql>
     </changeSet>
 

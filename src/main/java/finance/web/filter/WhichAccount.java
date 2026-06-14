@@ -45,6 +45,9 @@ public class WhichAccount extends HttpFilter {
     private String scopeId(final HttpServletRequest req, final HttpServletResponse resp) {
         final Cookie[] cookies = req.getCookies();
 
+        if (null == cookies)
+            return null;
+
         for (final Cookie cookie : cookies)
             if (SCOPE_ID.equals(cookie.getName()))
                 return cookie.getValue();

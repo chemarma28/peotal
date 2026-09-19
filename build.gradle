@@ -1,0 +1,75 @@
+plugins {
+    id 'application'
+    id 'java'
+}
+
+version = "1.0.0"
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src"]
+        }
+        
+        resources {
+            srcDirs = ["src"]
+            exclude "**/*.java"
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ["test"]
+        }
+    }
+}
+
+processResources {
+    includeEmptyDirs = false
+    
+    from('db') {
+        into 'db'
+    }
+}
+
+application {
+    mainClass = 'Launcher'
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    def joobyVersion = "4.5.4"
+
+    implementation "com.h2database:h2:2.3.232"
+    implementation "io.jooby:jooby:${joobyVersion}"
+    implementation "io.jooby:jooby-netty:${joobyVersion}"
+    implementation "io.jooby:jooby-logback:${joobyVersion}"
+    implementation "io.jooby:jooby-flyway:${joobyVersion}"
+    implementation "io.jooby:jooby-jdbi:${joobyVersion}"
+    implementation "com.google.code.gson:gson:2.14.0"
+    implementation "io.jooby:jooby-avaje-inject:${joobyVersion}"
+	
+    compileOnly "org.projectlombok:lombok:1.18.46"
+	annotationProcessor "org.projectlombok:lombok:1.18.46"
+
+    annotationProcessor "io.avaje:avaje-inject-generator:12.6"
+
+	testCompileOnly "org.projectlombok:lombok:1.18.46"
+	testAnnotationProcessor "org.projectlombok:lombok:1.18.46"
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": application.mainClass
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

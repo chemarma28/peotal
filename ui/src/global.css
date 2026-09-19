@@ -1,0 +1,132 @@
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'Noto Sans';
+    src: url('./assets/NotoSans-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    src: url('./assets/NotoSans-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    src: url('./assets/NotoSans-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    src: url('./assets/NotoSans-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Noto Sans';
+    src: url('./assets/NotoSans-BoldItalic.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+
+@theme {
+    --font-noto: "Noto Sans", sans-serif;
+
+    --color-text-primary: #33415c;
+
+    --color-border-default: #a8b7d1;
+    --color-border-focus: #59739e;
+
+    --color-bg-card: var(--color-white);
+    --color-border-card: var(--color-zinc-400);
+
+    --color-bg-button-primary: #716898;
+    --color-bg-button-primary-hover: color-mix(in srgb, #fff 10%, #716898);
+
+    --color-bg-button-secondary: #F1EAE5;
+    --color-text-button-secondary: #4e4868;
+    --color-bg-button-secondary-hover: #e2ddec;
+
+    --color-bg-toggle-active: #d1d8e6;
+    --color-bg-toggle-hover: color-mix(in srgb, #fff 60%, #d1d8e6);
+}
+
+@layer components {
+    button.primary {
+        @apply box-border border-solid rounded-lg border-0 p-1 text-white bg-bg-button-primary hover:bg-bg-button-primary-hover;
+    }
+
+    button.secondary {
+        @apply box-border border-solid rounded-lg border-0 p-1 text-text-button-secondary bg-bg-button-secondary hover:bg-bg-button-secondary-hover;
+    }
+
+    .toggle-group {
+        @apply w-full flex rounded-lg border-1 border-border-default;
+    }
+
+    .toggle-group button {
+        @apply w-full p-1 first:rounded-l-lg last:rounded-r-lg focus:outline focus:outline-2 outline-border-focus;
+        @apply hover:bg-bg-toggle-hover;
+    }
+
+    .toggle-group button.active {
+        @apply bg-bg-toggle-active;
+    }
+
+    .form-control {
+        @apply w-full p-1 rounded-lg border-1 border-border-default;
+        @apply has-focus:border-transparent has-focus:outline-2 has-focus:outline-border-focus;
+    }
+
+    .form-control input,
+    .form-control:not(.form-currency-control) select {
+        @apply w-full;
+        @apply focus:outline-none;
+    }
+
+    .form-currency-control select {
+        @apply rounded-lg focus:outline-1 focus:outline-border-focus;
+    }
+}
+
+body {
+    @apply font-noto text-text-primary text-base bg-zinc-100;
+}
+
+h1 {
+    @apply text-4xl;
+}
+
+h2 {
+    @apply text-3xl;
+}
+
+h3 {
+    @apply text-2xl;
+}
+
+h4 {
+    @apply text-xl;
+}
+
+h5 {
+    @apply text-lg;
+}
+
+dialog {
+    @apply open:fixed;
+    @apply open:left-[50%] top-[50%] open:-translate-y-[50%] open:-translate-x-[50%];
+    @apply open:box-border min-w-xs sm:min-w-lg rounded-lg border-1 border-zinc-50;
+    @apply backdrop:bg-black/40;
+}

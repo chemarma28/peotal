@@ -1,9 +1,10 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic",
-    "java.configuration.updateBuildConfiguration": "automatic",
-    "java.format.enabled": true,
-    "java.format.settings.url": "https://google.github.io/styleguide/intellij-java-google-style.xml",
-    "[java]": {
-        "editor.defaultFormatter": "redhat.java"
-    }
+    "[svelte]": {"editor.defaultFormatter": "svelte.svelte-vscode"},
+    "svelte.enable-ts-plugin": true,
+    "css.lint.unknownAtRules": "ignore",
+    "js/ts.tsdk.path": "node_modules/typescript/lib",
+    "editor.tabSize": 4,
+    "editor.copyWithSyntaxHighlighting": false,
+    "workbench.tree.indent": 12,
+    "workbench.settings.showAISearchToggle": false
 }

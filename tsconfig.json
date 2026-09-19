@@ -1,0 +1,26 @@
+{
+    "include": [
+        "ui/**/*"
+    ],
+    "exclude": [
+        "node_modules/*"
+    ],
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "types": ["svelte"],
+        "paths": {
+            "@ui/*": ["./ui/src/*"]
+        },
+        "sourceMap": true,
+        "resolveJsonModule": true,
+        "alwaysStrict": true,
+        "strictNullChecks": true,
+        "strictBindCallApply": true,
+        "strictFunctionTypes": true,
+        "strictPropertyInitialization": true,
+        "ignoreDeprecations": "6.0"
+    }
+}
+

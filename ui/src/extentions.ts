@@ -1,9 +1,9 @@
-export { };
+export {};
 
 declare global {
     interface Array<T> {
         first(): T;
-        groupingBy(by: (el: T) => string | number): { by: string | number, entries: T[] }[];
+        groupingBy(by: (el: T) => string | number): { by: string | number; entries: T[] }[];
     }
 
     interface Date {
@@ -11,11 +11,15 @@ declare global {
     }
 }
 
-Array.prototype.first = function () { return this[0] };
+Array.prototype.first = function () {
+    return this[0];
+};
 
-Array.prototype.groupingBy = function <T>(this: T[], by: (el: T) => string | number): { by: string | number, entries: T[] }[] {
-    if (!this.length)
-        return [];
+Array.prototype.groupingBy = function <T>(
+    this: T[],
+    by: (el: T) => string | number,
+): { by: string | number; entries: T[] }[] {
+    if (!this.length) return [];
 
     // Elements of array must be sorted
     const elements = [...this];
@@ -45,8 +49,8 @@ Array.prototype.groupingBy = function <T>(this: T[], by: (el: T) => string | num
     result.push(last);
 
     return result;
-}
+};
 
 Date.prototype.toIsoDate = function (): string {
     return this.toISOString().split("T").first();
-}
+};

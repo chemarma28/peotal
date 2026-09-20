@@ -2,39 +2,39 @@
 @import "tailwindcss";
 
 @font-face {
-    font-family: 'Noto Sans';
-    src: url('./assets/NotoSans-Regular.ttf') format('truetype');
+    font-family: "Noto Sans";
+    src: url("./assets/NotoSans-Regular.ttf") format("truetype");
     font-weight: 400;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Noto Sans';
-    src: url('./assets/NotoSans-Light.ttf') format('truetype');
+    font-family: "Noto Sans";
+    src: url("./assets/NotoSans-Light.ttf") format("truetype");
     font-weight: 300;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Noto Sans';
-    src: url('./assets/NotoSans-Bold.ttf') format('truetype');
+    font-family: "Noto Sans";
+    src: url("./assets/NotoSans-Bold.ttf") format("truetype");
     font-weight: 700;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Noto Sans';
-    src: url('./assets/NotoSans-Italic.ttf') format('truetype');
+    font-family: "Noto Sans";
+    src: url("./assets/NotoSans-Italic.ttf") format("truetype");
     font-weight: 400;
     font-style: italic;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Noto Sans';
-    src: url('./assets/NotoSans-BoldItalic.ttf') format('truetype');
+    font-family: "Noto Sans";
+    src: url("./assets/NotoSans-BoldItalic.ttf") format("truetype");
     font-weight: 700;
     font-style: italic;
     font-display: swap;
@@ -54,7 +54,7 @@
     --color-bg-button-primary: #716898;
     --color-bg-button-primary-hover: color-mix(in srgb, #fff 10%, #716898);
 
-    --color-bg-button-secondary: #F1EAE5;
+    --color-bg-button-secondary: #f1eae5;
     --color-text-button-secondary: #4e4868;
     --color-bg-button-secondary-hover: #e2ddec;
 
@@ -64,19 +64,19 @@
 
 @layer components {
     button.primary {
-        @apply box-border border-solid rounded-lg border-0 p-1 text-white bg-bg-button-primary hover:bg-bg-button-primary-hover;
+        @apply bg-bg-button-primary hover:bg-bg-button-primary-hover box-border rounded-lg border-0 border-solid p-1 text-white;
     }
 
     button.secondary {
-        @apply box-border border-solid rounded-lg border-0 p-1 text-text-button-secondary bg-bg-button-secondary hover:bg-bg-button-secondary-hover;
+        @apply text-text-button-secondary bg-bg-button-secondary hover:bg-bg-button-secondary-hover box-border rounded-lg border-0 border-solid p-1;
     }
 
     .toggle-group {
-        @apply w-full flex rounded-lg border-1 border-border-default;
+        @apply border-border-default flex w-full rounded-lg border-1;
     }
 
     .toggle-group button {
-        @apply w-full p-1 first:rounded-l-lg last:rounded-r-lg focus:outline focus:outline-2 outline-border-focus;
+        @apply outline-border-focus w-full p-1 first:rounded-l-lg last:rounded-r-lg focus:outline focus:outline-2;
         @apply hover:bg-bg-toggle-hover;
     }
 
@@ -85,8 +85,8 @@
     }
 
     .form-control {
-        @apply w-full p-1 rounded-lg border-1 border-border-default;
-        @apply has-focus:border-transparent has-focus:outline-2 has-focus:outline-border-focus;
+        @apply border-border-default w-full rounded-lg border-1 p-1;
+        @apply has-focus:outline-border-focus has-focus:border-transparent has-focus:outline-2;
     }
 
     .form-control input,
@@ -96,12 +96,12 @@
     }
 
     .form-currency-control select {
-        @apply rounded-lg focus:outline-1 focus:outline-border-focus;
+        @apply focus:outline-border-focus rounded-lg focus:outline-1;
     }
 }
 
 body {
-    @apply font-noto text-text-primary text-base bg-zinc-100;
+    @apply font-noto text-text-primary bg-zinc-100 text-base;
 }
 
 h1 {
@@ -126,7 +126,7 @@ h5 {
 
 dialog {
     @apply open:fixed;
-    @apply open:left-[50%] top-[50%] open:-translate-y-[50%] open:-translate-x-[50%];
-    @apply open:box-border min-w-xs sm:min-w-lg rounded-lg border-1 border-zinc-50;
+    @apply top-[50%] open:left-[50%] open:-translate-x-[50%] open:-translate-y-[50%];
+    @apply min-w-xs rounded-lg border-1 border-zinc-50 open:box-border sm:min-w-lg;
     @apply backdrop:bg-black/40;
 }

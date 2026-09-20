@@ -10,24 +10,16 @@
     }
 </script>
 
-<div class="bg-bg-card border-1 rounded-lg border-border-card">
+<div class="bg-bg-card border-border-card rounded-lg border-1">
     <button
-        class="flex justify-start items-center gap-1 font-inherit font-semibold text-lg p-2 cursor-pointer w-full"
-        onclick={toggle}
-    >
-        <i
-            class="fa fa-solid fa-angle-right transition-transform {!hidden
-                ? 'rotate-90'
-                : 'rotate-0'}"
-        ></i>
+        class="font-inherit flex w-full cursor-pointer items-center justify-start gap-1 p-2 text-lg font-semibold"
+        onclick={toggle}>
+        <i class="fa fa-solid fa-angle-right transition-transform {!hidden ? 'rotate-90' : 'rotate-0'}"></i>
         <span>{header}</span>
     </button>
 
     {#if !hidden}
-        <div
-            class="c-accordion-collapsible"
-            transition:slide
-        >
+        <div class="c-accordion-collapsible" transition:slide>
             <div class="pr-2 pb-2 pl-2">
                 {@render body()}
             </div>

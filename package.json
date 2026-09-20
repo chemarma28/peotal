@@ -7,13 +7,17 @@
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
-        "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
+        "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json",
+        "format": "prettier --write ."
     },
     "devDependencies": {
         "@sveltejs/vite-plugin-svelte": "^7.1.2",
         "@tailwindcss/vite": "^4.3.3",
         "@tsconfig/svelte": "^5.0.8",
         "@types/node": "^24.12.3",
+        "prettier": "^3.9.8",
+        "prettier-plugin-svelte": "^4.1.1",
+        "prettier-plugin-tailwindcss": "^0.8.1",
         "sass-embedded": "^1.100.0",
         "svelte-check": "^4.4.8",
         "svelte-routing": "^2.13.0",
@@ -22,6 +26,7 @@
         "vite": "^8.0.12"
     },
     "dependencies": {
+        "@codeborne/i18n-json": "^0.3.7",
         "@fortawesome/fontawesome-free": "^7.3.1",
         "autonumeric": "^4.10.10",
         "svelte": "^5.55.5"

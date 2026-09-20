@@ -6,6 +6,7 @@
     import type { Category, Transaction } from "@ui/types";
     import Empty from "@ui/components/Empty.svelte";
     import { showToast, ToastVariant } from "@ui/components/toasts";
+    import { _ } from "@ui/i18n";
 
     let transactionViewRef: TransactionView;
 
@@ -18,9 +19,7 @@
         const begin = new Date("2026-01-01");
         const end = new Date("2027-01-01");
 
-        return await api.get<Transaction[]>(
-            `transactions?begin=${begin.toIsoDate()}&end=${end.toIsoDate()}`,
-        );
+        return await api.get<Transaction[]>(`transactions?begin=${begin.toIsoDate()}&end=${end.toIsoDate()}`);
     }
 
     async function loadCategories(): Promise<Map<number, Category>> {
@@ -60,7 +59,7 @@
     <div class="flex flex-col gap-2 md:col-span-3">
         <div class="flex justify-end">
             <button onclick={() => transactionViewRef.show()} class="primary">
-                <i class="fa-solid fa-plus"></i>Add transaction</button>
+                <i class="fa-solid fa-plus"></i>{_("activity.button.add.transaction")}</button>
         </div>
 
         {#if transactions.length && categories.size}
@@ -71,7 +70,5 @@
     </div>
 </div>
 
-<TransactionView
-    bind:this={transactionViewRef}
-    onSave={onSaveTransaction}
-    categories={[...categories.values()]}></TransactionView>
+<TransactionView bind:this={transactionViewRef} onSave={onSaveTransaction} categories={[...categories.values()]}
+></TransactionView>

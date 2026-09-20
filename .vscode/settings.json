@@ -1,5 +1,11 @@
 {
-    "[svelte]": {"editor.defaultFormatter": "svelte.svelte-vscode"},
+    "[svelte]": { "editor.defaultFormatter": "svelte.svelte-vscode" },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
     "svelte.enable-ts-plugin": true,
     "css.lint.unknownAtRules": "ignore",
     "js/ts.tsdk.path": "node_modules/typescript/lib",

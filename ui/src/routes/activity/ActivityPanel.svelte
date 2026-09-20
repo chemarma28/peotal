@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _ } from "@ui/i18n";
     import Accordion from "@ui/components/Accordion.svelte";
     import AccordionItem from "@ui/components/AccordionItem.svelte";
     import Rounded from "@ui/components/Rounded.svelte";
@@ -10,14 +11,11 @@
         transactions: Transaction[];
     };
 
-    let { categories, transactions = $bindable<Transaction[]>() }: Props =
-        $props();
+    let { categories, transactions = $bindable<Transaction[]>() }: Props = $props();
     let dailyTransactions = $state<DailyTransactions[]>([]);
 
     const category = (categoryId?: number) => {
-        categoryId && categories.has(categoryId)
-            ? categories.get(categoryId)!.name
-            : "No Category";
+        return categoryId && categories.has(categoryId) ? categories.get(categoryId)!.name : "No Category";
     };
 
     $effect(() => {
@@ -38,20 +36,14 @@
                     <table class="w-full">
                         <thead>
                             <tr>
-                                <th
-                                    class="py-1 pl-2 border-b-1 border-border-card text-left"
-                                >
-                                    Description
+                                <th class="border-border-card border-b-1 py-1 pl-2 text-left">
+                                    {_("activity.panel.description")}
                                 </th>
-                                <th
-                                    class="py-1 w-12 border-b-1 border-border-card"
-                                >
-                                    Category
+                                <th class="border-border-card w-12 border-b-1 py-1">
+                                    {_("activity.panel.category")}
                                 </th>
-                                <th
-                                    class="py-1 pr-2 border-b-1 border-border-card text-right"
-                                >
-                                    Amount
+                                <th class="border-border-card border-b-1 py-1 pr-2 text-right">
+                                    {_("activity.panel.amount")}
                                 </th>
                             </tr>
                         </thead>
@@ -59,23 +51,17 @@
                         <tbody>
                             {#each daily.transactions as transaction}
                                 <tr class="">
-                                    <td
-                                        class="border-b-1 pl-2 py-2 border-border-card/50"
-                                    >
+                                    <td class="border-border-card/50 border-b-1 py-2 pl-2">
                                         {transaction.description}
                                     </td>
 
-                                    <td
-                                        class="border-b-1 py-2 border-border-card/50 text-center"
-                                    >
+                                    <td class="border-border-card/50 border-b-1 py-2 text-center">
                                         <Rounded color="lightblue">
                                             {category(transaction.categoryId)}
                                         </Rounded>
                                     </td>
 
-                                    <td
-                                        class="border-b-1 py-2 pr-2 border-border-card/50 text-right"
-                                    >
+                                    <td class="border-border-card/50 border-b-1 py-2 pr-2 text-right">
                                         ${transaction.amount}
                                     </td>
                                 </tr>
@@ -84,7 +70,9 @@
 
                         <tfoot>
                             <tr class="font-semibold">
-                                <td class="pl-2">Summary</td>
+                                <td class="pl-2">
+                                    {_("activity.panel.summary")}
+                                </td>
                                 <td></td>
                                 <td class="pr-2 text-right">$120</td>
                             </tr>

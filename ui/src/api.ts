@@ -1,6 +1,6 @@
 export const headers = {
     "Content-Type": "application/json; charset=UTF-8",
-    "Accept": "application/json",
+    Accept: "application/json",
 } as HeadersInit;
 
 type Body = object | string | FormData | File;
@@ -8,8 +8,8 @@ type Body = object | string | FormData | File;
 class Api {
     prefix = "api";
 
-    request(path: string, init?: RequestInit | { body?: Body, headers?: HeadersInit }): Promise<Response> {
-        if (path.startsWith('/')) throw new Error("Invalid path: " + path)
+    request(path: string, init?: RequestInit | { body?: Body; headers?: HeadersInit }): Promise<Response> {
+        if (path.startsWith("/")) throw new Error("Invalid path: " + path);
 
         path = this.prefix + "/" + path;
 
@@ -17,12 +17,15 @@ class Api {
 
         return fetch(path, {
             ...init,
-            body: body instanceof File || body instanceof FormData || typeof body == "string" ? body : body && JSON.stringify(body),
-            headers: init?.headers ?? headers
+            body:
+                body instanceof File || body instanceof FormData || typeof body == "string"
+                    ? body
+                    : body && JSON.stringify(body),
+            headers: init?.headers ?? headers,
         }).catch(this.handleFetchFailure) as Promise<Response>;
     }
 
-    async requestJson(path: string, init?: RequestInit | { body?: Body, headers?: HeadersInit }) {
+    async requestJson(path: string, init?: RequestInit | { body?: Body; headers?: HeadersInit }) {
         return this.request(path, init).then(this.extractJsonHandlingErrors);
     }
 
@@ -72,4 +75,4 @@ class Api {
     }
 }
 
-export default new Api;
+export default new Api();

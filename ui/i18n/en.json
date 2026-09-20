@@ -1,0 +1,50 @@
+{
+    "routes": {
+        "activity": "Activity",
+        "budget": "Budget"
+    },
+    "activity": {
+        "button": {
+            "add": {
+                "transaction": "Add transaction"
+            }
+        },
+        "panel": {
+            "description": "Description",
+            "category": "Category",
+            "amount": "Amount",
+            "summary": "Summary"
+        }
+    },
+    "transaction": {
+        "title": {
+            "new": "New Transaction"
+        },
+        "labels": {
+            "issued": "Issued",
+            "category": "Category",
+            "currency": "Amount",
+            "description": "Description"
+        },
+        "placeholders": {
+            "category": "Select a category",
+            "description": "Enter some notes"
+        },
+        "errors": {
+            "category": "Please select an option",
+            "currency": "The value must be greater than 0"
+        },
+        "save": "Save"
+    },
+    "types": {
+        "transactions": {
+            "income": "Income",
+            "expense": "Expense"
+        }
+    },
+    "forms": {
+        "select": {
+            "undefined": "Select an option"
+        }
+    }
+}

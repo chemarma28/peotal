@@ -23,10 +23,4 @@
     };
 </script>
 
-<InputField
-    type="date"
-    {id}
-    {label}
-    {required}
-    bind:value={format.string}
-></InputField>
+<InputField type="date" {id} {label} {required} bind:value={format.string}></InputField>

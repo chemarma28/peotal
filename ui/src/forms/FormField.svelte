@@ -13,10 +13,7 @@
 
 <div class="flex flex-col gap-1">
     <div class="flex flex-row items-center">
-        <label
-            for={id}
-            class="cursor-pointer text-sm font-semibold"
-        >
+        <label for={id} class="cursor-pointer text-sm font-semibold">
             {label}
             {#if required}
                 <span class="text-xs text-red-700">*</span>

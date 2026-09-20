@@ -3,9 +3,8 @@
 </script>
 
 <div
-    class="inline-block text-center p-0.5 border-1 rounded-full w-[8rem]"
+    class="inline-block w-[8rem] rounded-full border-1 p-0.5 text-center"
     style:background-color={`color-mix(in oklab, ${color} 50%, transparent)`}
-    style:border-color={color}
->
+    style:border-color={color}>
     {@render children()}
 </div>

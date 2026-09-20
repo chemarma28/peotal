@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { _, _transactionType } from "@ui/i18n";
     import api from "@ui/api";
     import CurrencyField from "@ui/forms/CurrencyField.svelte";
     import DateField from "@ui/forms/DateField.svelte";
@@ -45,33 +46,18 @@
         e.preventDefault();
 
         transaction.categoryId = category?.id ?? 1;
-        const response = await api.post<Transaction>(
-            "transaction",
-            transaction,
-        );
+        const response = await api.post<Transaction>("transaction", transaction);
         onSave(response);
         close();
     }
 </script>
 
-<dialog
-    bind:this={dialogRef}
-    class="font-inherit text-inherit p-3"
->
-    <form
-        autocomplete="off"
-        class="flex flex-col gap-4"
-        onsubmit={save}
-    >
-        <header class="flex justify-between items-center">
-            <h5 class="font-semibold">New Transaction</h5>
+<dialog bind:this={dialogRef} class="font-inherit p-3 text-inherit">
+    <form autocomplete="off" class="flex flex-col gap-4" onsubmit={save}>
+        <header class="flex items-center justify-between">
+            <h5 class="font-semibold">{_("transaction.title.new")}</h5>
 
-            <button
-                type="button"
-                class="text-lg"
-                aria-label="Close dialog"
-                onclick={close}
-            >
+            <button type="button" class="text-lg" aria-label="Close dialog" onclick={close}>
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </header>
@@ -82,22 +68,18 @@
                 values={Object.values(TransactionType).map(
                     (type) =>
                         ({
-                            name: type,
+                            name: _transactionType(type),
                             record: type,
                         }) satisfies SelectOption<TransactionType>,
-                )}
-            ></ToggleGroup>
+                )}></ToggleGroup>
 
-            <DateField
-                id="date"
-                label="Date"
-                bind:value={transaction.issued}
-            />
+            <DateField id="date" label={_("transaction.labels.issued")} bind:value={transaction.issued} />
 
             <SelectField
                 id="category"
-                label="Category"
+                label={_("transaction.labels.category")}
                 required
+                undefinedLabel={_("transaction.placeholders.category")}
                 values={categories.map(
                     (category) =>
                         ({
@@ -106,36 +88,27 @@
                         }) satisfies SelectOption<Category>,
                 )}
                 bind:value={category}
-                validator={(value) => (value ? "" : "Please select an option")}
-            ></SelectField>
+                validator={(value) => (value ? "" : _("transaction.errors.category"))}></SelectField>
 
             <CurrencyField
                 amountId="amount"
                 currencyId="currency"
-                label="Amount"
+                label={_("transaction.labels.currency")}
                 bind:amount={transaction.amount}
                 bind:currency={transaction.currency}
                 required
                 validator={(value) => {
-                    if ((value as number) <= 0)
-                        return "The value must be greater than 0";
-                }}
-            ></CurrencyField>
+                    if ((value as number) <= 0) return _("transaction.errors.currency");
+                }}></CurrencyField>
 
             <InputField
                 id="description"
-                label="Description"
-                placeholder="Enter some notes"
+                label={_("transaction.labels.description")}
+                placeholder={_("transaction.placeholders.description")}
                 required
-                bind:value={transaction.description}
-            ></InputField>
+                bind:value={transaction.description}></InputField>
         </div>
 
-        <button
-            class="primary w-full"
-            type="submit"
-        >
-            Save
-        </button>
+        <button class="primary w-full" type="submit">{_("transaction.save")}</button>
     </form>
 </dialog>

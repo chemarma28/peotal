@@ -1,6 +1,6 @@
-import { Transaction } from "@ui/types"
+import { Transaction } from "@ui/types";
 
 export type DailyTransactions = {
-    issued: string,
+    issued: string;
     transactions: Transaction[];
-}
+};

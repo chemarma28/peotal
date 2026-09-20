@@ -1,7 +1,4 @@
-<script
-    lang="ts"
-    generics="T"
->
+<script lang="ts" generics="T">
     import type { SelectOption } from "./types";
 
     type Props = {
@@ -22,7 +19,6 @@
             onclick={() => {
                 chosen = toggle;
                 value = toggle.record;
-            }}>{toggle.name}</button
-        >
+            }}>{toggle.name}</button>
     {/each}
 </div>

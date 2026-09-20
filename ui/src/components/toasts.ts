@@ -3,26 +3,30 @@ import { writable } from "svelte/store";
 export enum ToastVariant {
     SUCCESS = "success",
     WARNING = "warning",
-    ERROR = "error"
-};
+    ERROR = "error",
+}
 
 export type Toast = {
-    id: number,
-    variant: ToastVariant,
-    title: string,
-    message?: ToastMessage,
-    duration: number,
-    timer?: number
+    id: number;
+    variant: ToastVariant;
+    title: string;
+    message?: ToastMessage;
+    duration: number;
+    timer?: number;
 };
 
 export type ToastMessage = {
-    payload: string,
-    hidden?: boolean
+    payload: string;
+    hidden?: boolean;
 };
 
 export const toasts = writable<Array<Toast>>([]);
 
-export function showToast(variant: ToastVariant, title: string, options?: { message?: ToastMessage, duration?: number }): Toast {
+export function showToast(
+    variant: ToastVariant,
+    title: string,
+    options?: { message?: ToastMessage; duration?: number },
+): Toast {
     const duration = options?.duration ?? 2500;
 
     const toast: Toast = {
@@ -30,7 +34,7 @@ export function showToast(variant: ToastVariant, title: string, options?: { mess
         variant: variant,
         title: title,
         message: options?.message,
-        duration: duration
+        duration: duration,
     };
 
     toasts.update((toasts) => [...toasts, toast]);

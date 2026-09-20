@@ -5,26 +5,19 @@
         loading?: boolean;
     };
 
-    let {
-        header,
-        description,
-        loading = $bindable<boolean>(false),
-    }: Props = $props();
+    let { header, description, loading = $bindable<boolean>(false) }: Props = $props();
 </script>
 
-<div
-    class="min-h-32 flex flex-col justify-center items-center gap-1 bg-bg-card border-1 border-border-card rounded-lg"
->
+<div class="bg-bg-card border-border-card flex min-h-32 flex-col items-center justify-center gap-1 rounded-lg border-1">
     {#if loading}
-        <div
-            class="w-8 h-8 rounded-full border-3 border-solid border-border-card border-t-transparent animate-spin"
-        ></div>
+        <div class="border-border-card h-8 w-8 animate-spin rounded-full border-3 border-solid border-t-transparent">
+        </div>
     {:else}
         <div class="font-semibold">
             {header ?? "No entries found"}
         </div>
 
-        <div class="text-sm max-w-md">
+        <div class="max-w-md text-sm">
             {description ?? "Entries will appear here once they are added"}
         </div>
     {/if}

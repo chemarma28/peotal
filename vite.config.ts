@@ -13,17 +13,14 @@ export default defineConfig({
     root: uiDir,
 
     resolve: {
-        tsconfigPaths: true
+        tsconfigPaths: true,
     },
 
-    plugins: [
-        svelte(),
-        tailwindcss()
-    ],
+    plugins: [svelte(), tailwindcss()],
 
     server: {
         proxy: {
-            "/api": "http://localhost:9097"
-        }
-    }
-})
+            "/api": "http://localhost:9097",
+        },
+    },
+});

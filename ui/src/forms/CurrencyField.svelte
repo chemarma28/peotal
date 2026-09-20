@@ -32,14 +32,11 @@
     let initial = amount;
 
     onMount(() => {
-        input?.addEventListener(
-            "autoNumeric:rawValueModified",
-            (e: CustomEvent) => {
-                const num = numeric.getNumber();
+        input?.addEventListener("autoNumeric:rawValueModified", (e: CustomEvent) => {
+            const num = numeric.getNumber();
 
-                amount = num ? num : 0;
-            },
-        );
+            amount = num ? num : 0;
+        });
     });
 
     const autonumeric: Attachment = (input) => {
@@ -63,26 +60,11 @@
     });
 </script>
 
-<FormField
-    id={amountId}
-    {label}
-    {required}
->
-    <div class="flex items-center form-control form-currency-control">
-        <input
-            {@attach autonumeric}
-            type="text"
-            inputmode="decimal"
-            id={amountId}
-            bind:this={input}
-            {...props}
-        />
+<FormField id={amountId} {label} {required}>
+    <div class="form-control form-currency-control flex items-center">
+        <input {@attach autonumeric} type="text" inputmode="decimal" id={amountId} bind:this={input} {...props} />
 
-        <select
-            id={currencyId}
-            bind:value={currency}
-            class="px-1"
-        >
+        <select id={currencyId} bind:value={currency} class="px-1">
             {#each Object.values(Currency) as currency}
                 <option>{currency}</option>
             {/each}

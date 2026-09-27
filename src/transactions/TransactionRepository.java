@@ -1,6 +1,5 @@
 package transactions;
 
-import static java.lang.String.format;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,13 +11,9 @@ import jakarta.inject.Singleton;
 public class TransactionRepository {
 
     public Transaction save(Handle handle, Transaction it) {
-        if (it.issued.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException(format("Transaction date can not be in the future"));
-        }
-
         final String q = """
-            INSERT INTO transactions (description, issued, operation, category_id, amount)
-            VALUES (:description, :issued, :operation, :categoryId, :amount)
+            INSERT INTO transactions (description, issued, operation, category_id, amount, currency)
+            VALUES (:description, :issued, :operation, :categoryId, :amount, :currency)
         """;
 
         it.id = handle.createUpdate(q)

@@ -20,7 +20,7 @@ public class TransactionTypeConverter implements Converter, JsonDeserializer<Tra
     @Override
     public Object convert(Type type, Value value, ConversionHint hint) {
         if (type == TransactionType.class) {
-            fromString(value.name(), value.value());
+            return fromString(value.name(), value.value());
         }
 
         return null;

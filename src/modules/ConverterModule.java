@@ -10,12 +10,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 
+import converters.CurrencyConverter;
 import converters.LocalDateConverter;
 import converters.TransactionTypeConverter;
 import io.jooby.Extension;
 import io.jooby.Jooby;
 import io.jooby.MediaType;
 import io.jooby.value.ValueFactory;
+import transactions.Currency;
 import transactions.TransactionType;
 
 public class ConverterModule implements Extension {
@@ -23,14 +25,17 @@ public class ConverterModule implements Extension {
     private final Gson gson;
     private final LocalDateConverter instantConverter;
     private final TransactionTypeConverter transactionTypeConverter;
+    private final CurrencyConverter currencyConverter;
 
     public ConverterModule() {
         this.instantConverter = new LocalDateConverter();
         this.transactionTypeConverter = new TransactionTypeConverter();
+        this.currencyConverter = new CurrencyConverter();
 
         this.gson = new GsonBuilder().serializeNulls()
                 .registerTypeAdapter(LocalDate.class, instantConverter)
                 .registerTypeAdapter(TransactionType.class, transactionTypeConverter)
+                .registerTypeAdapter(Currency.class, currencyConverter)
                 .create();
     }
 
@@ -55,5 +60,6 @@ public class ConverterModule implements Extension {
 
         valueFactory.put(Instant.class, instantConverter);
         valueFactory.put(TransactionType.class, new TransactionTypeConverter());
+        valueFactory.put(Currency.class, new CurrencyConverter());
     }
 }

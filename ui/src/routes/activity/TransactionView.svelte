@@ -17,6 +17,8 @@
 
     let { onSave, categories }: Props = $props();
 
+    type TransactionDraft = Omit<Transaction, "categoryId"> & { categoryId?: number };
+
     const DEFAULT_OPERATION = TransactionType.EXPENSE;
 
     const operationOptions: SelectOption<TransactionType>[] = Object.values(TransactionType).map((record) => ({
@@ -28,9 +30,8 @@
         categories.map((record) => ({ name: record.name, record })),
     );
 
-    const empty = (): Transaction => ({
+    const empty = (): TransactionDraft => ({
         operation: DEFAULT_OPERATION,
-        categoryId: undefined,
         issued: new Date().toIsoDate(),
         amount: 0,
         currency: Currency.USD,
@@ -39,7 +40,7 @@
 
     let dialogRef = $state<HTMLDialogElement>();
 
-    let transaction = $state<Transaction>(empty());
+    let transaction = $state<TransactionDraft>(empty());
     let operation = $state<SelectOption<TransactionType> | undefined>(
         operationOptions.find((o) => o.record === DEFAULT_OPERATION),
     );
@@ -62,8 +63,8 @@
 
         const payload: Transaction = {
             ...transaction,
-            operation: operation?.record ?? transaction.operation,
-            categoryId: category?.record.id,
+            operation: operation!.record,
+            categoryId: category!.record.id,
         };
 
         onSave(await api.post<Transaction>("transaction", payload));

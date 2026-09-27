@@ -4,16 +4,12 @@ import javax.sql.DataSource;
 
 import org.h2.jdbcx.JdbcDataSource;
 import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.mapper.reflect.BeanMapper;
 
-import categories.Category;
 import io.jooby.Environment;
 import io.jooby.Extension;
 import io.jooby.Jooby;
 import io.jooby.flyway.FlywayModule;
 import io.jooby.jdbi.JdbiModule;
-import transactions.Transaction;
-import transactions.TransactionType;
 
 public class DBModule implements Extension {
 
@@ -25,10 +21,7 @@ public class DBModule implements Extension {
         it.install(new FlywayModule());
         it.install(new JdbiModule());
 
-        final Jdbi jdbi = it.require(Jdbi.class);
-        jdbi.registerColumnMapper(TransactionType.class, (rs, col, ctx) -> TransactionType.valueOf(rs.getString(col)));
-        jdbi.registerRowMapper(BeanMapper.factory(Transaction.class));
-        jdbi.registerRowMapper(BeanMapper.factory(Category.class));
+        Db.registerMappers(it.require(Jdbi.class));
     }
 
     private DataSource dataSource(Environment env) {

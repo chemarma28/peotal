@@ -1,24 +1,26 @@
 <script lang="ts" generics="T">
-    import type { SelectOption } from "./types";
+    import type { SelectOption, SelectionKey } from "./types";
 
     type Props = {
-        value?: T;
-        values: SelectOption<T>[];
+        chosen?: SelectOption<T>;
+        options: SelectOption<T>[];
+        key?: SelectionKey<T>;
     };
 
-    let chosen = $state<SelectOption<T>>();
+    let { chosen = $bindable<SelectOption<T> | undefined>(), options, key = (o) => o.record }: Props = $props();
 
-    let { value = $bindable<T>(), values }: Props = $props();
+    const selected = (option: SelectOption<T>) => chosen != null && key(option) === key(chosen);
 </script>
 
-<div class="toggle-group">
-    {#each values as toggle}
+<div class="toggle-group" role="radiogroup">
+    {#each options as option}
         <button
             type="button"
-            class={`${chosen?.name === toggle.name || toggle.record === value ? "active" : ""}`}
+            role="radio"
+            aria-checked={selected(option)}
+            class={selected(option) ? "active" : ""}
             onclick={() => {
-                chosen = toggle;
-                value = toggle.record;
-            }}>{toggle.name}</button>
+                chosen = option;
+            }}>{option.name}</button>
     {/each}
 </div>

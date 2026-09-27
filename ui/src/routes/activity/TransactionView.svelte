@@ -12,16 +12,25 @@
 
     type Props = {
         categories: Category[];
-        onSave: (transactions: Transaction) => void;
+        onSave: (transaction: Transaction) => void;
     };
 
     let { onSave, categories }: Props = $props();
 
-    let category = $state<Category>();
+    const DEFAULT_OPERATION = TransactionType.EXPENSE;
 
-    const initial = (): Transaction => ({
-        operation: TransactionType.INCOME,
-        categoryId: category?.id,
+    const operationOptions: SelectOption<TransactionType>[] = Object.values(TransactionType).map((record) => ({
+        name: _transactionType(record),
+        record,
+    }));
+
+    const categoryOptions = $derived<SelectOption<Category>[]>(
+        categories.map((record) => ({ name: record.name, record })),
+    );
+
+    const empty = (): Transaction => ({
+        operation: DEFAULT_OPERATION,
+        categoryId: undefined,
         issued: new Date().toIsoDate(),
         amount: 0,
         currency: Currency.USD,
@@ -29,11 +38,17 @@
     });
 
     let dialogRef = $state<HTMLDialogElement>();
-    let transaction: Transaction = $state<Transaction>(initial());
+
+    let transaction = $state<Transaction>(empty());
+    let operation = $state<SelectOption<TransactionType> | undefined>(
+        operationOptions.find((o) => o.record === DEFAULT_OPERATION),
+    );
+    let category = $state<SelectOption<Category> | undefined>();
 
     export function show(it?: Transaction) {
-        category = undefined;
-        transaction = it ? { ...it } : initial();
+        transaction = it ? { ...it } : empty();
+        operation = operationOptions.find((o) => o.record === transaction.operation);
+        category = categoryOptions.find((o) => o.record.id === transaction.categoryId);
 
         dialogRef?.showModal();
     }
@@ -45,9 +60,13 @@
     async function save(e: SubmitEvent) {
         e.preventDefault();
 
-        transaction.categoryId = category?.id ?? 1;
-        const response = await api.post<Transaction>("transaction", transaction);
-        onSave(response);
+        const payload: Transaction = {
+            ...transaction,
+            operation: operation?.record ?? transaction.operation,
+            categoryId: category?.record.id,
+        };
+
+        onSave(await api.post<Transaction>("transaction", payload));
         close();
     }
 </script>
@@ -63,15 +82,7 @@
         </header>
 
         <div class="flex flex-col gap-2">
-            <ToggleGroup
-                value={transaction.operation}
-                values={Object.values(TransactionType).map(
-                    (type) =>
-                        ({
-                            name: _transactionType(type),
-                            record: type,
-                        }) satisfies SelectOption<TransactionType>,
-                )}></ToggleGroup>
+            <ToggleGroup bind:chosen={operation} options={operationOptions}></ToggleGroup>
 
             <DateField id="date" label={_("transaction.labels.issued")} bind:value={transaction.issued} />
 
@@ -79,34 +90,32 @@
                 id="category"
                 label={_("transaction.labels.category")}
                 required
-                undefinedLabel={_("transaction.placeholders.category")}
-                values={categories.map(
-                    (category) =>
-                        ({
-                            name: category.name,
-                            record: category,
-                        }) satisfies SelectOption<Category>,
-                )}
-                bind:value={category}
-                validator={(value) => (value ? "" : _("transaction.errors.category"))}></SelectField>
+                placeholder={_("transaction.placeholders.category")}
+                options={categoryOptions}
+                key={(o) => o.record.id}
+                bind:chosen={category}
+                validator={(value) => (value ? "" : _("transaction.errors.category"))}>
+            </SelectField>
 
             <CurrencyField
                 amountId="amount"
                 currencyId="currency"
                 label={_("transaction.labels.currency")}
+                required
                 bind:amount={transaction.amount}
                 bind:currency={transaction.currency}
-                required
                 validator={(value) => {
                     if ((value as number) <= 0) return _("transaction.errors.currency");
-                }}></CurrencyField>
+                }}>
+            </CurrencyField>
 
             <InputField
                 id="description"
                 label={_("transaction.labels.description")}
                 placeholder={_("transaction.placeholders.description")}
                 required
-                bind:value={transaction.description}></InputField>
+                bind:value={transaction.description}>
+            </InputField>
         </div>
 
         <button class="primary w-full" type="submit">{_("transaction.save")}</button>

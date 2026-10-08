@@ -5,14 +5,20 @@
         chosen?: SelectOption<T>;
         options: SelectOption<T>[];
         key?: SelectionKey<T>;
+        styleClass?: string;
     };
 
-    let { chosen = $bindable<SelectOption<T> | undefined>(), options, key = (o) => o.record }: Props = $props();
+    let {
+        chosen = $bindable<SelectOption<T> | undefined>(),
+        options,
+        key = (o) => o.record,
+        styleClass,
+    }: Props = $props();
 
     const selected = (option: SelectOption<T>) => chosen != null && key(option) === key(chosen);
 </script>
 
-<div class="toggle-group" role="radiogroup">
+<div class="toggle-group {styleClass}" role="radiogroup">
     {#each options as option}
         <button
             type="button"

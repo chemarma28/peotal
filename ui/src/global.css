@@ -54,9 +54,9 @@
     --color-bg-button-primary: #716898;
     --color-bg-button-primary-hover: color-mix(in srgb, #fff 10%, #716898);
 
-    --color-bg-button-secondary: #f1eae5;
-    --color-text-button-secondary: #4e4868;
-    --color-bg-button-secondary-hover: #e2ddec;
+    --color-bg-button-secondary: #7c7792;
+    --color-text-button-secondary: #fff;
+    --color-bg-button-secondary-hover: #9d99ae;
 
     --color-bg-toggle-active: #d1d8e6;
     --color-bg-toggle-hover: color-mix(in srgb, #fff 60%, #d1d8e6);
@@ -64,7 +64,7 @@
 
 @layer components {
     button.primary {
-        @apply bg-bg-button-primary hover:bg-bg-button-primary-hover box-border rounded-lg border-0 border-solid p-1 text-white;
+        @apply shrink-0 text-nowrap bg-bg-button-primary hover:bg-bg-button-primary-hover box-border rounded-lg border-0 border-solid p-1 text-white;
     }
 
     button.secondary {

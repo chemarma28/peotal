@@ -11,6 +11,7 @@ import transactions.TransactionType;
 @AllArgsConstructor
 public class Category {
 
+    @Nullable
     public Long id;
     public String name;
     public TransactionType operation;

@@ -61,10 +61,13 @@
     async function save(e: SubmitEvent) {
         e.preventDefault();
 
+        const categoryId = category?.record.id;
+        if (categoryId === undefined) return;
+
         const payload: Transaction = {
             ...transaction,
             operation: operation!.record,
-            categoryId: category!.record.id,
+            categoryId,
         };
 
         onSave(await api.post<Transaction>("transaction", payload));

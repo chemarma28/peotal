@@ -1,9 +1,11 @@
 {
     "routes": {
         "activity": "Activity",
-        "budget": "Budget"
+        "budget": "Budget",
+        "categories": "Categories"
     },
     "activity": {
+        "title": "Transactions",
         "button": {
             "add": {
                 "transaction": "Add transaction"
@@ -14,6 +16,18 @@
             "category": "Category",
             "amount": "Amount",
             "summary": "Summary"
+        },
+        "filter": {
+            "all": "All"
+        },
+        "period": {
+            "previous": "Previous month",
+            "next": "Next month"
+        },
+        "summary": {
+            "transactions": "Transactions",
+            "income": "Income",
+            "expenses": "Expenses"
         }
     },
     "transaction": {
@@ -46,5 +60,19 @@
         "select": {
             "undefined": "Select an option"
         }
+    },
+    "months": {
+        "january": "January",
+        "february": "February",
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "june": "June",
+        "july": "July",
+        "august": "August",
+        "september": "September",
+        "october": "October",
+        "november": "November",
+        "december": "December"
     }
 }

@@ -2,7 +2,7 @@
     import { _ } from "@ui/i18n";
     import Accordion from "@ui/components/Accordion.svelte";
     import AccordionItem from "@ui/components/AccordionItem.svelte";
-    import Rounded from "@ui/components/Rounded.svelte";
+    import Badge from "@ui/components/Badge.svelte";
     import type { Category, Transaction } from "@ui/types";
     import type { DailyTransactions } from "./types";
 
@@ -14,9 +14,7 @@
     let { categories, transactions = $bindable<Transaction[]>() }: Props = $props();
     let dailyTransactions = $state<DailyTransactions[]>([]);
 
-    const category = (categoryId?: number) => {
-        return categoryId && categories.has(categoryId) ? categories.get(categoryId)!.name : "No Category";
-    };
+    const findCategory = (categoryId?: number) => (categoryId ? categories.get(categoryId) : undefined);
 
     $effect(() => {
         dailyTransactions = transactions
@@ -50,15 +48,18 @@
 
                         <tbody>
                             {#each daily.transactions as transaction}
+                                {@const transactionCategory = findCategory(transaction.categoryId)}
                                 <tr class="">
                                     <td class="border-border-card/50 border-b-1 py-2 pl-2">
                                         {transaction.description}
                                     </td>
 
                                     <td class="border-border-card/50 border-b-1 py-2 text-center">
-                                        <Rounded color="lightblue">
-                                            {category(transaction.categoryId)}
-                                        </Rounded>
+                                        <Badge
+                                            color={transactionCategory?.color ?? "#a8b7d1"}
+                                            icon={transactionCategory?.icon}>
+                                            {transactionCategory?.name ?? "No Category"}
+                                        </Badge>
                                     </td>
 
                                     <td class="border-border-card/50 border-b-1 py-2 pr-2 text-right">

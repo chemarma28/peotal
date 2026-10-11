@@ -17,7 +17,7 @@
             {header ?? "No entries found"}
         </div>
 
-        <div class="max-w-md text-sm">
+        <div class="text-center text-sm">
             {description ?? "Entries will appear here once they are added"}
         </div>
     {/if}

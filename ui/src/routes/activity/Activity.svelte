@@ -93,7 +93,7 @@
         {#if transactions.length && categories.size}
             <ActivitySidebar categories={[...categories.values()]} />
         {:else}
-            <Empty {loading}></Empty>
+            <Empty {loading} header="No categories found" description="Your categories will appear here"></Empty>
         {/if}
     </aside>
 

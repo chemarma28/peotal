@@ -5,8 +5,6 @@ import { initTranslations } from "./i18n";
 
 await initTranslations();
 
-document.body.innerHTML = "";
-
-const app = mount(App, { target: document.body });
+const app = mount(App, { target: document.getElementById("index")! });
 
 export default app;

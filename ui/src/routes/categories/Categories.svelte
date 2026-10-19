@@ -32,8 +32,20 @@
     let draggableIndex = $state<number>();
     let dropIndex = $state<number>();
 
+    let dragArmed = false;
+    let armedCard: HTMLElement | undefined;
+
     function enableDrop(e: DragEvent) {
         e.preventDefault();
+    }
+
+    function releaseDrag() {
+        if (armedCard) {
+            armedCard.draggable = false;
+            armedCard = undefined;
+        }
+
+        dragArmed = false;
     }
 
     function onDrop(e: DragEvent) {
@@ -53,15 +65,19 @@
     onMount(() => {
         window.addEventListener("dragover", enableDrop);
         window.addEventListener("drop", onDrop);
+        window.addEventListener("mouseup", releaseDrag);
     });
 
     onDestroy(() => {
         window.removeEventListener("dragover", enableDrop);
         window.removeEventListener("drop", onDrop);
+        window.removeEventListener("mouseup", releaseDrag);
     });
 
     const dropZone = (index: number) => (element: HTMLElement) => {
         function dragEnter(e: DragEvent) {
+            if (!dragArmed) return;
+
             dropIndex = index;
         }
 
@@ -75,21 +91,41 @@
     };
 
     const draggable = (index: number) => (element: HTMLElement) => {
-        element.draggable = true;
+        element.draggable = false;
+
+        function mouseDown(e: MouseEvent) {
+            const handle = (e.target as HTMLElement | null)?.closest("[data-drag-handle]");
+
+            if (!handle || !element.contains(handle)) return;
+
+            element.draggable = true;
+            armedCard = element;
+            dragArmed = true;
+        }
 
         function dragStart(e: DragEvent) {
+            if (!dragArmed) {
+                e.preventDefault();
+                return;
+            }
+
             draggableIndex = index;
         }
 
         function dragEnd(e: DragEvent) {
+            releaseDrag();
+
             draggableIndex = undefined;
             dropIndex = undefined;
         }
 
+        element.addEventListener("mousedown", mouseDown);
         element.addEventListener("dragstart", dragStart);
         element.addEventListener("dragend", dragEnd);
 
         return () => {
+            element.draggable = false;
+            element.removeEventListener("mousedown", mouseDown);
             element.removeEventListener("dragstart", dragStart);
             element.removeEventListener("dragend", dragEnd);
         };
@@ -116,7 +152,12 @@
                     {@attach draggable(index)}
                     {@attach dropZone(index + 1)}
                     class="border-border-card bg-bg-card rounded-lg border-1 p-1">
-                    <i class="fa-solid fa-grip rotate-90 cursor-move"></i>
+                    <i
+                        data-drag-handle
+                        aria-hidden="true"
+                        class="fa-solid fa-grip inline-block rotate-90 px-1 select-none {draggableIndex === index
+                            ? 'cursor-grabbing'
+                            : 'cursor-grab'}"></i>
                     <Badge color={category.color} icon={category.icon}>
                         {category.name}
                     </Badge>

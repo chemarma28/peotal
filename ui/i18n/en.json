@@ -5,7 +5,21 @@
         "categories": "Categories"
     },
     "activity": {
-        "title": "Transactions",
+        "title": "Activity",
+        "description": "Review your income and expenses for the selected period",
+        "empty": {
+            "categories": {
+                "header": "No categories yet",
+                "description": "Your categories will appear here once they are added"
+            },
+            "transactions": {
+                "header": "No transactions yet",
+                "description": "Transactions for the selected period will appear here"
+            }
+        },
+        "toast": {
+            "transactionSaved": "Transaction saved"
+        },
         "button": {
             "add": {
                 "transaction": "Add transaction"
@@ -21,8 +35,9 @@
             "all": "All"
         },
         "period": {
-            "previous": "Previous month",
-            "next": "Next month"
+            "label": "Period",
+            "month": "Month",
+            "year": "Year"
         },
         "summary": {
             "transactions": "Transactions",

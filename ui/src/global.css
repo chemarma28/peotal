@@ -100,33 +100,35 @@
     }
 }
 
-body {
-    @apply font-noto text-text-primary bg-zinc-100 text-base;
-}
+@layer base {
+    body {
+        @apply font-noto text-text-primary bg-zinc-100 text-base;
+    }
 
-h1 {
-    @apply text-4xl;
-}
+    h1 {
+        @apply text-4xl;
+    }
 
-h2 {
-    @apply text-3xl;
-}
+    h2 {
+        @apply text-3xl;
+    }
 
-h3 {
-    @apply text-2xl;
-}
+    h3 {
+        @apply text-2xl;
+    }
 
-h4 {
-    @apply text-xl;
-}
+    h4 {
+        @apply text-xl;
+    }
 
-h5 {
-    @apply text-lg;
-}
+    h5 {
+        @apply text-lg;
+    }
 
-dialog {
-    @apply open:fixed;
-    @apply top-[50%] open:left-[50%] open:-translate-x-[50%] open:-translate-y-[50%];
-    @apply min-w-xs rounded-lg border-1 border-zinc-50 open:box-border sm:min-w-lg;
-    @apply backdrop:bg-black/40;
+    dialog {
+        @apply open:fixed;
+        @apply top-[50%] open:left-[50%] open:-translate-x-[50%] open:-translate-y-[50%];
+        @apply min-w-xs rounded-lg border-1 border-zinc-50 open:box-border sm:min-w-lg;
+        @apply backdrop:bg-black/40;
+    }
 }

@@ -10,7 +10,8 @@
     import { showToast, ToastVariant } from "@ui/components/toasts";
     import { HEADER_ACTION, type HeaderActionStore } from "@ui/layout/headerAction";
     import { _ } from "@ui/i18n";
-    import MonthSpinner from "@ui/components/MonthSpinner.svelte";
+    import Page from "@ui/layout/Page.svelte";
+    import MonthPicker from "@ui/components/MonthPicker.svelte";
     import ToggleGroup from "@ui/forms/ToggleGroup.svelte";
     import { type SelectOption } from "@ui/forms/types";
 
@@ -66,7 +67,7 @@
     let filter = $state<SelectOption<TransactionType | undefined>>(filterOptions[2]);
 
     async function onSaveTransaction(transaction: Transaction) {
-        showToast(ToastVariant.SUCCESS, "Transaction was saved");
+        showToast(ToastVariant.SUCCESS, _("activity.toast.transactionSaved"));
         transactions = await loadTransactions();
     }
 
@@ -80,46 +81,55 @@
     });
 </script>
 
-<div class="mb-4 lg:hidden">
-    <MonthSpinner bind:begin stretch></MonthSpinner>
-</div>
+{#snippet pageActions()}
+    <div class="hidden items-center gap-2 lg:flex">
+        <MonthPicker bind:begin></MonthPicker>
+    </div>
+{/snippet}
 
-<div class="grid grid-cols-1 gap-8 lg:grid-cols-[18rem_minmax(0,1fr)]">
-    <aside class="lg:sticky lg:top-4 lg:self-start">
-        <div class="mb-2">
-            <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
-        </div>
+<Page title={_("activity.title")} description={_("activity.description")} actions={pageActions}>
+    <div class="mb-4 lg:hidden">
+        <MonthPicker bind:begin stretch></MonthPicker>
+    </div>
 
-        {#if transactions.length && categories.size}
-            <ActivitySidebar categories={[...categories.values()]} />
-        {:else}
-            <Empty {loading} header="No categories found" description="Your categories will appear here"></Empty>
-        {/if}
-    </aside>
-
-    <section>
-        <div class="mx-auto flex w-full max-w-5xl flex-col gap-4">
-            <div class="flex items-center justify-between gap-2">
-                <div class="hidden lg:block">
-                    <MonthSpinner bind:begin></MonthSpinner>
-                </div>
-
-                <div class="hidden lg:block">
-                    <button onclick={() => transactionViewRef.show()} class="primary">
-                        <i class="fa-solid fa-plus"></i>{_("activity.button.add.transaction")}</button>
-                </div>
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-[18rem_minmax(0,1fr)]">
+        <aside class="lg:sticky lg:top-4 lg:self-start">
+            <div class="mb-2">
+                <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
             </div>
 
-            <ActivitySummary />
-
             {#if transactions.length && categories.size}
-                <ActivityPanel {categories} {transactions} />
+                <ActivitySidebar categories={[...categories.values()]} />
             {:else}
-                <Empty {loading}></Empty>
+                <Empty
+                    {loading}
+                    header={_("activity.empty.categories.header")}
+                    description={_("activity.empty.categories.description")} />
             {/if}
-        </div>
-    </section>
-</div>
+        </aside>
+
+        <section>
+            <div class="mx-auto flex w-full max-w-5xl flex-col gap-4">
+                <div class="hidden justify-end lg:flex">
+                    <button onclick={() => transactionViewRef.show()} class="primary">
+                        <i class="fa-solid fa-plus"></i>{_("activity.button.add.transaction")}
+                    </button>
+                </div>
+
+                <ActivitySummary />
+
+                {#if transactions.length && categories.size}
+                    <ActivityPanel {categories} {transactions} />
+                {:else}
+                    <Empty
+                        {loading}
+                        header={_("activity.empty.transactions.header")}
+                        description={_("activity.empty.transactions.description")} />
+                {/if}
+            </div>
+        </section>
+    </div>
+</Page>
 
 <TransactionView bind:this={transactionViewRef} onSave={onSaveTransaction} categories={[...categories.values()]}
 ></TransactionView>

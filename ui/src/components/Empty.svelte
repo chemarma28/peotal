@@ -8,7 +8,7 @@
     let { header, description, loading = $bindable<boolean>(false) }: Props = $props();
 </script>
 
-<div class="bg-bg-card border-border-card flex min-h-32 flex-col items-center justify-center gap-1 rounded-lg border-1">
+<div class="bg-bg-card border-border-card flex min-h-32 flex-col items-center justify-center gap-1 rounded-lg border-1 p-4">
     {#if loading}
         <div class="border-border-card h-8 w-8 animate-spin rounded-full border-3 border-solid border-t-transparent">
         </div>

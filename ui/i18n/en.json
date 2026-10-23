@@ -4,6 +4,12 @@
         "budget": "Budget",
         "categories": "Categories"
     },
+    "auth": {
+        "login": {
+            "title": "Sign in",
+            "description": "Sign in to manage your income and expenses"
+        }
+    },
     "categories": {
         "description": "Manage expense and income categories",
         "filter": {

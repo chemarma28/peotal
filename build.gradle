@@ -5,6 +5,18 @@ plugins {
 
 version = "1.0.0"
 
+def requiredJava = JavaVersion.VERSION_21
+def currentJava = JavaVersion.current()
+
+if (currentJava != requiredJava) {
+    throw new GradleException(
+            "Quno requires JDK 21. " +
+            "Current Gradle JVM: ${currentJava} " +
+            "(${System.getProperty('java.version')}, ${System.getProperty('java.home')}). " +
+            "Set JAVA_HOME to JDK 21 or configure Gradle JVM in your IDE."
+    )
+}
+
 sourceSets {
     main {
         java {
@@ -40,8 +52,9 @@ test {
     useJUnitPlatform()
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.compilerArgs += ['-parameters']
+    options.release = 21
 }
 
 repositories {

@@ -46,6 +46,14 @@ public class CategoryRepository {
         return category;
     }
 
+    public List<Category> saveAll(Handle handle, List<Category> categories) {
+        for (final Category category : categories) {
+            save(handle, category);
+        }
+
+        return categories;
+    }
+
     public List<Category> listAll(Handle handle) {
         return list(handle, null);
     }

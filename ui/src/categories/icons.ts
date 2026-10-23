@@ -6,6 +6,9 @@ export const CATEGORY_ICONS = {
     internet: "fa-solid fa-wifi",
     mobile: "fa-solid fa-mobile-screen-button",
     household: "fa-solid fa-bolt",
+    services: "fa-solid fa-screwdriver-wrench",
+    salary: "fa-solid fa-briefcase",
+    gift: "fa-solid fa-gift",
     circle: "fa-solid fa-circle",
 } as const;
 

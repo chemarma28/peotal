@@ -22,10 +22,14 @@
             "expenses": "Expenses",
             "income": "Income"
         },
+        "action": {
+            "createDefaults": "Create defaults",
+            "retry": "Retry"
+        },
         "empty": {
             "all": {
                 "header": "No categories yet",
-                "description": "Categories will appear here once they are added"
+                "description": "Create a default set of categories to get started"
             },
             "expenses": {
                 "header": "No expense categories yet",
@@ -34,7 +38,16 @@
             "income": {
                 "header": "No income categories yet",
                 "description": "Income categories will appear here once they are added"
+            },
+            "loadError": {
+                "header": "Could not load categories",
+                "description": "Check the connection and try again"
             }
+        },
+        "toast": {
+            "defaultsCreated": "Default categories created",
+            "defaultsFailed": "Could not create default categories",
+            "orderFailed": "Could not save category order"
         }
     },
     "activity": {

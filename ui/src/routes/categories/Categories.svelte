@@ -1,43 +1,27 @@
 <script lang="ts">
-    import type { CategoryIcon } from "@ui/categories/icons";
+    import api from "@ui/api";
     import Badge from "@ui/components/Badge.svelte";
     import Empty from "@ui/components/Empty.svelte";
-    import Page from "@ui/layout/Page.svelte";
+    import { showToast, ToastVariant } from "@ui/components/toasts";
+    import { DEFAULT_CATEGORIES } from "@ui/categories/defaults";
     import { _ } from "@ui/i18n";
     import ToggleGroup from "@ui/forms/ToggleGroup.svelte";
     import type { SelectOption } from "@ui/forms/types";
+    import Page from "@ui/layout/Page.svelte";
     import { TransactionType, type Category } from "@ui/types";
     import { onDestroy, onMount } from "svelte";
     import { flip } from "svelte/animate";
 
-    type Props = {
-        categories: Category[];
-    };
-
-    const starter = (id: number, name: string, color: string, icon: CategoryIcon): Category => ({
-        id,
-        name,
-        color,
-        icon,
-        operation: TransactionType.EXPENSE,
-        ordinal: id - 1,
-    });
-
-    let categories = $state<Category[]>([
-        starter(1, "Groceries", "#7cb342", "groceries"),
-        starter(2, "Transport", "#5c6bc0", "transport"),
-        starter(3, "Restaurant", "#ef6c00", "restaurant"),
-        starter(4, "Entertainment", "#ab47bc", "entertainment"),
-        starter(5, "Internet", "#29b6f6", "internet"),
-        starter(6, "Mobile", "#26a69a", "mobile"),
-        starter(7, "Household", "#8d6e63", "household"),
-    ]);
+    let categories = $state<Category[]>([]);
+    let loading = $state(true);
+    let loadError = $state(false);
+    let creatingDefaults = $state(false);
 
     let filter = $state<SelectOption<TransactionType | undefined>>({ name: "", record: undefined });
 
     let expenseCategories = $derived(categories.filter((it) => it.operation === TransactionType.EXPENSE));
     let incomeCategories = $derived(categories.filter((it) => it.operation === TransactionType.INCOME));
-    
+
     let visibleCategories = $derived(
         filter.record === TransactionType.EXPENSE
             ? expenseCategories
@@ -84,6 +68,47 @@
               : _("categories.empty.all.description"),
     );
 
+    async function loadCategories() {
+        loading = true;
+        loadError = false;
+
+        try {
+            categories = await api.get<Category[]>("categories");
+        } catch (e) {
+            loadError = true;
+        } finally {
+            loading = false;
+        }
+    }
+
+    async function createDefaults() {
+        creatingDefaults = true;
+
+        try {
+            categories = await api.post<Category[]>("category/batch", { items: DEFAULT_CATEGORIES });
+            filter = { name: "", record: undefined };
+            showToast(ToastVariant.SUCCESS, _("categories.toast.defaultsCreated"));
+        } catch (e) {
+            showToast(ToastVariant.ERROR, _("categories.toast.defaultsFailed"));
+            await loadCategories();
+        } finally {
+            creatingDefaults = false;
+        }
+    }
+
+    async function persistOrder() {
+        const items = categories
+            .filter((it) => it.id !== undefined)
+            .map((it, ordinal) => ({ id: it.id, ordinal }));
+
+        try {
+            categories = await api.put<Category[]>("category/order", { items });
+        } catch (e) {
+            showToast(ToastVariant.ERROR, _("categories.toast.orderFailed"));
+            await loadCategories();
+        }
+    }
+
     let draggableIndex = $state<number>();
     let dropIndex = $state<number>();
 
@@ -104,7 +129,7 @@
     }
 
     function onDrop(e: DragEvent) {
-        if (dropIndex == undefined || draggableIndex == undefined) return;
+        if (filter.record || dropIndex == undefined || draggableIndex == undefined) return;
 
         const shallow = [...categories];
         const from = draggableIndex;
@@ -115,9 +140,11 @@
         shallow.splice(position, 0, moved);
 
         categories = [...shallow];
+        void persistOrder();
     }
 
     onMount(() => {
+        loadCategories();
         window.addEventListener("dragover", enableDrop);
         window.addEventListener("drop", onDrop);
         window.addEventListener("mouseup", releaseDrag);
@@ -198,50 +225,67 @@
 {/snippet}
 
 <Page width="narrow" title={_("routes.categories")} description={_("categories.description")}>
-    <section>
-        <div class="mb-4">
-            <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
-        </div>
+    {#if loading}
+        <Empty loading />
+    {:else if loadError}
+        <Empty
+            header={_("categories.empty.loadError.header")}
+            description={_("categories.empty.loadError.description")}
+            actionLabel={_("categories.action.retry")}
+            onAction={loadCategories} />
+    {:else}
+        <section>
+            <div class="mb-4">
+                <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
+            </div>
 
-        <div class="mb-2 flex items-baseline justify-between gap-2">
-            <h2 id="categories-heading" class="text-lg font-semibold">
-                {sectionTitle}
-            </h2>
-            <span class="text-sm opacity-60">{visibleCategories.length}</span>
-        </div>
+            <div class="mb-2 flex items-baseline justify-between gap-2">
+                <h2 id="categories-heading" class="text-lg font-semibold">
+                    {sectionTitle}
+                </h2>
+                <span class="text-sm opacity-60">{visibleCategories.length}</span>
+            </div>
 
-        {#if visibleCategories.length}
-            <ul class="m-0 flex list-none flex-col p-0" role="list" aria-labelledby="categories-heading">
-                <li aria-hidden="true">
-                    {@render placeholder(0)}
-                </li>
-
-                {#each visibleCategories as category, index (category.id)}
-                    <li animate:flip={{ duration: 200 }}>
-                        <div
-                            {@attach draggable(index)}
-                            {@attach dropZone(index + 1)}
-                            class="border-border-card bg-bg-card rounded-lg border-1 p-1">
-                            {#if !filter.record}
-                                <i
-                                    data-drag-handle
-                                    aria-hidden="true"
-                                    class="fa-solid fa-grip inline-block rotate-90 px-1 select-none {draggableIndex ===
-                                    index
-                                        ? 'cursor-grabbing'
-                                        : 'cursor-grab'}"></i>
-                            {/if}
-                            <Badge color={category.color} icon={category.icon}>
-                                {category.name}
-                            </Badge>
-                        </div>
-
-                        {@render placeholder(index + 1)}
+            {#if categories.length === 0}
+                <Empty
+                    header={emptyHeader}
+                    description={emptyDescription}
+                    actionLabel={_("categories.action.createDefaults")}
+                    onAction={createDefaults}
+                    actionDisabled={creatingDefaults} />
+            {:else if visibleCategories.length}
+                <ul class="m-0 flex list-none flex-col p-0" role="list" aria-labelledby="categories-heading">
+                    <li aria-hidden="true">
+                        {@render placeholder(0)}
                     </li>
-                {/each}
-            </ul>
-        {:else}
-            <Empty header={emptyHeader} description={emptyDescription} />
-        {/if}
-    </section>
+
+                    {#each visibleCategories as category, index (category.id)}
+                        <li animate:flip={{ duration: 200 }}>
+                            <div
+                                {@attach draggable(index)}
+                                {@attach dropZone(index + 1)}
+                                class="border-border-card bg-bg-card rounded-lg border-1 p-1">
+                                {#if !filter.record}
+                                    <i
+                                        data-drag-handle
+                                        aria-hidden="true"
+                                        class="fa-solid fa-grip inline-block rotate-90 px-1 select-none {draggableIndex ===
+                                        index
+                                            ? 'cursor-grabbing'
+                                            : 'cursor-grab'}"></i>
+                                {/if}
+                                <Badge color={category.color} icon={category.icon}>
+                                    {category.name}
+                                </Badge>
+                            </div>
+
+                            {@render placeholder(index + 1)}
+                        </li>
+                    {/each}
+                </ul>
+            {:else}
+                <Empty header={emptyHeader} description={emptyDescription} />
+            {/if}
+        </section>
+    {/if}
 </Page>

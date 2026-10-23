@@ -45,6 +45,20 @@ public class CategoryController {
         return repository.save(handle, category);
     }
 
+    @POST("/category/batch")
+    public List<Category> createBatch(Context ctx) {
+        final Handle handle = ctx.require(Handle.class);
+        final CategoryBatch batch = ctx.body(CategoryBatch.class);
+
+        if (batch == null) {
+            throw new IllegalArgumentException("body is required");
+        }
+
+        CategoryValidation.validateForBatch(handle, repository, batch.items);
+
+        return repository.saveAll(handle, batch.items);
+    }
+
     @PUT("/category")
     public Category update(Context ctx) {
         final Handle handle = ctx.require(Handle.class);

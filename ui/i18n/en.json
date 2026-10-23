@@ -4,6 +4,33 @@
         "budget": "Budget",
         "categories": "Categories"
     },
+    "categories": {
+        "description": "Manage expense and income categories",
+        "filter": {
+            "all": "All",
+            "expenses": "Expenses",
+            "income": "Income"
+        },
+        "section": {
+            "all": "All categories",
+            "expenses": "Expenses",
+            "income": "Income"
+        },
+        "empty": {
+            "all": {
+                "header": "No categories yet",
+                "description": "Categories will appear here once they are added"
+            },
+            "expenses": {
+                "header": "No expense categories yet",
+                "description": "Expense categories will appear here once they are added"
+            },
+            "income": {
+                "header": "No income categories yet",
+                "description": "Income categories will appear here once they are added"
+            }
+        }
+    },
     "activity": {
         "title": "Activity",
         "description": "Review your income and expenses for the selected period",

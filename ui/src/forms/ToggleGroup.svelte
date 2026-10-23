@@ -27,6 +27,12 @@
             class={selected(option) ? "active" : ""}
             onclick={() => {
                 chosen = option;
-            }}>{option.name}</button>
+            }}>
+            <span>{option.name}</span>
+
+            {#if option.badge != undefined}
+                <span class="toggle-badge">{option.badge}</span>
+            {/if}
+        </button>
     {/each}
 </div>

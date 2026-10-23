@@ -1,7 +1,11 @@
 <script lang="ts">
     import type { CategoryIcon } from "@ui/categories/icons";
     import Badge from "@ui/components/Badge.svelte";
+    import Empty from "@ui/components/Empty.svelte";
     import Page from "@ui/layout/Page.svelte";
+    import { _ } from "@ui/i18n";
+    import ToggleGroup from "@ui/forms/ToggleGroup.svelte";
+    import type { SelectOption } from "@ui/forms/types";
     import { TransactionType, type Category } from "@ui/types";
     import { onDestroy, onMount } from "svelte";
     import { flip } from "svelte/animate";
@@ -28,6 +32,57 @@
         starter(6, "Mobile", "#26a69a", "mobile"),
         starter(7, "Household", "#8d6e63", "household"),
     ]);
+
+    let filter = $state<SelectOption<TransactionType | undefined>>({ name: "", record: undefined });
+
+    let expenseCategories = $derived(categories.filter((it) => it.operation === TransactionType.EXPENSE));
+    let incomeCategories = $derived(categories.filter((it) => it.operation === TransactionType.INCOME));
+    
+    let visibleCategories = $derived(
+        filter.record === TransactionType.EXPENSE
+            ? expenseCategories
+            : filter.record === TransactionType.INCOME
+              ? incomeCategories
+              : categories,
+    );
+
+    let filterOptions = $derived<SelectOption<TransactionType | undefined>[]>([
+        { name: _("categories.filter.all"), record: undefined, badge: categories.length },
+        {
+            name: _("categories.filter.expenses"),
+            record: TransactionType.EXPENSE,
+            badge: expenseCategories.length,
+        },
+        {
+            name: _("categories.filter.income"),
+            record: TransactionType.INCOME,
+            badge: incomeCategories.length,
+        },
+    ]);
+
+    let sectionTitle = $derived(
+        filter.record === TransactionType.EXPENSE
+            ? _("categories.section.expenses")
+            : filter.record === TransactionType.INCOME
+              ? _("categories.section.income")
+              : _("categories.section.all"),
+    );
+
+    let emptyHeader = $derived(
+        filter.record === TransactionType.EXPENSE
+            ? _("categories.empty.expenses.header")
+            : filter.record === TransactionType.INCOME
+              ? _("categories.empty.income.header")
+              : _("categories.empty.all.header"),
+    );
+
+    let emptyDescription = $derived(
+        filter.record === TransactionType.EXPENSE
+            ? _("categories.empty.expenses.description")
+            : filter.record === TransactionType.INCOME
+              ? _("categories.empty.income.description")
+              : _("categories.empty.all.description"),
+    );
 
     let draggableIndex = $state<number>();
     let dropIndex = $state<number>();
@@ -142,29 +197,51 @@
     </div>
 {/snippet}
 
-<Page width="narrow">
-    <div class="flex flex-col">
-        {@render placeholder(0)}
+<Page width="narrow" title={_("routes.categories")} description={_("categories.description")}>
+    <section>
+        <div class="mb-4">
+            <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
+        </div>
 
-        {#each categories as category, index (category.id)}
-            <div animate:flip={{ duration: 200 }}>
-                <div
-                    {@attach draggable(index)}
-                    {@attach dropZone(index + 1)}
-                    class="border-border-card bg-bg-card rounded-lg border-1 p-1">
-                    <i
-                        data-drag-handle
-                        aria-hidden="true"
-                        class="fa-solid fa-grip inline-block rotate-90 px-1 select-none {draggableIndex === index
-                            ? 'cursor-grabbing'
-                            : 'cursor-grab'}"></i>
-                    <Badge color={category.color} icon={category.icon}>
-                        {category.name}
-                    </Badge>
-                </div>
+        <div class="mb-2 flex items-baseline justify-between gap-2">
+            <h2 id="categories-heading" class="text-lg font-semibold">
+                {sectionTitle}
+            </h2>
+            <span class="text-sm opacity-60">{visibleCategories.length}</span>
+        </div>
 
-                {@render placeholder(index + 1)}
-            </div>
-        {/each}
-    </div>
+        {#if visibleCategories.length}
+            <ul class="m-0 flex list-none flex-col p-0" role="list" aria-labelledby="categories-heading">
+                <li aria-hidden="true">
+                    {@render placeholder(0)}
+                </li>
+
+                {#each visibleCategories as category, index (category.id)}
+                    <li animate:flip={{ duration: 200 }}>
+                        <div
+                            {@attach draggable(index)}
+                            {@attach dropZone(index + 1)}
+                            class="border-border-card bg-bg-card rounded-lg border-1 p-1">
+                            {#if !filter.record}
+                                <i
+                                    data-drag-handle
+                                    aria-hidden="true"
+                                    class="fa-solid fa-grip inline-block rotate-90 px-1 select-none {draggableIndex ===
+                                    index
+                                        ? 'cursor-grabbing'
+                                        : 'cursor-grab'}"></i>
+                            {/if}
+                            <Badge color={category.color} icon={category.icon}>
+                                {category.name}
+                            </Badge>
+                        </div>
+
+                        {@render placeholder(index + 1)}
+                    </li>
+                {/each}
+            </ul>
+        {:else}
+            <Empty header={emptyHeader} description={emptyDescription} />
+        {/if}
+    </section>
 </Page>

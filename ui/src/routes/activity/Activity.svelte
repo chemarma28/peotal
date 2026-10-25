@@ -98,7 +98,7 @@
                 <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
             </div>
 
-            {#if transactions.length && categories.size}
+            {#if categories.size}
                 <ActivitySidebar categories={[...categories.values()]} />
             {:else}
                 <Empty
@@ -118,7 +118,12 @@
 
                 <ActivitySummary />
 
-                {#if transactions.length && categories.size}
+                {#if !categories.size}
+                    <Empty
+                        {loading}
+                        header={_("activity.empty.categories.header")}
+                        description={_("activity.empty.categories.description")} />
+                {:else if transactions.length}
                     <ActivityPanel {categories} {transactions} />
                 {:else}
                     <Empty

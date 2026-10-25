@@ -11,6 +11,9 @@
     import { TransactionType, type Category } from "@ui/types";
     import { onDestroy, onMount } from "svelte";
     import { flip } from "svelte/animate";
+    import CategoryView from "./CategoryView.svelte";
+
+    let categoryViewRef: CategoryView;
 
     let categories = $state<Category[]>([]);
     let loading = $state(true);
@@ -94,6 +97,12 @@
         } finally {
             creatingDefaults = false;
         }
+    }
+
+    function onCategorySaved(saved: Category) {
+        categories = categories.some((it) => it.id === saved.id)
+            ? categories.map((it) => (it.id === saved.id ? saved : it))
+            : [...categories, saved];
     }
 
     async function persistOrder() {
@@ -281,6 +290,7 @@
                                 <div>
                                     <button
                                         type="button"
+                                        onclick={() => categoryViewRef?.show(category)}
                                         class="icon"
                                         aria-label={_("categories.action.edit")}
                                         title={_("categories.action.edit")}>
@@ -299,3 +309,5 @@
         </section>
     {/if}
 </Page>
+
+<CategoryView bind:this={categoryViewRef} onSave={onCategorySaved}></CategoryView>

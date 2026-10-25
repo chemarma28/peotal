@@ -98,6 +98,10 @@
         @apply bg-bg-toggle-pressed;
     }
 
+    .toggle-group button:disabled {
+        @apply pointer-events-none opacity-60;
+    }
+
     .toggle-group button.active {
         @apply bg-bg-toggle-active;
     }
@@ -123,6 +127,10 @@
 
     .form-currency-control select {
         @apply focus:outline-border-focus rounded-lg focus:outline-1;
+    }
+
+    .form-control:has(input[readonly]) {
+        @apply bg-zinc-50;
     }
 }
 

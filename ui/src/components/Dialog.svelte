@@ -60,7 +60,7 @@
     oncancel={cancel}
     onmousedown={pointerDown}
     onclick={click}
-    onclose={onclose}>
+    {onclose}>
     <form autocomplete="off" class="flex flex-col gap-4" onsubmit={submit}>
         <header class="flex items-center justify-between">
             <h5 id={titleId} class="font-semibold">{title}</h5>

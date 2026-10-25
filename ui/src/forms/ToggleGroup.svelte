@@ -6,6 +6,8 @@
         options: SelectOption<T>[];
         key?: SelectionKey<T>;
         styleClass?: string;
+        label?: string;
+        disabled?: boolean;
     };
 
     let {
@@ -13,18 +15,21 @@
         options,
         key = (o) => o.record,
         styleClass,
+        label,
+        disabled = false,
     }: Props = $props();
 
     const selected = (option: SelectOption<T>) => chosen != null && key(option) === key(chosen);
 </script>
 
-<div class="toggle-group {styleClass}" role="radiogroup">
+<div class="toggle-group {styleClass}" role="radiogroup" aria-label={label}>
     {#each options as option}
         <button
             type="button"
             role="radio"
             aria-checked={selected(option)}
             class={selected(option) ? "active" : ""}
+            {disabled}
             onclick={() => {
                 chosen = option;
             }}>

@@ -7,6 +7,7 @@
     import SelectField from "@ui/forms/SelectField.svelte";
     import ToggleGroup from "@ui/forms/ToggleGroup.svelte";
     import type { SelectOption } from "@ui/forms/types";
+    import Dialog from "@ui/components/Dialog.svelte";
     import type { Category, Transaction } from "@ui/types";
     import { Currency, TransactionType } from "@ui/types";
 
@@ -38,7 +39,7 @@
         description: "",
     });
 
-    let dialogRef = $state<HTMLDialogElement>();
+    let dialogRef = $state<Dialog>();
 
     let transaction = $state<TransactionDraft>(empty());
     let operation = $state<SelectOption<TransactionType> | undefined>(
@@ -51,16 +52,14 @@
         operation = operationOptions.find((o) => o.record === transaction.operation);
         category = categoryOptions.find((o) => o.record.id === transaction.categoryId);
 
-        dialogRef?.showModal();
+        dialogRef?.show();
     }
 
     export function close() {
         dialogRef?.close();
     }
 
-    async function save(e: SubmitEvent) {
-        e.preventDefault();
-
+    async function save() {
         const categoryId = category?.record.id;
         if (categoryId === undefined) return;
 
@@ -75,53 +74,43 @@
     }
 </script>
 
-<dialog bind:this={dialogRef} class="font-inherit p-3 text-inherit">
-    <form autocomplete="off" class="flex flex-col gap-4" onsubmit={save}>
-        <header class="flex items-center justify-between">
-            <h5 class="font-semibold">{_("transaction.title.new")}</h5>
+<Dialog bind:this={dialogRef} title={_("transaction.title.new")} onsubmit={save}>
+    <ToggleGroup bind:chosen={operation} options={operationOptions}></ToggleGroup>
 
-            <button type="button" class="icon" aria-label={_("common.close")} title={_("common.close")} onclick={close}>
-                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-            </button>
-        </header>
+    <DateField id="date" label={_("transaction.labels.issued")} bind:value={transaction.issued} />
 
-        <div class="flex flex-col gap-2">
-            <ToggleGroup bind:chosen={operation} options={operationOptions}></ToggleGroup>
+    <SelectField
+        id="category"
+        label={_("transaction.labels.category")}
+        required
+        placeholder={_("transaction.placeholders.category")}
+        options={categoryOptions}
+        key={(o) => o.record.id}
+        bind:chosen={category}
+        validator={(value) => (value ? "" : _("transaction.errors.category"))}>
+    </SelectField>
 
-            <DateField id="date" label={_("transaction.labels.issued")} bind:value={transaction.issued} />
+    <CurrencyField
+        amountId="amount"
+        currencyId="currency"
+        label={_("transaction.labels.currency")}
+        required
+        bind:amount={transaction.amount}
+        bind:currency={transaction.currency}
+        validator={(value) => {
+            if ((value as number) <= 0) return _("transaction.errors.currency");
+        }}>
+    </CurrencyField>
 
-            <SelectField
-                id="category"
-                label={_("transaction.labels.category")}
-                required
-                placeholder={_("transaction.placeholders.category")}
-                options={categoryOptions}
-                key={(o) => o.record.id}
-                bind:chosen={category}
-                validator={(value) => (value ? "" : _("transaction.errors.category"))}>
-            </SelectField>
+    <InputField
+        id="description"
+        label={_("transaction.labels.description")}
+        placeholder={_("transaction.placeholders.description")}
+        required
+        bind:value={transaction.description}>
+    </InputField>
 
-            <CurrencyField
-                amountId="amount"
-                currencyId="currency"
-                label={_("transaction.labels.currency")}
-                required
-                bind:amount={transaction.amount}
-                bind:currency={transaction.currency}
-                validator={(value) => {
-                    if ((value as number) <= 0) return _("transaction.errors.currency");
-                }}>
-            </CurrencyField>
-
-            <InputField
-                id="description"
-                label={_("transaction.labels.description")}
-                placeholder={_("transaction.placeholders.description")}
-                required
-                bind:value={transaction.description}>
-            </InputField>
-        </div>
-
+    {#snippet footer()}
         <button class="primary w-full" type="submit">{_("transaction.save")}</button>
-    </form>
-</dialog>
+    {/snippet}
+</Dialog>

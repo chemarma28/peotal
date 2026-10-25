@@ -22,7 +22,8 @@
 
 <div class="mx-auto w-full {WIDTHS[width]}">
     {#if title || description || actions}
-        <header class="mb-4 flex flex-col gap-3 border-b border-border-card pb-3 sm:flex-row sm:items-start sm:justify-between">
+        <header
+            class="border-border-card mb-4 flex flex-col gap-3 border-b pb-3 sm:flex-row sm:items-start sm:justify-between">
             <div class="min-w-0">
                 {#if title}
                     <h1 class="text-2xl font-semibold tracking-tight">{title}</h1>

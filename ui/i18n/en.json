@@ -10,6 +10,9 @@
             "description": "Sign in to manage your income and expenses"
         }
     },
+    "common": {
+        "close": "Close"
+    },
     "categories": {
         "description": "Manage expense and income categories",
         "filter": {
@@ -24,7 +27,8 @@
         },
         "action": {
             "createDefaults": "Create defaults",
-            "retry": "Retry"
+            "retry": "Retry",
+            "edit": "Edit"
         },
         "empty": {
             "all": {

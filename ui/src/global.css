@@ -53,22 +53,36 @@
 
     --color-bg-button-primary: #716898;
     --color-bg-button-primary-hover: color-mix(in srgb, #fff 10%, #716898);
+    --color-bg-button-primary-pressed: color-mix(in srgb, #000 12%, #716898);
 
     --color-bg-button-secondary: #7c7792;
     --color-text-button-secondary: #fff;
     --color-bg-button-secondary-hover: #9d99ae;
+    --color-bg-button-secondary-pressed: color-mix(in srgb, #000 12%, #7c7792);
 
     --color-bg-toggle-active: #d1d8e6;
     --color-bg-toggle-hover: color-mix(in srgb, #fff 60%, #d1d8e6);
+    --color-bg-toggle-pressed: color-mix(in srgb, #000 10%, #d1d8e6);
 }
 
 @layer components {
     button.primary {
-        @apply shrink-0 text-nowrap bg-bg-button-primary hover:bg-bg-button-primary-hover box-border rounded-lg border-0 border-solid p-1 text-white;
+        @apply bg-bg-button-primary hover:bg-bg-button-primary-hover active:bg-bg-button-primary-pressed box-border shrink-0 rounded-lg border-0 border-solid p-1 text-nowrap text-white;
+        @apply outline-bg-button-primary focus-visible:outline-2 focus-visible:outline-offset-2;
+        @apply disabled:pointer-events-none disabled:opacity-40;
     }
 
     button.secondary {
-        @apply text-text-button-secondary bg-bg-button-secondary hover:bg-bg-button-secondary-hover box-border rounded-lg border-0 border-solid p-1;
+        @apply text-text-button-secondary bg-bg-button-secondary hover:bg-bg-button-secondary-hover active:bg-bg-button-secondary-pressed box-border rounded-lg border-0 border-solid p-1;
+        @apply outline-bg-button-secondary focus-visible:outline-2 focus-visible:outline-offset-2;
+        @apply disabled:pointer-events-none disabled:opacity-40;
+    }
+
+    button.icon {
+        @apply inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent p-0 text-sm select-none;
+        @apply hover:bg-bg-toggle-active active:bg-bg-toggle-pressed transition-colors;
+        @apply outline-border-focus focus-visible:outline-2 focus-visible:outline-offset-1;
+        @apply disabled:pointer-events-none disabled:opacity-40;
     }
 
     .toggle-group {
@@ -76,8 +90,12 @@
     }
 
     .toggle-group button {
-        @apply outline-border-focus inline-flex w-full items-center justify-center gap-1.5 p-1 first:rounded-l-lg last:rounded-r-lg focus:outline focus:outline-2;
+        @apply outline-border-focus inline-flex w-full items-center justify-center gap-1.5 p-1 first:rounded-l-lg last:rounded-r-lg focus-visible:outline-2 focus-visible:-outline-offset-2;
         @apply hover:bg-bg-toggle-hover;
+    }
+
+    .toggle-group button:active:not(.active) {
+        @apply bg-bg-toggle-pressed;
     }
 
     .toggle-group button.active {
@@ -85,7 +103,7 @@
     }
 
     .toggle-badge {
-        @apply inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-zinc-200 px-1 text-xs font-semibold leading-none tabular-nums;
+        @apply inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-zinc-200 px-1 text-xs leading-none font-semibold tabular-nums;
     }
 
     .toggle-group button.active .toggle-badge {
@@ -94,7 +112,7 @@
 
     .form-control {
         @apply border-border-default w-full rounded-lg border-1 p-1;
-        @apply has-focus:outline-border-focus has-focus:border-transparent has-focus:outline-2;
+        @apply focus-within:outline-border-focus focus-within:border-transparent focus-within:outline-2;
     }
 
     .form-control input,

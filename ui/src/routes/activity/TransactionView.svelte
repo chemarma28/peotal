@@ -80,8 +80,8 @@
         <header class="flex items-center justify-between">
             <h5 class="font-semibold">{_("transaction.title.new")}</h5>
 
-            <button type="button" class="text-lg" aria-label="Close dialog" onclick={close}>
-                <i class="fa-solid fa-xmark"></i>
+            <button type="button" class="icon" aria-label={_("common.close")} title={_("common.close")} onclick={close}>
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
         </header>
 

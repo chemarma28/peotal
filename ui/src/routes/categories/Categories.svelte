@@ -97,9 +97,7 @@
     }
 
     async function persistOrder() {
-        const items = categories
-            .filter((it) => it.id !== undefined)
-            .map((it, ordinal) => ({ id: it.id, ordinal }));
+        const items = categories.filter((it) => it.id !== undefined).map((it, ordinal) => ({ id: it.id, ordinal }));
 
         try {
             categories = await api.put<Category[]>("category/order", { items });
@@ -264,19 +262,31 @@
                             <div
                                 {@attach draggable(index)}
                                 {@attach dropZone(index + 1)}
-                                class="border-border-card bg-bg-card rounded-lg border-1 p-1">
-                                {#if !filter.record}
-                                    <i
-                                        data-drag-handle
-                                        aria-hidden="true"
-                                        class="fa-solid fa-grip inline-block rotate-90 px-1 select-none {draggableIndex ===
-                                        index
-                                            ? 'cursor-grabbing'
-                                            : 'cursor-grab'}"></i>
-                                {/if}
-                                <Badge color={category.color} icon={category.icon}>
-                                    {category.name}
-                                </Badge>
+                                class="border-border-card bg-bg-card flex items-center justify-between rounded-lg border-1 p-1">
+                                <div>
+                                    {#if !filter.record}
+                                        <i
+                                            data-drag-handle
+                                            aria-hidden="true"
+                                            class="fa-solid fa-grip inline-block rotate-90 px-1 select-none {draggableIndex ===
+                                            index
+                                                ? 'cursor-grabbing'
+                                                : 'cursor-grab'}"></i>
+                                    {/if}
+                                    <Badge color={category.color} icon={category.icon}>
+                                        {category.name}
+                                    </Badge>
+                                </div>
+
+                                <div>
+                                    <button
+                                        type="button"
+                                        class="icon"
+                                        aria-label={_("categories.action.edit")}
+                                        title={_("categories.action.edit")}>
+                                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             {@render placeholder(index + 1)}

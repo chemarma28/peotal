@@ -1,5 +1,6 @@
 <script lang="ts">
     import { fly } from "svelte/transition";
+    import { _ } from "@ui/i18n";
     import { hideToast, toasts, ToastVariant } from "./toasts";
 </script>
 
@@ -29,12 +30,13 @@
                     <div class="shrink-0">
                         <button
                             type="button"
-                            class="cursor-pointer text-sm"
-                            aria-label="close toast"
+                            class="icon"
+                            aria-label={_("common.close")}
+                            title={_("common.close")}
                             onclick={() => {
                                 hideToast(toast);
                             }}>
-                            <i class="fa-solid fa-xmark"></i>
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>

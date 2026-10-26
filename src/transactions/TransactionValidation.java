@@ -13,7 +13,23 @@ public final class TransactionValidation {
     private TransactionValidation() {
     }
 
-    public static void validate(Handle handle, CategoryRepository categories, Transaction transaction) {
+    public static void validateForCreate(Handle handle, CategoryRepository categories, Transaction transaction) {
+        if (transaction.id != null) {
+            throw new IllegalArgumentException("id must not be set when creating a transaction");
+        }
+
+        validate(handle, categories, transaction);
+    }
+
+    public static void validateForUpdate(Handle handle, CategoryRepository categories, Transaction transaction) {
+        if (transaction.id == null) {
+            throw new IllegalArgumentException("id is required to update a transaction");
+        }
+
+        validate(handle, categories, transaction);
+    }
+
+    private static void validate(Handle handle, CategoryRepository categories, Transaction transaction) {
         if (transaction.operation == null) {
             throw new IllegalArgumentException("operation is required");
         }
@@ -34,8 +50,12 @@ public final class TransactionValidation {
             throw new IllegalArgumentException("currency is required");
         }
 
-        if (transaction.description == null || transaction.description.isBlank()) {
-            throw new IllegalArgumentException("description is required");
+        if (transaction.description != null) {
+            transaction.description = transaction.description.trim();
+
+            if (transaction.description.isEmpty()) {
+                transaction.description = null;
+            }
         }
 
         if (transaction.categoryId == null) {

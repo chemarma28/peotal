@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     issued DATE NOT NULL,
     amount DECIMAL(19, 5) NOT NULL,
-    `description` VARCHAR(255) NOT NULL,
+    `description` VARCHAR(255),
     operation ENUM('EXPENSE', 'INCOME') NOT NULL,
     category_id BIGINT NOT NULL,
     currency VARCHAR(3) NOT NULL,

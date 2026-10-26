@@ -18,7 +18,10 @@
 
     let { onSave, categories }: Props = $props();
 
-    type TransactionDraft = Omit<Transaction, "categoryId"> & { categoryId?: number };
+    type TransactionDraft = Omit<Transaction, "categoryId" | "description"> & {
+        categoryId?: number;
+        description: string;
+    };
 
     const DEFAULT_OPERATION = TransactionType.EXPENSE;
 
@@ -27,8 +30,14 @@
         record,
     }));
 
+    let operation = $state<SelectOption<TransactionType> | undefined>(
+        operationOptions.find((o) => o.record === DEFAULT_OPERATION),
+    );
+
     const categoryOptions = $derived<SelectOption<Category>[]>(
-        categories.map((record) => ({ name: record.name, record })),
+        categories
+            .filter((record) => !operation || record.operation === operation.record)
+            .map((record) => ({ name: record.name, record })),
     );
 
     const empty = (): TransactionDraft => ({
@@ -42,15 +51,23 @@
     let dialogRef = $state<Dialog>();
 
     let transaction = $state<TransactionDraft>(empty());
-    let operation = $state<SelectOption<TransactionType> | undefined>(
-        operationOptions.find((o) => o.record === DEFAULT_OPERATION),
-    );
     let category = $state<SelectOption<Category> | undefined>();
 
+    let isNew = $derived(transaction.id === undefined);
+    let hasCategories = $derived(categoryOptions.length > 0);
+
+    $effect(() => {
+        if (category && operation && category.record.operation !== operation.record) {
+            category = undefined;
+        }
+    });
+
     export function show(it?: Transaction) {
-        transaction = it ? { ...it } : empty();
+        transaction = it ? { ...it, description: it.description ?? "" } : empty();
         operation = operationOptions.find((o) => o.record === transaction.operation);
-        category = categoryOptions.find((o) => o.record.id === transaction.categoryId);
+
+        const selected = categories.find((o) => o.id === transaction.categoryId);
+        category = selected ? { name: selected.name, record: selected } : undefined;
 
         dialogRef?.show();
     }
@@ -61,20 +78,28 @@
 
     async function save() {
         const categoryId = category?.record.id;
-        if (categoryId === undefined) return;
+        if (categoryId === undefined || !operation) return;
 
         const payload: Transaction = {
             ...transaction,
-            operation: operation!.record,
+            operation: operation.record,
             categoryId,
+            description: transaction.description?.trim() || undefined,
         };
 
-        onSave(await api.post<Transaction>("transaction", payload));
+        const saved = isNew
+            ? await api.post<Transaction>("transaction", payload)
+            : await api.put<Transaction>("transaction", payload);
+
+        onSave(saved);
         close();
     }
 </script>
 
-<Dialog bind:this={dialogRef} title={_("transaction.title.new")} onsubmit={save}>
+<Dialog
+    bind:this={dialogRef}
+    title={isNew ? _("transaction.title.new") : _("transaction.title.edit")}
+    onsubmit={save}>
     <ToggleGroup bind:chosen={operation} options={operationOptions}></ToggleGroup>
 
     <DateField id="date" label={_("transaction.labels.issued")} bind:value={transaction.issued} />
@@ -89,6 +114,10 @@
         bind:chosen={category}
         validator={(value) => (value ? "" : _("transaction.errors.category"))}>
     </SelectField>
+
+    {#if !hasCategories}
+        <p class="text-sm text-red-700">{_("transaction.errors.noCategory")}</p>
+    {/if}
 
     <CurrencyField
         amountId="amount"
@@ -106,11 +135,12 @@
         id="description"
         label={_("transaction.labels.description")}
         placeholder={_("transaction.placeholders.description")}
-        required
         bind:value={transaction.description}>
     </InputField>
 
     {#snippet footer()}
-        <button class="primary w-full" type="submit">{_("transaction.save")}</button>
+        <button class="primary w-full" type="submit" disabled={!hasCategories}>
+            {_("transaction.save")}
+        </button>
     {/snippet}
 </Dialog>

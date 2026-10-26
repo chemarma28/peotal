@@ -15,6 +15,7 @@ public class Transaction {
 
     @Nullable
     public Long id;
+    @Nullable
     public String description;
     public LocalDate issued;
     public TransactionType operation;

@@ -9,9 +9,10 @@
     type Props = {
         categories: Map<number, Category>;
         transactions: Transaction[];
+        onEdit: (transaction: Transaction) => void;
     };
 
-    let { categories, transactions = $bindable<Transaction[]>() }: Props = $props();
+    let { categories, transactions = $bindable<Transaction[]>(), onEdit }: Props = $props();
     let dailyTransactions = $state<DailyTransactions[]>([]);
 
     const findCategory = (categoryId?: number) => (categoryId ? categories.get(categoryId) : undefined);
@@ -35,9 +36,6 @@
                         <thead>
                             <tr>
                                 <th class="border-border-card border-b-1 py-1 pl-2 text-left">
-                                    {_("activity.panel.description")}
-                                </th>
-                                <th class="border-border-card w-12 border-b-1 py-1">
                                     {_("activity.panel.category")}
                                 </th>
                                 <th class="border-border-card border-b-1 py-1 pr-2 text-right">
@@ -49,17 +47,20 @@
                         <tbody>
                             {#each daily.transactions as transaction}
                                 {@const transactionCategory = findCategory(transaction.categoryId)}
-                                <tr class="">
-                                    <td class="border-border-card/50 border-b-1 py-2 pl-2">
-                                        {transaction.description}
-                                    </td>
-
-                                    <td class="border-border-card/50 border-b-1 py-2 text-center">
-                                        <Badge
-                                            color={transactionCategory?.color ?? "#a8b7d1"}
-                                            icon={transactionCategory?.icon}>
-                                            {transactionCategory?.name ?? "No Category"}
-                                        </Badge>
+                                <tr>
+                                    <td class="border-border-card/50 border-b-1 py-2 pl-2 text-left">
+                                        <button
+                                            type="button"
+                                            class="cursor-pointer rounded-full"
+                                            aria-label={_("activity.action.editTransaction")}
+                                            title={_("activity.action.editTransaction")}
+                                            onclick={() => onEdit(transaction)}>
+                                            <Badge
+                                                color={transactionCategory?.color ?? "#a8b7d1"}
+                                                icon={transactionCategory?.icon}>
+                                                {transactionCategory?.name ?? "No Category"}
+                                            </Badge>
+                                        </button>
                                     </td>
 
                                     <td class="border-border-card/50 border-b-1 py-2 pr-2 text-right">
@@ -74,7 +75,6 @@
                                 <td class="pl-2">
                                     {_("activity.panel.summary")}
                                 </td>
-                                <td></td>
                                 <td class="pr-2 text-right">$120</td>
                             </tr>
                         </tfoot>

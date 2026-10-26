@@ -2,6 +2,8 @@ package transactions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -51,6 +53,40 @@ class TransactionRepositoryTest extends RepositoryTest {
         assertEquals(category.id, loaded.categoryId);
         assertEquals(Currency.USD, loaded.currency);
         assertEquals(0, new BigDecimal("12.34").compareTo(loaded.amount));
+    }
+
+    @Test
+    void saveAllowsNullDescription() {
+        final Category category = CATEGORIES.save(handle, EXPENSE_CATEGORY);
+
+        final Transaction saved = TRANSACTIONS.save(handle, Fixtures.transaction(
+                null, MIDDLE, TransactionType.EXPENSE, category.id, new BigDecimal("12.34"), Currency.USD));
+
+        final Transaction loaded = TRANSACTIONS.find(handle, saved.id).orElseThrow();
+
+        assertNull(loaded.description);
+    }
+
+    @Test
+    void saveUpdatesExistingTransaction() {
+        final Category category = CATEGORIES.save(handle, EXPENSE_CATEGORY);
+        final Transaction saved = TRANSACTIONS.save(handle, Fixtures.transaction(
+                "lunch", MIDDLE, TransactionType.EXPENSE, category.id, new BigDecimal("12.34"), Currency.USD));
+
+        saved.description = "dinner";
+        saved.amount = new BigDecimal("25.00");
+        TRANSACTIONS.save(handle, saved);
+
+        final Transaction loaded = TRANSACTIONS.find(handle, saved.id).orElseThrow();
+
+        assertEquals("dinner", loaded.description);
+        assertEquals(0, new BigDecimal("25.00").compareTo(loaded.amount));
+        assertEquals(1, TRANSACTIONS.list(handle, MIDDLE, MIDDLE).size());
+    }
+
+    @Test
+    void findReturnsEmptyForMissingTransaction() {
+        assertTrue(TRANSACTIONS.find(handle, 999L).isEmpty());
     }
 
     @Test

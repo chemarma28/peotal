@@ -2,7 +2,6 @@
     import { onMount, getContext } from "svelte";
     import ActivityPanel from "./ActivityPanel.svelte";
     import ActivitySidebar from "./ActivitySidebar.svelte";
-    import ActivitySummary from "./ActivitySummary.svelte";
     import TransactionView from "./TransactionView.svelte";
     import api from "@ui/api";
     import { type Category, type Transaction, TransactionType } from "@ui/types";
@@ -92,8 +91,8 @@
         <MonthPicker bind:begin stretch></MonthPicker>
     </div>
 
-    <div class="grid grid-cols-1 gap-8 lg:grid-cols-[18rem_minmax(0,1fr)]">
-        <aside class="lg:sticky lg:top-4 lg:self-start">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-[22rem_minmax(0,1fr)]">
+        <aside class="lg:self-start">
             <div class="mb-2">
                 <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
             </div>
@@ -116,15 +115,16 @@
                     </button>
                 </div>
 
-                <ActivitySummary />
-
                 {#if !categories.size}
                     <Empty
                         {loading}
                         header={_("activity.empty.categories.header")}
                         description={_("activity.empty.categories.description")} />
                 {:else if transactions.length}
-                    <ActivityPanel {categories} {transactions} />
+                    <ActivityPanel
+                        {categories}
+                        {transactions}
+                        onEdit={(transaction) => transactionViewRef.show(transaction)} />
                 {:else}
                     <Empty
                         {loading}

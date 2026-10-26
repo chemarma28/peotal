@@ -113,8 +113,10 @@
                 "transaction": "Add transaction"
             }
         },
+        "action": {
+            "editTransaction": "Edit transaction"
+        },
         "panel": {
-            "description": "Description",
             "category": "Category",
             "amount": "Amount",
             "summary": "Summary"
@@ -126,16 +128,12 @@
             "label": "Period",
             "month": "Month",
             "year": "Year"
-        },
-        "summary": {
-            "transactions": "Transactions",
-            "income": "Income",
-            "expenses": "Expenses"
         }
     },
     "transaction": {
         "title": {
-            "new": "New Transaction"
+            "new": "New Transaction",
+            "edit": "Edit Transaction"
         },
         "labels": {
             "issued": "Issued",
@@ -145,11 +143,12 @@
         },
         "placeholders": {
             "category": "Select a category",
-            "description": "Enter some notes"
+            "description": "Optional note"
         },
         "errors": {
             "category": "Please select an option",
-            "currency": "The value must be greater than 0"
+            "currency": "The value must be greater than 0",
+            "noCategory": "Create a category for this transaction type first"
         },
         "save": "Save"
     },

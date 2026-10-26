@@ -2,6 +2,7 @@ package transactions;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.jdbi.v3.core.Handle;
 
@@ -9,6 +10,7 @@ import categories.CategoryRepository;
 import io.jooby.Context;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.POST;
+import io.jooby.annotation.PUT;
 import io.jooby.annotation.Path;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -40,7 +42,19 @@ public class TransactionController {
         final Handle handle = ctx.require(Handle.class);
         final Transaction transaction = ctx.body(Transaction.class);
 
-        TransactionValidation.validate(handle, categories, transaction);
+        TransactionValidation.validateForCreate(handle, categories, transaction);
+
+        return repository.save(handle, transaction);
+    }
+
+    @PUT("/transaction")
+    public Transaction update(Context ctx) {
+        final Handle handle = ctx.require(Handle.class);
+        final Transaction transaction = ctx.body(Transaction.class);
+
+        TransactionValidation.validateForUpdate(handle, categories, transaction);
+
+        repository.find(handle, transaction.id).orElseThrow(NoSuchElementException::new);
 
         return repository.save(handle, transaction);
     }

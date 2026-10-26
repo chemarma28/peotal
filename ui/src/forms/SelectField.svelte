@@ -12,6 +12,7 @@
         placeholder?: string;
         key?: SelectionKey<T>;
         validator?: (value?: SelectOption<T>) => string | undefined;
+        disabled?: boolean;
     };
 
     let {
@@ -23,6 +24,7 @@
         placeholder,
         key = (o) => o.record,
         validator,
+        disabled = false,
     }: Props = $props();
 
     let elementRef = $state<HTMLSelectElement>();
@@ -41,8 +43,14 @@
 </script>
 
 <FormField {id} {label} {required}>
-    <div class="form-control">
-        <select bind:this={elementRef} {id} {required} value={index < 0 ? "" : String(index)} onchange={pick}>
+    <div class="form-control {disabled ? 'bg-zinc-100 opacity-60' : ''}">
+        <select
+            bind:this={elementRef}
+            {id}
+            {required}
+            {disabled}
+            value={index < 0 ? "" : String(index)}
+            onchange={pick}>
             <option value="" disabled>{placeholder ?? _("forms.select.undefined")}</option>
 
             {#each options as option, i}

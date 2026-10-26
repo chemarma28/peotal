@@ -32,6 +32,9 @@
         "preview": {
             "name": "Category"
         },
+        "color": {
+            "custom": "Custom"
+        },
         "filter": {
             "all": "All",
             "expenses": "Expenses",
@@ -69,10 +72,8 @@
             "defaultsCreated": "Default categories created",
             "defaultsFailed": "Could not create default categories",
             "orderFailed": "Could not save category order",
-            "created": "Category created",
-            "createFailed": "Could not create category",
-            "updated": "Category updated",
-            "updateFailed": "Could not update category"
+            "saved": "Category saved",
+            "failed": "Could not save category"
         }
     },
     "activity": {

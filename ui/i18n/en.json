@@ -12,6 +12,7 @@
     },
     "common": {
         "close": "Close",
+        "continue": "Continue",
         "save": "Save"
     },
     "categories": {
@@ -19,6 +20,11 @@
         "title": {
             "new": "New Category",
             "edit": "Edit Category"
+        },
+        "button": {
+            "add": {
+                "category": "Add category"
+            }
         },
         "labels": {
             "name": "Name",
@@ -48,7 +54,15 @@
         "action": {
             "createDefaults": "Create defaults",
             "retry": "Retry",
-            "edit": "Edit"
+            "edit": "Edit",
+            "delete": "Delete category"
+        },
+        "danger": {
+            "title": "More"
+        },
+        "delete": {
+            "title": "Delete category?",
+            "description": "This category will be deleted. This action cannot be undone"
         },
         "empty": {
             "all": {
@@ -73,7 +87,9 @@
             "defaultsFailed": "Could not create default categories",
             "orderFailed": "Could not save category order",
             "saved": "Category saved",
-            "failed": "Could not save category"
+            "failed": "Could not save category",
+            "deleted": "Category deleted",
+            "deleteFailed": "Could not delete category"
         }
     },
     "activity": {

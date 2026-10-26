@@ -175,8 +175,8 @@ tasks.register("types") {
                     def converted = convert.invoke(converter, type)
 
                     if (converted != null) {
-                        output.append("// ").append(className).append(System.lineSeparator())
-                        output.append("export ").append(converted).append(System.lineSeparator())
+                        output.append("// ").append(className).append('\n')
+                        output.append("export ").append(converted).append('\n')
                     }
                 }
             }

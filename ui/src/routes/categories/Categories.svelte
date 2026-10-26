@@ -9,9 +9,10 @@
     import type { SelectOption } from "@ui/forms/types";
     import Page from "@ui/layout/Page.svelte";
     import { TransactionType, type Category } from "@ui/types";
-    import { onDestroy, onMount } from "svelte";
+    import { getContext, onDestroy, onMount } from "svelte";
     import { flip } from "svelte/animate";
     import CategoryView from "./CategoryView.svelte";
+    import { HEADER_ACTION, type HeaderActionStore } from "@ui/layout/headerAction";
 
     let categoryViewRef: CategoryView;
 
@@ -20,7 +21,8 @@
     let loadError = $state(false);
     let creatingDefaults = $state(false);
 
-    let filter = $state<SelectOption<TransactionType | undefined>>({ name: "", record: undefined });
+    const NO_FILTER = { name: "", record: undefined };
+    let filter = $state<SelectOption<TransactionType | undefined>>(NO_FILTER);
 
     let expenseCategories = $derived(categories.filter((it) => it.operation === TransactionType.EXPENSE));
     let incomeCategories = $derived(categories.filter((it) => it.operation === TransactionType.INCOME));
@@ -47,14 +49,6 @@
         },
     ]);
 
-    let sectionTitle = $derived(
-        filter.record === TransactionType.EXPENSE
-            ? _("categories.section.expenses")
-            : filter.record === TransactionType.INCOME
-              ? _("categories.section.income")
-              : _("categories.section.all"),
-    );
-
     let emptyHeader = $derived(
         filter.record === TransactionType.EXPENSE
             ? _("categories.empty.expenses.header")
@@ -70,6 +64,18 @@
               ? _("categories.empty.income.description")
               : _("categories.empty.all.description"),
     );
+
+    const headerAction = getContext<HeaderActionStore>(HEADER_ACTION);
+
+    $effect(() => {
+        headerAction.set({
+            icon: "fa-solid fa-plus",
+            label: _("categories.button.add.category"),
+            onClick: () => categoryViewRef.show(undefined, filter.record ?? TransactionType.EXPENSE),
+        });
+
+        return () => headerAction.set(undefined);
+    });
 
     async function loadCategories() {
         loading = true;
@@ -103,6 +109,15 @@
         categories = categories.some((it) => it.id === saved.id)
             ? categories.map((it) => (it.id === saved.id ? saved : it))
             : [...categories, saved];
+        filter = { name: "", record: saved.operation };
+    }
+
+    function onCategoryDeleted(deleted: Category) {
+        categories = categories.filter((it) => it.id !== deleted.id);
+
+        if (categories.length === 0) {
+            filter = NO_FILTER;
+        }
     }
 
     async function persistOrder() {
@@ -246,11 +261,22 @@
                 <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
             </div>
 
-            <div class="mb-2 flex items-baseline justify-between gap-2">
+            <div class="mb-2 flex items-center justify-between gap-2">
                 <h2 id="categories-heading" class="text-lg font-semibold">
-                    {sectionTitle}
+                    {filter.record === TransactionType.EXPENSE
+                        ? _("categories.section.expenses")
+                        : filter.record === TransactionType.INCOME
+                          ? _("categories.section.income")
+                          : _("categories.section.all")}
                 </h2>
-                <span class="text-sm opacity-60">{visibleCategories.length}</span>
+
+                <div class="hidden lg:block">
+                    <button
+                        onclick={() => categoryViewRef.show(undefined, filter.record ?? TransactionType.EXPENSE)}
+                        class="primary">
+                        <i class="fa-solid fa-plus"></i>{_("categories.button.add.category")}
+                    </button>
+                </div>
             </div>
 
             {#if categories.length === 0}
@@ -310,4 +336,4 @@
     {/if}
 </Page>
 
-<CategoryView bind:this={categoryViewRef} onSave={onCategorySaved}></CategoryView>
+<CategoryView bind:this={categoryViewRef} onSave={onCategorySaved} onDelete={onCategoryDeleted}></CategoryView>

@@ -71,7 +71,7 @@
             {/if}
         </header>
 
-        <main class="p-4 pb-8">
+        <main class="p-4 pb-16">
             {@render children()}
         </main>
     </div>

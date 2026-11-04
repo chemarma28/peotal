@@ -51,7 +51,7 @@
 <div class="min-h-dvh bg-zinc-100">
     <aside
         class="border-border-card bg-bg-card hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-60 lg:flex-col lg:border-r lg:p-4">
-        <h3 class="font-bold">Quno</h3>
+        <h3 class="font-bold">Peotal</h3>
 
         <nav class="mt-6 flex flex-col gap-1">
             {#each routes as r}
@@ -62,7 +62,7 @@
 
     <div class="lg:pl-60">
         <header class="sticky top-0 z-20 flex items-center justify-between gap-2 bg-zinc-200 p-2 lg:hidden">
-            <h3 class="font-bold">Quno</h3>
+            <h3 class="font-bold">Peotal</h3>
 
             {#if headerAction}
                 <button class="primary" aria-label={headerAction.label} onclick={headerAction.onClick}>

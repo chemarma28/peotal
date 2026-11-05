@@ -18,7 +18,7 @@
         },
 
         set string(val: string) {
-            value = new Date(val).toIsoDate();
+            value = val;
         },
     };
 </script>

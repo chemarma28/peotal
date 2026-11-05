@@ -3,8 +3,9 @@
     import Accordion from "@ui/components/Accordion.svelte";
     import AccordionItem from "@ui/components/AccordionItem.svelte";
     import Badge from "@ui/components/Badge.svelte";
-    import type { Category, Transaction } from "@ui/types";
+    import { Currency, type Category, type Transaction } from "@ui/types";
     import type { DailyTransactions } from "./types";
+    import { formatMoney } from "@ui/currencies";
 
     type Props = {
         categories: Map<number, Category>;
@@ -20,10 +21,21 @@
     $effect(() => {
         dailyTransactions = transactions
             .groupingBy((transaction) => transaction.issued)
-            .map((bucket) => ({
-                issued: bucket.by.toString(),
-                transactions: bucket.entries,
-            }));
+            .map((bucket) => {
+                const issued = bucket.by.toString();
+                const transactions = bucket.entries;
+                const sums = transactions
+                    .toSorted((a, b) => a.currency.localeCompare(b.currency))
+                    .groupingBy((it) => it.currency)
+                    .map((it) => {
+                        const currency = it.by as Currency;
+                        const sum = it.entries.reduce((sum, it) => sum + it.amount, 0);
+
+                        return { currency, sum };
+                    });
+
+                return { issued, transactions, sums };
+            });
     });
 </script>
 
@@ -64,7 +76,7 @@
                                     </td>
 
                                     <td class="border-border-card/50 border-b-1 py-2 pr-2 text-right">
-                                        ${transaction.amount}
+                                        {formatMoney(transaction.amount, transaction.currency)}
                                     </td>
                                 </tr>
                             {/each}
@@ -75,7 +87,13 @@
                                 <td class="pl-2">
                                     {_("activity.panel.summary")}
                                 </td>
-                                <td class="pr-2 text-right">$120</td>
+                                <td class="pr-2 text-right">
+                                    {#each daily.sums as s}
+                                        <div>
+                                            {formatMoney(s.sum, s.currency)}
+                                        </div>
+                                    {/each}
+                                </td>
                             </tr>
                         </tfoot>
                     </table>

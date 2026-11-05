@@ -4,7 +4,7 @@
     import ActivitySidebar from "./ActivitySidebar.svelte";
     import TransactionView from "./TransactionView.svelte";
     import api from "@ui/api";
-    import { type Category, type Transaction, TransactionType } from "@ui/types";
+    import { type Category, type CategorySummary, type Transaction, TransactionType } from "@ui/types";
     import Empty from "@ui/components/Empty.svelte";
     import { showToast, ToastVariant } from "@ui/components/toasts";
     import { HEADER_ACTION, type HeaderActionStore } from "@ui/layout/headerAction";
@@ -16,13 +16,19 @@
 
     let transactionViewRef: TransactionView;
 
-    let loading = $state(true);
+    let categoriesLoading = $state(true);
+    let periodLoading = $state(true);
+    const loading = $derived(categoriesLoading || periodLoading);
 
     let transactions = $state<Transaction[]>([]);
     let categories = $state<Map<number, Category>>(new Map());
+    let summary = $state<CategorySummary[]>([]);
 
     const now = new Date();
     let begin = $state(new Date(now.getFullYear(), now.getMonth(), 1));
+    const end = $derived(new Date(begin.getFullYear(), begin.getMonth() + 1, 0));
+
+    let periodRequest = 0;
 
     const headerAction = getContext<HeaderActionStore>(HEADER_ACTION);
 
@@ -36,11 +42,8 @@
         return () => headerAction.set(undefined);
     });
 
-    async function loadTransactions(): Promise<Transaction[]> {
-        const begin = new Date("2026-01-01");
-        const end = new Date("2027-01-01");
-
-        return await api.get<Transaction[]>(`transactions?begin=${begin.toIsoDate()}&end=${end.toIsoDate()}`);
+    async function loadTransactions(from: Date, to: Date): Promise<Transaction[]> {
+        return await api.get<Transaction[]>(`transactions?begin=${from.toIsoDate()}&end=${to.toIsoDate()}`);
     }
 
     async function loadCategories(): Promise<Map<number, Category>> {
@@ -57,6 +60,35 @@
         return categories;
     }
 
+    async function loadCategorySummaries(from: Date, to: Date): Promise<CategorySummary[]> {
+        return await api.get<CategorySummary[]>(`categories/summary?begin=${from.toIsoDate()}&end=${to.toIsoDate()}`);
+    }
+
+    async function loadPeriod(from: Date, to: Date) {
+        const request = ++periodRequest;
+        periodLoading = true;
+
+        try {
+            const [loadedTransactions, loadedSummary] = await Promise.all([
+                loadTransactions(from, to),
+                loadCategorySummaries(from, to),
+            ]);
+
+            if (request !== periodRequest) return;
+
+            transactions = loadedTransactions;
+            summary = loadedSummary;
+        } finally {
+            if (request === periodRequest) {
+                periodLoading = false;
+            }
+        }
+    }
+
+    $effect(() => {
+        void loadPeriod(begin, end);
+    });
+
     const filterOptions: SelectOption<TransactionType | undefined>[] = [
         { name: _("types.transactions.expense"), record: TransactionType.EXPENSE },
         { name: _("types.transactions.income"), record: TransactionType.INCOME },
@@ -67,15 +99,14 @@
 
     async function onSaveTransaction(transaction: Transaction) {
         showToast(ToastVariant.SUCCESS, _("activity.toast.transactionSaved"));
-        transactions = await loadTransactions();
+        await loadPeriod(begin, end);
     }
 
     onMount(async () => {
         try {
             categories = await loadCategories();
-            transactions = await loadTransactions();
         } finally {
-            loading = false;
+            categoriesLoading = false;
         }
     });
 </script>
@@ -93,12 +124,12 @@
 
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-[22rem_minmax(0,1fr)]">
         <aside class="lg:self-start">
-            <div class="mb-2">
+            <div class="min-h-12">
                 <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
             </div>
 
             {#if categories.size}
-                <ActivitySidebar categories={[...categories.values()]} />
+                <ActivitySidebar categories={[...categories.values()]} {summary} />
             {:else}
                 <Empty
                     {loading}
@@ -108,11 +139,13 @@
         </aside>
 
         <section>
-            <div class="mx-auto flex w-full max-w-5xl flex-col gap-4">
-                <div class="hidden justify-end lg:flex">
-                    <button onclick={() => transactionViewRef.show()} class="primary">
-                        <i class="fa-solid fa-plus"></i>{_("activity.button.add.transaction")}
-                    </button>
+            <div class="mx-auto w-full max-w-5xl">
+                <div class="hidden min-h-12 lg:flex lg:justify-end">
+                    <div>
+                        <button onclick={() => transactionViewRef.show()} class="primary">
+                            <i class="fa-solid fa-plus"></i>{_("activity.button.add.transaction")}
+                        </button>
+                    </div>
                 </div>
 
                 {#if !categories.size}

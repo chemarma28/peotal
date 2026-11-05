@@ -123,6 +123,7 @@
         amountId="amount"
         currencyId="currency"
         label={_("transaction.labels.currency")}
+        autofocus
         required
         bind:amount={transaction.amount}
         bind:currency={transaction.currency}

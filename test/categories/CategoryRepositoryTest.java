@@ -1,14 +1,20 @@
 package categories;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.jdbi.v3.core.JdbiException;
+import static java.math.BigDecimal.TEN;
+import static java.math.BigDecimal.valueOf;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static transactions.Currency.BYN;
+import static transactions.Currency.USD;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.jdbi.v3.core.JdbiException;
 import org.junit.jupiter.api.Test;
 
 import support.Fixtures;
@@ -150,7 +156,8 @@ class CategoryRepositoryTest extends RepositoryTest {
                 new CategoryOrder.Item(first.id, 1),
                 new CategoryOrder.Item(second.id, 0)));
 
-        final List<String> names = CATEGORIES.listByOperation(handle, TransactionType.EXPENSE).stream().map(it -> it.name).toList();
+        final List<String> names = CATEGORIES.listByOperation(handle, TransactionType.EXPENSE).stream()
+                .map(it -> it.name).toList();
 
         assertEquals(List.of("Beta", "Alpha"), names);
     }
@@ -166,6 +173,36 @@ class CategoryRepositoryTest extends RepositoryTest {
         } catch (JdbiException expected) {
             // expected: unique index (operation, name)
         }
+    }
+
+    @Test
+    void getCategorySummariesForTwoTransactions() {
+        final Category GROCERIES = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
+        TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
+        TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
+
+        List<CategorySummary> summaries = CATEGORIES.getCategorySummaries(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+
+        assertEquals(1, summaries.size());
+        assertEquals(BYN, summaries.getFirst().currency);
+        assertEquals(0, BigDecimal.valueOf(20).compareTo(summaries.getFirst().amount));
+    }
+
+    @Test
+    void getCategorySummariesForTwoDistinctCurrencies() {
+        final Category GROCERIES = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
+        TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
+        TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, valueOf(5), USD));
+
+        List<CategorySummary> summaries = CATEGORIES.getCategorySummaries(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+
+        CategorySummary byn = assertDoesNotThrow(
+                () -> summaries.stream().filter((it) -> it.currency.equals(BYN)).findAny().orElseThrow());
+        CategorySummary usd = assertDoesNotThrow(
+                () -> summaries.stream().filter((it) -> it.currency.equals(USD)).findAny().orElseThrow());
+
+        assertEquals(0, TEN.compareTo(byn.amount));
+        assertEquals(0, valueOf(5).compareTo(usd.amount));
     }
 
     private long countCategories() {

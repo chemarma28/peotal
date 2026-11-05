@@ -6,6 +6,7 @@ import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.reflect.BeanMapper;
 
 import categories.Category;
+import categories.CategorySummary;
 import transactions.Currency;
 import transactions.Transaction;
 import transactions.TransactionType;
@@ -26,5 +27,6 @@ public final class Db {
         jdbi.registerColumnMapper(Currency.class, (rs, col, ctx) -> Currency.valueOf(rs.getString(col)));
         jdbi.registerRowMapper(BeanMapper.factory(Transaction.class));
         jdbi.registerRowMapper(BeanMapper.factory(Category.class));
+        jdbi.registerRowMapper(BeanMapper.factory(CategorySummary.class));
     }
 }

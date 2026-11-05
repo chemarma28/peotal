@@ -1,5 +1,7 @@
 // categories.Category
 export interface Category {color: string; icon?: string; id?: number; name: string; operation: TransactionType; ordinal: number;}
+// categories.CategorySummary
+export interface CategorySummary {amount: number; categoryId: number; currency: Currency;}
 // transactions.Currency
 export enum Currency {BYN = 'BYN', RUB = 'RUB', USD = 'USD', EUR = 'EUR'}
 // transactions.Transaction

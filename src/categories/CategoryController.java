@@ -1,5 +1,6 @@
 package categories;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -103,5 +104,14 @@ public class CategoryController {
         repository.delete(handle, id);
 
         return Map.of("id", id);
+    }
+
+    @GET("/categories/summary")
+    public List<CategorySummary> geCategorySummaries(Context ctx) {
+        final Handle handle = ctx.require(Handle.class);
+        final LocalDate begin = ctx.query("begin").to(LocalDate.class);
+        final LocalDate end = ctx.query("end").to(LocalDate.class);
+
+        return repository.getCategorySummaries(handle, begin, end);
     }
 }

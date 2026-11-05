@@ -1,14 +1,14 @@
 package categories;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.jdbi.v3.core.Handle;
 
-import transactions.TransactionType;
-
 import jakarta.inject.Singleton;
+import transactions.TransactionType;
 
 @Singleton
 public class CategoryRepository {
@@ -20,9 +20,9 @@ public class CategoryRepository {
             }
 
             final String q = """
-                INSERT INTO categories (name, operation, color, icon, ordinal)
-                VALUES (:name, :operation, :color, :icon, :ordinal)
-            """;
+                        INSERT INTO categories (name, operation, color, icon, ordinal)
+                        VALUES (:name, :operation, :color, :icon, :ordinal)
+                    """;
 
             category.id = handle.createUpdate(q)
                     .bindBean(category)
@@ -35,10 +35,10 @@ public class CategoryRepository {
             }
 
             final String q = """
-                UPDATE categories
-                SET name = :name, operation = :operation, color = :color, icon = :icon, ordinal = :ordinal
-                WHERE id = :id
-            """;
+                        UPDATE categories
+                        SET name = :name, operation = :operation, color = :color, icon = :icon, ordinal = :ordinal
+                        WHERE id = :id
+                    """;
 
             handle.createUpdate(q).bindBean(category).execute();
         }
@@ -138,5 +138,17 @@ public class CategoryRepository {
         return handle.createQuery("SELECT COALESCE(MAX(ordinal), -1) + 1 FROM categories")
                 .mapTo(Integer.class)
                 .one();
+    }
+
+    public List<CategorySummary> getCategorySummaries(Handle handle, LocalDate begin, LocalDate end) {
+        return handle.createQuery("""
+                    SELECT category_id, currency, SUM(amount) AS amount FROM transactions
+                    WHERE issued BETWEEN :begin AND :end
+                    GROUP BY category_id, currency
+                """)
+                .bind("begin", begin)
+                .bind("end", end)
+                .mapTo(CategorySummary.class)
+                .list();
     }
 }

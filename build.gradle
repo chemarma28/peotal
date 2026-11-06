@@ -59,7 +59,12 @@ tasks.withType(JavaCompile).configureEach {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://jitpack.io") }
+    maven {
+        url = uri("https://jitpack.io")
+        content {
+            includeGroup "com.github.chemarma28"
+        }
+    }
 }
 
 configurations {
@@ -91,7 +96,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 
-    jvm2dts "com.github.keksworks:jvm2dts:1.9.1"
+    jvm2dts "com.github.chemarma28:jvm2dts:b65f6646fa62b914a6e5798f2d083605cc409b1b"
 }
 
 jar {
@@ -106,85 +111,28 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.register("types") {
+tasks.register("types", JavaExec) {
     group = "build"
     description = "Generate ui/src/types.ts from Java model classes"
 
     dependsOn "classes"
 
+    classpath = configurations.jvm2dts + sourceSets.main.runtimeClasspath
+    mainClass = "jvm2dts.Main"
+
     def outputFile = layout.projectDirectory.file("ui/src/types.ts")
-    def classesDirProvider = layout.buildDirectory.dir("classes/java/main")
-    def packages = ["categories", "transactions"] as Set
-    def generatorClasspath = configurations.jvm2dts
-    def runtimeClasspath = sourceSets.main.runtimeClasspath
+    def classesDir = layout.buildDirectory.dir("classes/java/main")
+
+    args "-data-only",
+         "-classesDir", classesDir.get().asFile.absolutePath,
+         "categories", "transactions"
+
+    standardOutput = new ByteArrayOutputStream()
 
     doLast {
-        def classesDir = classesDirProvider.get().asFile
-        def urls = (generatorClasspath.files + runtimeClasspath.files)
-                .collect { it.toURI().toURL() } as URL[]
-        def loader = new URLClassLoader(urls, (ClassLoader) null)
-
-        try {
-            // jvm2dts.Main hardcodes '/' when converting class paths to class
-            // names. On Windows Path.toString() uses '\', so Main silently
-            // produces an empty file. Reuse its converter but normalize both
-            // separators in the class file walk below.
-            def converterClass = loader.loadClass("jvm2dts.Converter")
-            def mapperClass = loader.loadClass("jvm2dts.TypeMapper")
-            def mapper = mapperClass.getConstructor(Map.class).newInstance([:] as Map)
-            def converter = converterClass.getConstructor(mapperClass).newInstance(mapper)
-            def convert = converterClass.getMethod("convert", Class.class)
-
-            def classNames = []
-            classesDir.eachFileRecurse(groovy.io.FileType.FILES) { file ->
-                if (!file.name.endsWith(".class")) {
-                    return
-                }
-
-                def relative = classesDir.toPath().relativize(file.toPath()).toString()
-                def className = relative
-                        .substring(0, relative.length() - ".class".length())
-                        .replace('/', '.')
-                        .replace('\\', '.')
-
-                def dot = className.lastIndexOf('.')
-                def packageName = dot > 0 ? className.substring(0, dot) : ""
-
-                if (packages.isEmpty() || packages.contains(packageName)) {
-                    classNames << className
-                }
-            }
-
-            classNames.sort()
-
-            def output = new StringBuilder()
-            classNames.each { className ->
-                def type = Class.forName(className, false, loader)
-                def data = type.isEnum() || type.isInterface()
-
-                if (!data) {
-                    try {
-                        type.getDeclaredMethod("equals", Object.class)
-                        data = true
-                    } catch (NoSuchMethodException ignored) {
-                        // not a data class
-                    }
-                }
-
-                if (data) {
-                    def converted = convert.invoke(converter, type)
-
-                    if (converted != null) {
-                        output.append("// ").append(className).append('\n')
-                        output.append("export ").append(converted).append('\n')
-                    }
-                }
-            }
-
-            outputFile.asFile.text = output.toString()
-        } finally {
-            loader.close()
-        }
+        outputFile.asFile.setText(
+                standardOutput.toString("UTF-8").replace("\r\n", "\n"),
+                "UTF-8")
     }
 }
 

@@ -1,5 +1,6 @@
 package categories;
 
+import static org.assertj.core.api.Assertions.*;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.valueOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -181,11 +182,15 @@ class CategoryRepositoryTest extends RepositoryTest {
         TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
         TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
 
-        List<CategorySummary> summaries = CATEGORIES.getCategorySummaries(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+        List<CategorySummaries> stat = CATEGORIES.getCategorySummaries(handle, Fixtures.ISSUED, Fixtures.ISSUED);
 
-        assertEquals(1, summaries.size());
-        assertEquals(BYN, summaries.getFirst().currency);
-        assertEquals(0, BigDecimal.valueOf(20).compareTo(summaries.getFirst().amount));
+        assertEquals(1, stat.size());
+
+        final CategorySummaries sum = stat.getFirst();
+
+        assertEquals(1, sum.sums.size());
+        assertEquals(BYN, sum.sums.getFirst().currency);
+        assertEquals(0, BigDecimal.valueOf(20).compareTo(sum.sums.getFirst().amount));
     }
 
     @Test
@@ -194,15 +199,36 @@ class CategoryRepositoryTest extends RepositoryTest {
         TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
         TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, valueOf(5), USD));
 
-        List<CategorySummary> summaries = CATEGORIES.getCategorySummaries(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+        List<CategorySummaries> stat = CATEGORIES.getCategorySummaries(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+
+        assertEquals(1, stat.size());
 
         CategorySummary byn = assertDoesNotThrow(
-                () -> summaries.stream().filter((it) -> it.currency.equals(BYN)).findAny().orElseThrow());
+                () -> stat.getFirst().sums.stream().filter((it) -> it.currency.equals(BYN)).findAny().orElseThrow());
         CategorySummary usd = assertDoesNotThrow(
-                () -> summaries.stream().filter((it) -> it.currency.equals(USD)).findAny().orElseThrow());
+                () -> stat.getFirst().sums.stream().filter((it) -> it.currency.equals(USD)).findAny().orElseThrow());
 
         assertEquals(0, TEN.compareTo(byn.amount));
         assertEquals(0, valueOf(5).compareTo(usd.amount));
+    }
+
+    @Test
+    void getCorrectWeightsForCategory() {
+        final Category GROCERIES = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
+        final Category TRANSPORT = CATEGORIES.save(handle, Fixtures.TRANSPORT.get());
+
+        TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
+        TRANSACTIONS.save(handle, Fixtures.expense(TRANSPORT, TEN, BYN));
+
+        List<CategorySummaries> stats = CATEGORIES.getCategorySummaries(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+
+        CategorySummaries groceriesStat = assertDoesNotThrow(
+                () -> stats.stream().filter((it) -> it.categoryId.equals(GROCERIES.id)).findAny().orElseThrow());
+        CategorySummaries transportStat = assertDoesNotThrow(
+                () -> stats.stream().filter((it) -> it.categoryId.equals(TRANSPORT.id)).findAny().orElseThrow());
+
+        assertThat(valueOf(0.5)).isCloseTo(groceriesStat.weight, within(valueOf(0.01)));
+        assertThat(valueOf(0.5)).isCloseTo(transportStat.weight, within(valueOf(0.01)));
     }
 
     private long countCategories() {

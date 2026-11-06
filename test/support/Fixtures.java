@@ -17,6 +17,7 @@ public final class Fixtures {
 
     public static final LocalDate ISSUED = LocalDate.of(2026, 1, 15);
     public static final Supplier<Category> GROCERIES = () -> category(EXPENSE, "Groceries", "#000000", "any", 0);
+    public static final Supplier<Category> TRANSPORT = () -> category(EXPENSE, "Transport", "#000000", "any", 0);
 
     private Fixtures() {
     }

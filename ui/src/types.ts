@@ -1,5 +1,7 @@
 // categories.Category
 export interface Category {color: string; icon?: string; id?: number; name: string; operation: TransactionType; ordinal: number;}
+// categories.CategorySummaries
+export interface CategorySummaries {categoryId: number; sums: CategorySummary[]; weight: number;}
 // categories.CategorySummary
 export interface CategorySummary {amount: number; categoryId: number; currency: Currency;}
 // transactions.Currency

@@ -4,7 +4,7 @@
     import ActivitySidebar from "./ActivitySidebar.svelte";
     import TransactionView from "./TransactionView.svelte";
     import api from "@ui/api";
-    import { type Category, type CategorySummary, type Transaction, TransactionType } from "@ui/types";
+    import { type Category, type CategorySummaries, type Transaction, TransactionType } from "@ui/types";
     import Empty from "@ui/components/Empty.svelte";
     import { showToast, ToastVariant } from "@ui/components/toasts";
     import { HEADER_ACTION, type HeaderActionStore } from "@ui/layout/headerAction";
@@ -22,7 +22,7 @@
 
     let transactions = $state<Transaction[]>([]);
     let categories = $state<Map<number, Category>>(new Map());
-    let summary = $state<CategorySummary[]>([]);
+    let summaries = $state<CategorySummaries[]>([]);
 
     const now = new Date();
     let begin = $state(new Date(now.getFullYear(), now.getMonth(), 1));
@@ -60,8 +60,8 @@
         return categories;
     }
 
-    async function loadCategorySummaries(from: Date, to: Date): Promise<CategorySummary[]> {
-        return await api.get<CategorySummary[]>(`categories/summary?begin=${from.toIsoDate()}&end=${to.toIsoDate()}`);
+    async function loadCategorySummaries(from: Date, to: Date): Promise<CategorySummaries[]> {
+        return await api.get<CategorySummaries[]>(`categories/summary?begin=${from.toIsoDate()}&end=${to.toIsoDate()}`);
     }
 
     async function loadPeriod(from: Date, to: Date) {
@@ -77,7 +77,7 @@
             if (request !== periodRequest) return;
 
             transactions = loadedTransactions;
-            summary = loadedSummary;
+            summaries = loadedSummary;
         } finally {
             if (request === periodRequest) {
                 periodLoading = false;
@@ -129,7 +129,7 @@
             </div>
 
             {#if categories.size}
-                <ActivitySidebar categories={[...categories.values()]} {summary} />
+                <ActivitySidebar categories={[...categories.values()]} {summaries} />
             {:else}
                 <Empty
                     {loading}

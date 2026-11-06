@@ -1,5 +1,10 @@
 package categories;
 
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.HALF_EVEN;
+import static java.util.stream.Collectors.groupingBy;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -140,8 +145,8 @@ public class CategoryRepository {
                 .one();
     }
 
-    public List<CategorySummary> getCategorySummaries(Handle handle, LocalDate begin, LocalDate end) {
-        return handle.createQuery("""
+    public List<CategorySummaries> getCategorySummaries(Handle handle, LocalDate begin, LocalDate end) {
+        final List<CategorySummary> summaries = handle.createQuery("""
                     SELECT category_id, currency, SUM(amount) AS amount FROM transactions
                     WHERE issued BETWEEN :begin AND :end
                     GROUP BY category_id, currency
@@ -150,5 +155,20 @@ public class CategoryRepository {
                 .bind("end", end)
                 .mapTo(CategorySummary.class)
                 .list();
+
+        final BigDecimal grand = summaries.stream().map(CategorySummary::getAmount).reduce(ZERO, BigDecimal::add);
+
+        return summaries.stream().collect(groupingBy(CategorySummary::getCategoryId))
+                .entrySet().stream()
+                .map(e -> {
+                    final Long categoryId = e.getKey();
+                    final List<CategorySummary> sums = e.getValue();
+                    final BigDecimal p = sums.stream().map(CategorySummary::getAmount).reduce(ZERO, BigDecimal::add)
+                            .setScale(2)
+                            .divide(grand, HALF_EVEN);
+
+                    return new CategorySummaries(categoryId, sums, p);
+                })
+                .toList();
     }
 }

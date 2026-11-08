@@ -151,7 +151,8 @@
             </Badge>
         </div>
     {:else}
-        <div class="relative flex w-full items-center justify-center rounded-lg border-1 border-zinc-300 bg-zinc-200 p-4">
+        <div
+            class="relative flex w-full items-center justify-center rounded-lg border-1 border-zinc-300 bg-zinc-200 p-4">
             {#if isCustomColor}
                 <span
                     class="border-border-card bg-bg-card absolute top-2 right-2 z-10 rounded-md border-1 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide uppercase">
@@ -202,18 +203,13 @@
                     onclick={() => (dangerOpen = !dangerOpen)}>
                     <span>{_("categories.danger.title")}</span>
                     <i
-                        class="fa-solid fa-chevron-down text-xs transition-transform {dangerOpen
-                            ? 'rotate-180'
-                            : ''}"
+                        class="fa-solid fa-chevron-down text-xs transition-transform {dangerOpen ? 'rotate-180' : ''}"
                         aria-hidden="true"></i>
                 </button>
 
                 {#if dangerOpen}
                     <div id="category-danger-zone" class="mt-2">
-                        <button
-                            type="button"
-                            class="danger w-full"
-                            onclick={() => (confirmingDelete = true)}>
+                        <button type="button" class="danger w-full" onclick={() => (confirmingDelete = true)}>
                             {_("categories.action.delete")}
                         </button>
                     </div>

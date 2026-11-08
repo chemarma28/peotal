@@ -29,13 +29,13 @@
                     <Badge color={category.color} icon={category.icon}>{category.name}</Badge>
 
                     <div class="text-sm">
-                        <div class="flex gap-4">
+                        <div class="flex justify-end gap-4 font-semibold">
                             {#each stat?.sums as sum}
-                                <div class="font-semibold">
+                                <div>
                                     {formatMoney(sum?.amount ?? 0, sum?.currency ?? Currency.USD)}
                                 </div>
                             {:else}
-                                <div class="font-semibold">{formatMoney(0, Currency.USD)}</div>
+                                <div>{formatMoney(0, Currency.USD)}</div>
                             {/each}
                         </div>
 

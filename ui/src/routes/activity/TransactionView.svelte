@@ -96,10 +96,7 @@
     }
 </script>
 
-<Dialog
-    bind:this={dialogRef}
-    title={isNew ? _("transaction.title.new") : _("transaction.title.edit")}
-    onsubmit={save}>
+<Dialog bind:this={dialogRef} title={isNew ? _("transaction.title.new") : _("transaction.title.edit")} onsubmit={save}>
     <ToggleGroup bind:chosen={operation} options={operationOptions}></ToggleGroup>
 
     <DateField id="date" label={_("transaction.labels.issued")} bind:value={transaction.issued} />

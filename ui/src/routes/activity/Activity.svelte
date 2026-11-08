@@ -96,6 +96,10 @@
     ];
 
     let filter = $state<SelectOption<TransactionType | undefined>>(filterOptions[2]);
+    let visibleCategories = $derived<Category[]>(
+        [...categories.values()].filter((it) => !filter.record || it.operation === filter.record),
+    );
+    let visibleTransactions = $derived(transactions.filter((it) => !filter.record || it.operation === filter.record));
 
     async function onSaveTransaction(transaction: Transaction) {
         showToast(ToastVariant.SUCCESS, _("activity.toast.transactionSaved"));
@@ -128,8 +132,8 @@
                 <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
             </div>
 
-            {#if categories.size}
-                <ActivitySidebar categories={[...categories.values()]} {summaries} />
+            {#if visibleCategories.length}
+                <ActivitySidebar categories={visibleCategories} {summaries} />
             {:else}
                 <Empty
                     {loading}
@@ -148,15 +152,15 @@
                     </div>
                 </div>
 
-                {#if !categories.size}
+                {#if !visibleCategories.length}
                     <Empty
                         {loading}
                         header={_("activity.empty.categories.header")}
                         description={_("activity.empty.categories.description")} />
-                {:else if transactions.length}
+                {:else if visibleTransactions.length}
                     <ActivityPanel
                         {categories}
-                        {transactions}
+                        transactions={visibleTransactions}
                         onEdit={(transaction) => transactionViewRef.show(transaction)} />
                 {:else}
                     <Empty

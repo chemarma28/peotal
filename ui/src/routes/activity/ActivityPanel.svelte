@@ -1,11 +1,10 @@
 <script lang="ts">
-    import { _ } from "@ui/i18n";
     import Accordion from "@ui/components/Accordion.svelte";
     import AccordionItem from "@ui/components/AccordionItem.svelte";
     import Badge from "@ui/components/Badge.svelte";
-    import { Currency, type Category, type Transaction } from "@ui/types";
-    import type { DailyTransactions } from "./types";
     import { formatMoney } from "@ui/currencies";
+    import { _ } from "@ui/i18n";
+    import { Currency, type Category, type Transaction } from "@ui/types";
 
     type Props = {
         categories: Map<number, Category>;
@@ -13,13 +12,12 @@
         onEdit: (transaction: Transaction) => void;
     };
 
-    let { categories, transactions = $bindable<Transaction[]>(), onEdit }: Props = $props();
-    let dailyTransactions = $state<DailyTransactions[]>([]);
+    let { categories, transactions, onEdit }: Props = $props();
 
     const findCategory = (categoryId?: number) => (categoryId ? categories.get(categoryId) : undefined);
 
-    $effect(() => {
-        dailyTransactions = transactions
+    let dailyTransactions = $derived(
+        transactions
             .groupingBy((transaction) => transaction.issued)
             .map((bucket) => {
                 const issued = bucket.by.toString();
@@ -35,8 +33,8 @@
                     });
 
                 return { issued, transactions, sums };
-            });
-    });
+            }),
+    );
 </script>
 
 <Accordion>

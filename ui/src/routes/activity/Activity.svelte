@@ -122,7 +122,7 @@
         <MonthPicker bind:begin stretch></MonthPicker>
     </div>
 
-    <div class="grid grid-cols-1 gap-8 lg:grid-cols-[22rem_minmax(0,1fr)]">
+    <div class="grid grid-cols-1 gap-12 lg:grid-cols-[22rem_minmax(0,1fr)]">
         <aside class="lg:self-start">
             <div class="min-h-12">
                 <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>

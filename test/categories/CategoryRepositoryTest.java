@@ -1,14 +1,15 @@
 package categories;
 
-import static org.assertj.core.api.Assertions.*;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.valueOf;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static support.Fixtures.ISSUED;
 import static transactions.Currency.BYN;
 import static transactions.Currency.USD;
 
@@ -182,7 +183,7 @@ class CategoryRepositoryTest extends RepositoryTest {
         TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
         TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
 
-        List<CategorySummaries> stat = CATEGORIES.getCategorySummaries(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+        List<CategorySummaries> stat = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
 
         assertEquals(1, stat.size());
 
@@ -199,7 +200,7 @@ class CategoryRepositoryTest extends RepositoryTest {
         TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
         TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, valueOf(5), USD));
 
-        List<CategorySummaries> stat = CATEGORIES.getCategorySummaries(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+        List<CategorySummaries> stat = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
 
         assertEquals(1, stat.size());
 
@@ -220,15 +221,69 @@ class CategoryRepositoryTest extends RepositoryTest {
         TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
         TRANSACTIONS.save(handle, Fixtures.expense(TRANSPORT, TEN, BYN));
 
-        List<CategorySummaries> stats = CATEGORIES.getCategorySummaries(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+        List<CategorySummaries> stats = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
 
         CategorySummaries groceriesStat = assertDoesNotThrow(
                 () -> stats.stream().filter((it) -> it.categoryId.equals(GROCERIES.id)).findAny().orElseThrow());
         CategorySummaries transportStat = assertDoesNotThrow(
                 () -> stats.stream().filter((it) -> it.categoryId.equals(TRANSPORT.id)).findAny().orElseThrow());
 
-        assertThat(valueOf(0.5)).isCloseTo(groceriesStat.weight, within(valueOf(0.01)));
-        assertThat(valueOf(0.5)).isCloseTo(transportStat.weight, within(valueOf(0.01)));
+        assertThat(groceriesStat.weight).isEqualByComparingTo("0.5");
+        assertThat(transportStat.weight).isEqualByComparingTo("0.5");
+    }
+
+    @Test
+    void singleCategoryHasFullWeight() {
+        final Category groceries = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
+        TRANSACTIONS.save(handle, Fixtures.expense(groceries, TEN, BYN));
+
+        final List<CategorySummaries> stats = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
+
+        assertEquals(1, stats.size());
+        assertThat(stats.getFirst().weight).isEqualByComparingTo("1.00");
+    }
+
+    @Test
+    void sharesCurrenciesByAmount() {
+        final Category groceries = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
+        final Category transport = CATEGORIES.save(handle, Fixtures.TRANSPORT.get());
+
+        TRANSACTIONS.save(handle, Fixtures.expense(groceries, TEN, BYN));
+        TRANSACTIONS.save(handle, Fixtures.expense(transport, valueOf(5), USD));
+
+        final List<CategorySummaries> stats = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
+
+        CategorySummaries groceriesStat = assertDoesNotThrow(
+                () -> stats.stream().filter((it) -> it.categoryId.equals(groceries.id)).findAny().orElseThrow());
+        CategorySummaries transportStat = assertDoesNotThrow(
+                () -> stats.stream().filter((it) -> it.categoryId.equals(transport.id)).findAny().orElseThrow());
+
+        assertThat(groceriesStat.weight).isEqualByComparingTo("0.67");
+        assertThat(transportStat.weight).isEqualByComparingTo("0.33");
+    }
+
+    @Test
+    void incomeWeightsUseIncomeTotal() {
+        final Category groceries = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
+        final Category salary = CATEGORIES.save(handle, Fixtures.SALARY.get());
+        final Category bonus = CATEGORIES.save(handle, Fixtures.income("Bonus"));
+
+        TRANSACTIONS.save(handle, Fixtures.expense(groceries, valueOf(200), BYN));
+        TRANSACTIONS.save(handle, Fixtures.income(salary, valueOf(30)));
+        TRANSACTIONS.save(handle, Fixtures.income(bonus, valueOf(70)));
+
+        final List<CategorySummaries> stats = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
+
+        CategorySummaries groceriesStat = assertDoesNotThrow(
+                () -> stats.stream().filter((it) -> it.categoryId.equals(groceries.id)).findAny().orElseThrow());
+        CategorySummaries salaryStat = assertDoesNotThrow(
+                () -> stats.stream().filter((it) -> it.categoryId.equals(salary.id)).findAny().orElseThrow());
+        CategorySummaries bonusStat = assertDoesNotThrow(
+                () -> stats.stream().filter((it) -> it.categoryId.equals(bonus.id)).findAny().orElseThrow());
+
+        assertThat(groceriesStat.weight).isEqualByComparingTo("1.00");
+        assertThat(salaryStat.weight).isEqualByComparingTo("0.30");
+        assertThat(bonusStat.weight).isEqualByComparingTo("0.70");
     }
 
     private long countCategories() {

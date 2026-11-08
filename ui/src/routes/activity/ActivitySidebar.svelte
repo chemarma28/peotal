@@ -1,6 +1,6 @@
 <script lang="ts">
     import Badge from "@ui/components/Badge.svelte";
-    import { formatMoney } from "@ui/currencies";
+    import { formatMoney, formatNumber } from "@ui/currencies";
     import { Currency, type Category, type CategorySummaries } from "@ui/types";
 
     type Props = {
@@ -29,7 +29,7 @@
                     <Badge color={category.color} icon={category.icon}>{category.name}</Badge>
 
                     <div class="text-sm">
-                        <div class="flex gap-2">
+                        <div class="flex gap-4">
                             {#each stat?.sums as sum}
                                 <div class="font-semibold">
                                     {formatMoney(sum?.amount ?? 0, sum?.currency ?? Currency.USD)}
@@ -39,7 +39,7 @@
                             {/each}
                         </div>
 
-                        <div class="text-right opacity-60">0.0%</div>
+                        <div class="text-right opacity-60">{formatNumber(100 * (stat?.weight ?? 0))}%</div>
                     </div>
                 </div>
             {/if}

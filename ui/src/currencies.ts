@@ -16,7 +16,7 @@ export function currencySymbol(currency: Currency): string {
 const AMOUNT_FORMAT = new Intl.NumberFormat("ru-RU", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-    useGrouping: true
+    useGrouping: true,
 });
 
 export function formatMoney(amount: number, currency: Currency): string {
@@ -25,4 +25,10 @@ export function formatMoney(amount: number, currency: Currency): string {
     return SYMBOL_AFTER_AMOUNT.has(currency)
         ? `${formatted} ${currencySymbol(currency)}`
         : `${currencySymbol(currency)}${formatted}`;
+}
+
+export function formatNumber(value: number) {
+    const formatted = AMOUNT_FORMAT.format(value);
+
+    return formatted;
 }

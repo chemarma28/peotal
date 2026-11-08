@@ -107,7 +107,7 @@ public class CategoryController {
     }
 
     @GET("/categories/summary")
-    public List<CategorySummaries> geCategorySummaries(Context ctx) {
+    public List<CategorySummaries> getCategorySummaries(Context ctx) {
         final Handle handle = ctx.require(Handle.class);
         final LocalDate begin = ctx.query("begin").to(LocalDate.class);
         final LocalDate end = ctx.query("end").to(LocalDate.class);

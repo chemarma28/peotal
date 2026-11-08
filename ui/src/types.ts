@@ -3,7 +3,7 @@ export interface Category {color: string; icon?: string; id?: number; name: stri
 // categories.CategorySummaries
 export interface CategorySummaries {categoryId: number; sums: CategorySummary[]; weight: number;}
 // categories.CategorySummary
-export interface CategorySummary {amount: number; categoryId: number; currency: Currency;}
+export interface CategorySummary {amount: number; categoryId: number; currency: Currency; operation: TransactionType;}
 // transactions.Currency
 export enum Currency {BYN = 'BYN', RUB = 'RUB', USD = 'USD', EUR = 'EUR'}
 // transactions.Transaction

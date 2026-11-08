@@ -3,10 +3,14 @@ package categories;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.HALF_EVEN;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -147,27 +151,37 @@ public class CategoryRepository {
 
     public List<CategorySummaries> getCategorySummaries(Handle handle, LocalDate begin, LocalDate end) {
         final List<CategorySummary> summaries = handle.createQuery("""
-                    SELECT category_id, currency, SUM(amount) AS amount FROM transactions
-                    WHERE issued BETWEEN :begin AND :end
-                    GROUP BY category_id, currency
+                    SELECT t.category_id, t.operation, t.currency, SUM(t.amount) AS amount FROM transactions t
+                    JOIN categories c ON c.id = t.category_id
+                    WHERE t.issued BETWEEN :begin AND :end
+                    GROUP BY t.category_id, t.operation, t.currency, c.ordinal
+                    ORDER BY c.ordinal, t.category_id
                 """)
                 .bind("begin", begin)
                 .bind("end", end)
                 .mapTo(CategorySummary.class)
                 .list();
 
-        final BigDecimal grand = summaries.stream().map(CategorySummary::getAmount).reduce(ZERO, BigDecimal::add);
+        final Map<TransactionType, BigDecimal> totals = new EnumMap<>(TransactionType.class);
 
-        return summaries.stream().collect(groupingBy(CategorySummary::getCategoryId))
+        for (final CategorySummary summary : summaries) {
+            totals.merge(summary.operation, summary.amount, BigDecimal::add);
+        }
+
+        return summaries.stream()
+                .collect(groupingBy(CategorySummary::getCategoryId, LinkedHashMap::new, toList()))
                 .entrySet().stream()
                 .map(e -> {
                     final Long categoryId = e.getKey();
                     final List<CategorySummary> sums = e.getValue();
-                    final BigDecimal p = sums.stream().map(CategorySummary::getAmount).reduce(ZERO, BigDecimal::add)
-                            .setScale(2)
-                            .divide(grand, HALF_EVEN);
+                    final BigDecimal total = totals.getOrDefault(sums.getFirst().operation, ZERO);
+                    final BigDecimal amount = sums.stream().map(CategorySummary::getAmount).reduce(ZERO,
+                            BigDecimal::add);
 
-                    return new CategorySummaries(categoryId, sums, p);
+                    final BigDecimal weight = total.signum() == 0 ? ZERO.setScale(2)
+                            : amount.divide(total, 2, HALF_EVEN);
+
+                    return new CategorySummaries(categoryId, sums, weight);
                 })
                 .toList();
     }

@@ -39,6 +39,16 @@
         });
     });
 
+    $effect(() => {
+        if (!numeric) return;
+
+        const current = numeric.getNumber() ?? 0;
+
+        if (current !== amount) {
+            numeric.set(amount);
+        }
+    });
+
     const autonumeric: Attachment = (input) => {
         let options: AutoNumeric.CallbackOptions = {
             digitGroupSeparator: " ",

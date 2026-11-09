@@ -63,6 +63,9 @@
     --color-bg-toggle-active: #d1d8e6;
     --color-bg-toggle-hover: color-mix(in srgb, #fff 60%, #d1d8e6);
     --color-bg-toggle-pressed: color-mix(in srgb, #000 10%, #d1d8e6);
+
+    --color-income: #2f7d5c;
+    --color-expense: #8e3b46;
 }
 
 @layer components {

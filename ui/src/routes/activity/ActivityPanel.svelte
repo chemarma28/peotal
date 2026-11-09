@@ -95,7 +95,7 @@
                                         </div>
                                     </td>
 
-                                    <td class="border-border-card/50 border-b-1 pr-2 text-right">
+                                    <td class="border-border-card/50 border-b-1 pr-2 text-right text-sm font-semibold">
                                         <Money
                                             operation={transaction.operation}
                                             currency={transaction.currency}
@@ -110,48 +110,26 @@
                                 <td class="pl-2 align-text-top">
                                     {_("activity.panel.summary")}
                                 </td>
-                                <td class="pr-2 text-right">
-                                    <div
-                                        class="ml-auto grid grid-cols-[auto_auto] items-baseline justify-end gap-x-3 tabular-nums">
-                                        {#each daily.totals as total}
+                                <td class="pr-2">
+                                    {#each daily.totals as total}
+                                        <div class="text-right">
                                             {#if total.income > 0}
-                                                <span class="text-left">{currencySymbol(total.currency)}</span>
-
-                                                <span class="text-right whitespace-nowrap">
-                                                    <Money
-                                                        noColor
-                                                        showSymbol={false}
-                                                        operation={TransactionType.INCOME}
-                                                        currency={total.currency}
-                                                        amount={total.income} />
-                                                </span>
-
-                                                {#if total.expense > 0}
-                                                    <span></span>
-
-                                                    <span class="text-right whitespace-nowrap">
-                                                        <Money
-                                                            noColor
-                                                            showSymbol={false}
-                                                            operation={TransactionType.EXPENSE}
-                                                            currency={total.currency}
-                                                            amount={total.expense} />
-                                                    </span>
-                                                {/if}
-                                            {:else if total.expense > 0}
-                                                <span class="text-left">{currencySymbol(total.currency)}</span>
-
-                                                <span class="text-right whitespace-nowrap">
-                                                    <Money
-                                                        noColor
-                                                        showSymbol={false}
-                                                        operation={TransactionType.EXPENSE}
-                                                        currency={total.currency}
-                                                        amount={total.expense} />
-                                                </span>
+                                                <Money
+                                                    noColor
+                                                    operation={TransactionType.INCOME}
+                                                    currency={total.currency}
+                                                    amount={total.income} />
                                             {/if}
-                                        {/each}
-                                    </div>
+
+                                            {#if total.expense > 0}
+                                                <Money
+                                                    noColor
+                                                    operation={TransactionType.EXPENSE}
+                                                    currency={total.currency}
+                                                    amount={total.expense} />
+                                            {/if}
+                                        </div>
+                                    {/each}
                                 </td>
                             </tr>
                         </tfoot>

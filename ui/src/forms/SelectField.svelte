@@ -2,6 +2,7 @@
     import type { SelectOption, SelectionKey } from "./types";
     import FormField from "./FormField.svelte";
     import { _ } from "@ui/i18n";
+    import { type HTMLSelectAttributes } from "svelte/elements";
 
     type Props = {
         id: string;
@@ -13,7 +14,7 @@
         key?: SelectionKey<T>;
         validator?: (value?: SelectOption<T>) => string | undefined;
         disabled?: boolean;
-    };
+    } & Omit<HTMLSelectAttributes, "id" | "value" | "onchange">;
 
     let {
         id,
@@ -25,6 +26,7 @@
         key = (o) => o.record,
         validator,
         disabled = false,
+        ...props
     }: Props = $props();
 
     let elementRef = $state<HTMLSelectElement>();
@@ -50,7 +52,8 @@
             {required}
             {disabled}
             value={index < 0 ? "" : String(index)}
-            onchange={pick}>
+            onchange={pick}
+            {...props}>
             <option value="" disabled>{placeholder ?? _("forms.select.undefined")}</option>
 
             {#each options as option, i}

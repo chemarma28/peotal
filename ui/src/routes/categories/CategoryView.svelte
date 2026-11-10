@@ -2,12 +2,11 @@
     import api from "@ui/api";
     import { isPresetColor } from "@ui/categories/colors";
     import { CategoryIcons, DEFAULT_CATEGORY_ICON } from "@ui/categories/icons";
-    import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
     import Badge from "@ui/components/Badge.svelte";
     import Dialog from "@ui/components/Dialog.svelte";
-    import Icon from "@ui/components/Icon.svelte";
     import { showToast, ToastVariant } from "@ui/components/toasts";
     import ColorPicker from "@ui/forms/ColorPicker.svelte";
+    import DangerZone from "@ui/forms/DangerZone.svelte";
     import IconPicker from "@ui/forms/IconPicker.svelte";
     import InputField from "@ui/forms/InputField.svelte";
     import SelectField from "@ui/forms/SelectField.svelte";
@@ -38,7 +37,6 @@
     let dialogRef = $state<Dialog>();
     let saving = $state(false);
     let confirmingDelete = $state(false);
-    let dangerOpen = $state(false);
     let draft = $state<Draft>(empty());
     let operation = $state<SelectOption<TransactionType> | undefined>();
 
@@ -73,7 +71,6 @@
 
         operation = operationOptions.find((o) => o.record === (source?.operation ?? defaultOperation));
         confirmingDelete = false;
-        dangerOpen = false;
         saving = false;
 
         dialogRef?.show();
@@ -115,15 +112,11 @@
             await api.delete(`category/${draft.id}`);
 
             onDelete?.({
-                id: draft.id,
-                name: draft.name,
+                ...draft,
                 operation: operation?.record ?? TransactionType.EXPENSE,
-                color: draft.color,
-                icon: draft.icon,
                 ordinal: draft.ordinal ?? 0,
             });
 
-            showToast(ToastVariant.SUCCESS, _("categories.toast.deleted"));
             close();
         } catch (error) {
             showToast(ToastVariant.ERROR, _("categories.toast.deleteFailed"));
@@ -133,6 +126,8 @@
     }
 
     function submit() {
+        if (saving) return;
+
         if (confirmingDelete) {
             void remove();
         } else {
@@ -196,27 +191,11 @@
         </div>
 
         {#if !isNew}
-            <div class="mt-2">
-                <button
-                    type="button"
-                    class="flex w-full items-center justify-between text-sm font-semibold"
-                    aria-expanded={dangerOpen}
-                    aria-controls="category-danger-zone"
-                    onclick={() => (dangerOpen = !dangerOpen)}>
-                    <span>{_("categories.danger.title")}</span>
-                    <Icon
-                        icon={faChevronDown}
-                        class="text-xs transition-transform {dangerOpen ? 'rotate-180' : ''}" />
+            <DangerZone id="category-danger-zone" class="mt-1">
+                <button type="button" class="danger w-full" onclick={() => (confirmingDelete = true)}>
+                    {_("categories.action.delete")}
                 </button>
-
-                {#if dangerOpen}
-                    <div id="category-danger-zone" class="mt-2">
-                        <button type="button" class="danger w-full" onclick={() => (confirmingDelete = true)}>
-                            {_("categories.action.delete")}
-                        </button>
-                    </div>
-                {/if}
-            </div>
+            </DangerZone>
         {/if}
     {/if}
 

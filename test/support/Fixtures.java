@@ -35,11 +35,15 @@ public final class Fixtures {
         return new Category(null, name, operation, color, icon, ordinal);
     }
 
+    public static Transaction expense(Category category) {
+        return expense(category, BigDecimal.TEN);
+    }
+
     public static Transaction expense(Category category, BigDecimal amount) {
         return transaction("fixture", ISSUED, EXPENSE, category.id, amount, USD);
     }
 
-        public static Transaction expense(Category category, BigDecimal amount, Currency currency) {
+    public static Transaction expense(Category category, BigDecimal amount, Currency currency) {
         return transaction("fixture", ISSUED, EXPENSE, category.id, amount, currency);
     }
 

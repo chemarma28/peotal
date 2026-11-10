@@ -14,7 +14,7 @@
         footer?: Snippet;
     };
 
-    let { title, onsubmit, onclose, closable = true, dismissible = true, children, footer }: Props = $props();
+    let { title, onsubmit, onclose, closable = true, dismissible = false, children, footer }: Props = $props();
 
     const titleId = $props.id();
 

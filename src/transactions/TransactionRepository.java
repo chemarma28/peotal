@@ -59,4 +59,10 @@ public class TransactionRepository {
                 .mapTo(Transaction.class)
                 .list();
     }
+
+    public void delete(Handle handle, long id) {
+        handle.createUpdate("DELETE FROM transactions WHERE id = :id")
+                .bind("id", id)
+                .execute();
+    }
 }

@@ -124,4 +124,14 @@ class TransactionRepositoryTest extends RepositoryTest {
 
         assertEquals(List.of("inside"), descriptions);
     }
+
+    @Test
+    void deleteTransaction() {
+        final Category groceries = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
+        final Transaction it = TRANSACTIONS.save(handle, Fixtures.expense(groceries));
+        TRANSACTIONS.delete(handle, it.id);
+        final List<Transaction> transactions = TRANSACTIONS.list(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+
+        assertEquals(0, transactions.size());
+    }
 }

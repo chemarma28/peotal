@@ -8,6 +8,7 @@ import org.jdbi.v3.core.Handle;
 
 import categories.CategoryRepository;
 import io.jooby.Context;
+import io.jooby.annotation.DELETE;
 import io.jooby.annotation.GET;
 import io.jooby.annotation.POST;
 import io.jooby.annotation.PUT;
@@ -57,5 +58,15 @@ public class TransactionController {
         repository.find(handle, transaction.id).orElseThrow(NoSuchElementException::new);
 
         return repository.save(handle, transaction);
+    }
+
+    @DELETE("/transaction/{id}")
+    public void delete(Context ctx) {
+        final Handle handle = ctx.require(Handle.class);
+        final Long id = ctx.path("id").to(long.class);
+
+        repository.find(handle, id).orElseThrow(NoSuchElementException::new);
+
+        repository.delete(handle, id);
     }
 }

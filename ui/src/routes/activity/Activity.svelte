@@ -108,6 +108,11 @@
         await loadPeriod(begin, end);
     }
 
+    async function onDeleteTransaction(transaction: Transaction) {
+        showToast(ToastVariant.SUCCESS, _("activity.toast.transactionDeleted"));
+        await loadPeriod(begin, end);
+    }
+
     onMount(async () => {
         try {
             categories = await loadCategories();
@@ -148,7 +153,9 @@
             <div class="mx-auto w-full max-w-5xl">
                 <div class="hidden min-h-12 lg:flex lg:justify-end">
                     <div>
-                        <button onclick={() => transactionViewRef.show()} class="primary inline-flex items-center gap-1">
+                        <button
+                            onclick={() => transactionViewRef.show()}
+                            class="primary inline-flex items-center gap-1">
                             <Icon icon={faPlus} />{_("activity.button.add.transaction")}
                         </button>
                     </div>
@@ -175,5 +182,8 @@
     </div>
 </Page>
 
-<TransactionView bind:this={transactionViewRef} onSave={onSaveTransaction} categories={[...categories.values()]}
-></TransactionView>
+<TransactionView
+    bind:this={transactionViewRef}
+    onSave={onSaveTransaction}
+    onDelete={onDeleteTransaction}
+    categories={[...categories.values()]}></TransactionView>

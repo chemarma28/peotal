@@ -115,6 +115,7 @@
     }
 
     function onCategoryDeleted(deleted: Category) {
+        showToast(ToastVariant.SUCCESS, _("categories.toast.deleted"));
         categories = categories.filter((it) => it.id !== deleted.id);
 
         if (categories.length === 0) {

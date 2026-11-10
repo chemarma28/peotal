@@ -1,22 +1,25 @@
 <script lang="ts">
-    import { _, _transactionType } from "@ui/i18n";
     import api from "@ui/api";
+    import Dialog from "@ui/components/Dialog.svelte";
+    import { showToast, ToastVariant } from "@ui/components/toasts";
     import CurrencyField from "@ui/forms/CurrencyField.svelte";
+    import DangerZone from "@ui/forms/DangerZone.svelte";
     import DateField from "@ui/forms/DateField.svelte";
     import InputField from "@ui/forms/InputField.svelte";
     import SelectField from "@ui/forms/SelectField.svelte";
     import ToggleGroup from "@ui/forms/ToggleGroup.svelte";
     import type { SelectOption } from "@ui/forms/types";
-    import Dialog from "@ui/components/Dialog.svelte";
+    import { _, _transactionType } from "@ui/i18n";
     import type { Category, Transaction } from "@ui/types";
     import { Currency, TransactionType } from "@ui/types";
 
     type Props = {
         categories: Category[];
         onSave: (transaction: Transaction) => void;
+        onDelete: (transaction: Transaction) => void;
     };
 
-    let { onSave, categories }: Props = $props();
+    let { onSave, onDelete, categories }: Props = $props();
 
     type TransactionDraft = Omit<Transaction, "categoryId" | "description"> & {
         categoryId?: number;
@@ -56,6 +59,9 @@
     let isNew = $derived(transaction.id === undefined);
     let hasCategories = $derived(categoryOptions.length > 0);
 
+    let confirmingDelete = $state(false);
+    let saving = $state(false);
+
     $effect(() => {
         if (category && operation && category.record.operation !== operation.record) {
             category = undefined;
@@ -69,6 +75,8 @@
         const selected = categories.find((o) => o.id === transaction.categoryId);
         category = selected ? { name: selected.name, record: selected } : undefined;
 
+        confirmingDelete = false;
+
         dialogRef?.show();
     }
 
@@ -80,6 +88,8 @@
         const categoryId = category?.record.id;
         if (categoryId === undefined || !operation) return;
 
+        saving = true;
+
         const payload: Transaction = {
             ...transaction,
             operation: operation.record,
@@ -87,58 +97,115 @@
             description: transaction.description?.trim() || undefined,
         };
 
-        const saved = isNew
-            ? await api.post<Transaction>("transaction", payload)
-            : await api.put<Transaction>("transaction", payload);
+        try {
+            const saved = isNew
+                ? await api.post<Transaction>("transaction", payload)
+                : await api.put<Transaction>("transaction", payload);
 
-        onSave(saved);
-        close();
+            onSave(saved);
+            close();
+        } catch {
+            showToast(ToastVariant.ERROR, _("activity.toast.transactionSaveFailed"));
+        } finally {
+            saving = false;
+        }
+    }
+
+    async function remove() {
+        if (!transaction.id || transaction.categoryId === undefined) return;
+
+        saving = true;
+
+        try {
+            await api.delete(`transaction/${transaction.id}`);
+
+            onDelete({ ...transaction, categoryId: transaction.categoryId });
+            close();
+        } catch {
+            showToast(ToastVariant.ERROR, _("activity.toast.transactionDeleteFailed"));
+        } finally {
+            saving = false;
+        }
+    }
+
+    async function submit() {
+        if (saving) return;
+
+        if (confirmingDelete) void remove();
+        else void save();
     }
 </script>
 
-<Dialog bind:this={dialogRef} title={isNew ? _("transaction.title.new") : _("transaction.title.edit")} onsubmit={save}>
-    <ToggleGroup bind:chosen={operation} options={operationOptions}></ToggleGroup>
+<Dialog
+    bind:this={dialogRef}
+    title={confirmingDelete
+        ? _("transaction.delete.title")
+        : isNew
+          ? _("transaction.title.new")
+          : _("transaction.title.edit")}
+    onsubmit={submit}>
+    {#if !confirmingDelete}
+        <ToggleGroup bind:chosen={operation} options={operationOptions}></ToggleGroup>
 
-    <DateField id="date" label={_("transaction.labels.issued")} bind:value={transaction.issued} />
+        <DateField id="date" label={_("transaction.labels.issued")} bind:value={transaction.issued} />
 
-    <SelectField
-        id="category"
-        label={_("transaction.labels.category")}
-        required
-        placeholder={_("transaction.placeholders.category")}
-        options={categoryOptions}
-        key={(o) => o.record.id}
-        bind:chosen={category}
-        validator={(value) => (value ? "" : _("transaction.errors.category"))}>
-    </SelectField>
+        <SelectField
+            id="category"
+            label={_("transaction.labels.category")}
+            autofocus
+            required
+            placeholder={_("transaction.placeholders.category")}
+            options={categoryOptions}
+            key={(o) => o.record.id}
+            bind:chosen={category}
+            validator={(value) => (value ? "" : _("transaction.errors.category"))}>
+        </SelectField>
 
-    {#if !hasCategories}
-        <p class="text-sm text-red-700">{_("transaction.errors.noCategory")}</p>
+        {#if !hasCategories}
+            <p class="text-sm text-red-700">{_("transaction.errors.noCategory")}</p>
+        {/if}
+
+        <CurrencyField
+            amountId="amount"
+            currencyId="currency"
+            label={_("transaction.labels.currency")}
+            required
+            bind:amount={transaction.amount}
+            bind:currency={transaction.currency}
+            validator={(value) => {
+                if ((value as number) <= 0) return _("transaction.errors.currency");
+            }}>
+        </CurrencyField>
+
+        <InputField
+            id="description"
+            label={_("transaction.labels.description")}
+            placeholder={_("transaction.placeholders.description")}
+            bind:value={transaction.description}>
+        </InputField>
+
+        {#if !isNew}
+            <DangerZone id="transaction-danger-zone" class="mt-1">
+                <button type="button" class="danger w-full" onclick={() => (confirmingDelete = true)}>
+                    {_("transaction.action.delete")}
+                </button>
+            </DangerZone>
+        {/if}
+    {:else}
+        <p class="text-sm">
+            {_("transaction.delete.description")}
+        </p>
     {/if}
 
-    <CurrencyField
-        amountId="amount"
-        currencyId="currency"
-        label={_("transaction.labels.currency")}
-        autofocus
-        required
-        bind:amount={transaction.amount}
-        bind:currency={transaction.currency}
-        validator={(value) => {
-            if ((value as number) <= 0) return _("transaction.errors.currency");
-        }}>
-    </CurrencyField>
-
-    <InputField
-        id="description"
-        label={_("transaction.labels.description")}
-        placeholder={_("transaction.placeholders.description")}
-        bind:value={transaction.description}>
-    </InputField>
-
     {#snippet footer()}
-        <button class="primary w-full" type="submit" disabled={!hasCategories}>
-            {_("transaction.save")}
-        </button>
+        {#if !confirmingDelete}
+            <button class="primary w-full" type="submit" disabled={!hasCategories || saving}>
+                {_("transaction.action.save")}
+            </button>
+        {:else}
+            <button class="danger w-full" type="submit" disabled={saving}>
+                {_("common.continue")}
+            </button>
+        {/if}
     {/snippet}
 </Dialog>

@@ -12,6 +12,8 @@ const uiDir = path.resolve(__dirname, "ui");
 export default defineConfig({
     root: uiDir,
 
+    tsconfig: "../tsconfig.json",
+
     resolve: {
         tsconfigPaths: true,
     },

@@ -1,42 +1,76 @@
-export const CATEGORY_ICONS = {
-    groceries: "fa-solid fa-cart-shopping",
-    transport: "fa-solid fa-car",
-    restaurant: "fa-solid fa-utensils",
-    entertainment: "fa-solid fa-film",
-    internet: "fa-solid fa-wifi",
-    mobile: "fa-solid fa-mobile-screen-button",
-    household: "fa-solid fa-bolt",
-    services: "fa-solid fa-screwdriver-wrench",
-    salary: "fa-solid fa-briefcase",
-    gift: "fa-solid fa-gift",
-    health: "fa-solid fa-heart-pulse",
-    education: "fa-solid fa-graduation-cap",
-    travel: "fa-solid fa-plane",
-    pets: "fa-solid fa-paw",
-    cafe: "fa-solid fa-mug-hot",
-    shopping: "fa-solid fa-bag-shopping",
-    utilities: "fa-solid fa-plug",
-    rent: "fa-solid fa-house",
-    savings: "fa-solid fa-piggy-bank",
-    bonus: "fa-solid fa-award",
-    fitness: "fa-solid fa-dumbbell",
-    beauty: "fa-solid fa-scissors",
-    clothes: "fa-solid fa-shirt",
-    electronics: "fa-solid fa-laptop",
-    insurance: "fa-solid fa-shield-halved",
-    taxes: "fa-solid fa-file-invoice-dollar",
-    childcare: "fa-solid fa-baby",
-    charity: "fa-solid fa-hand-holding-heart",
-    subscription: "fa-solid fa-repeat",
-    circle: "fa-solid fa-circle",
+import {
+    faAward,
+    faBaby,
+    faBagShopping,
+    faBolt,
+    faBriefcase,
+    faCar,
+    faCartShopping,
+    faCircle,
+    faDumbbell,
+    faFileInvoiceDollar,
+    faFilm,
+    faGift,
+    faGraduationCap,
+    faHandHoldingHeart,
+    faHeartPulse,
+    faHouse,
+    faLaptop,
+    faMobileScreenButton,
+    faMugHot,
+    faPaw,
+    faPiggyBank,
+    faPlane,
+    faPlug,
+    faRepeat,
+    faScissors,
+    faScrewdriverWrench,
+    faShieldHalved,
+    faShirt,
+    faUtensils,
+    faWifi,
+} from "@fortawesome/free-solid-svg-icons";
+
+export const CategoryIcons = {
+    groceries: faCartShopping,
+    transport: faCar,
+    restaurant: faUtensils,
+    entertainment: faFilm,
+    internet: faWifi,
+    mobile: faMobileScreenButton,
+    household: faBolt,
+    services: faScrewdriverWrench,
+    salary: faBriefcase,
+    gift: faGift,
+    health: faHeartPulse,
+    education: faGraduationCap,
+    travel: faPlane,
+    pets: faPaw,
+    cafe: faMugHot,
+    shopping: faBagShopping,
+    utilities: faPlug,
+    rent: faHouse,
+    savings: faPiggyBank,
+    bonus: faAward,
+    fitness: faDumbbell,
+    beauty: faScissors,
+    clothes: faShirt,
+    electronics: faLaptop,
+    insurance: faShieldHalved,
+    taxes: faFileInvoiceDollar,
+    childcare: faBaby,
+    charity: faHandHoldingHeart,
+    subscription: faRepeat,
+    circle: faCircle,
 } as const;
 
-export type CategoryIcon = keyof typeof CATEGORY_ICONS;
+export type CategoryIconName = keyof typeof CategoryIcons;
+export type CategoryIcon = CategoryIconName;
 
 export const DEFAULT_CATEGORY_ICON: CategoryIcon = "circle";
 
-export function categoryIcon(key?: string | null): string {
-    const found = key ? CATEGORY_ICONS[key as CategoryIcon] : undefined;
+export function categoryIconDefinition(key?: string | null) {
+    const found = key ? CategoryIcons[key as CategoryIconName] : undefined;
 
-    return found ?? CATEGORY_ICONS[DEFAULT_CATEGORY_ICON];
+    return found ?? CategoryIcons.circle;
 }

@@ -1,5 +1,7 @@
 <script lang="ts">
     import { PRESET_COLORS, isPresetColor } from "@ui/categories/colors";
+    import { faPalette } from "@fortawesome/free-solid-svg-icons";
+    import Icon from "@ui/components/Icon.svelte";
     import { _ } from "@ui/i18n";
 
     type Props = {
@@ -45,7 +47,7 @@
             aria-label={_("categories.color.custom")}
             title={_("categories.color.custom")}
             onclick={openColorPicker}>
-            <i class="fa-solid fa-palette text-[10px]" aria-hidden="true"></i>
+            <Icon icon={faPalette} class="text-[10px]" />
         </button>
 
         <input bind:this={colorInput} bind:value type="color" class="sr-only" tabindex="-1" aria-hidden="true" />

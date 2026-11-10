@@ -1,9 +1,11 @@
 <script lang="ts">
     import api from "@ui/api";
     import { isPresetColor } from "@ui/categories/colors";
-    import { CATEGORY_ICONS, DEFAULT_CATEGORY_ICON } from "@ui/categories/icons";
+    import { CategoryIcons, DEFAULT_CATEGORY_ICON } from "@ui/categories/icons";
+    import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
     import Badge from "@ui/components/Badge.svelte";
     import Dialog from "@ui/components/Dialog.svelte";
+    import Icon from "@ui/components/Icon.svelte";
     import { showToast, ToastVariant } from "@ui/components/toasts";
     import ColorPicker from "@ui/forms/ColorPicker.svelte";
     import IconPicker from "@ui/forms/IconPicker.svelte";
@@ -188,7 +190,7 @@
 
             <IconPicker
                 label={_("categories.labels.icon")}
-                icons={CATEGORY_ICONS}
+                icons={CategoryIcons}
                 bind:value={draft.icon}
                 color={draft.color} />
         </div>
@@ -202,9 +204,9 @@
                     aria-controls="category-danger-zone"
                     onclick={() => (dangerOpen = !dangerOpen)}>
                     <span>{_("categories.danger.title")}</span>
-                    <i
-                        class="fa-solid fa-chevron-down text-xs transition-transform {dangerOpen ? 'rotate-180' : ''}"
-                        aria-hidden="true"></i>
+                    <Icon
+                        icon={faChevronDown}
+                        class="text-xs transition-transform {dangerOpen ? 'rotate-180' : ''}" />
                 </button>
 
                 {#if dangerOpen}

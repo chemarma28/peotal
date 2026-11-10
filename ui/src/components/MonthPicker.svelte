@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+    import Icon from "@ui/components/Icon.svelte";
     import { _ } from "@ui/i18n";
 
     type Props = {
@@ -80,9 +82,9 @@
                 {/each}
             </select>
 
-            <i
-                class="fa-solid fa-chevron-down pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-[10px] opacity-50">
-            </i>
+            <Icon
+                icon={faChevronDown}
+                class="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-[10px] opacity-50" />
         </div>
 
         <span class="bg-border-card h-4 w-px shrink-0"></span>

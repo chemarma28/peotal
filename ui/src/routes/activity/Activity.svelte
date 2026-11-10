@@ -1,9 +1,11 @@
 <script lang="ts">
     import { onMount, getContext } from "svelte";
+    import { faPlus } from "@fortawesome/free-solid-svg-icons";
     import ActivityPanel from "./ActivityPanel.svelte";
     import ActivitySidebar from "./ActivitySidebar.svelte";
     import TransactionView from "./TransactionView.svelte";
     import api from "@ui/api";
+    import Icon from "@ui/components/Icon.svelte";
     import { type Category, type CategorySummaries, type Transaction, TransactionType } from "@ui/types";
     import Empty from "@ui/components/Empty.svelte";
     import { showToast, ToastVariant } from "@ui/components/toasts";
@@ -34,7 +36,7 @@
 
     $effect(() => {
         headerAction.set({
-            icon: "fa-solid fa-plus",
+            icon: faPlus,
             label: _("activity.button.add.transaction"),
             onClick: () => transactionViewRef.show(),
         });
@@ -146,8 +148,8 @@
             <div class="mx-auto w-full max-w-5xl">
                 <div class="hidden min-h-12 lg:flex lg:justify-end">
                     <div>
-                        <button onclick={() => transactionViewRef.show()} class="primary">
-                            <i class="fa-solid fa-plus"></i>{_("activity.button.add.transaction")}
+                        <button onclick={() => transactionViewRef.show()} class="primary inline-flex items-center gap-1">
+                            <Icon icon={faPlus} />{_("activity.button.add.transaction")}
                         </button>
                     </div>
                 </div>

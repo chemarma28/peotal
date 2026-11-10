@@ -1,5 +1,7 @@
 <script lang="ts">
     import type { Snippet } from "svelte";
+    import { faXmark } from "@fortawesome/free-solid-svg-icons";
+    import Icon from "@ui/components/Icon.svelte";
     import { _ } from "@ui/i18n";
 
     type Props = {
@@ -72,7 +74,7 @@
                     aria-label={_("common.close")}
                     title={_("common.close")}
                     onclick={close}>
-                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    <Icon icon={faXmark} />
                 </button>
             {/if}
         </header>

@@ -1,5 +1,7 @@
+import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+
 export type HeaderAction = {
-    icon: string;
+    icon: IconDefinition;
     label: string;
     onClick: () => void;
 };

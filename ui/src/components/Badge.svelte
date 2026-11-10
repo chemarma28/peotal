@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { Snippet } from "svelte";
-    import { categoryIcon } from "@ui/categories/icons";
+    import Icon from "@ui/components/Icon.svelte";
+    import { categoryIconDefinition } from "@ui/categories/icons";
 
     type Props = {
         color: string;
@@ -19,7 +20,7 @@
         style:background-color={`color-mix(in oklab, ${color} 35%, white)`}
         style:border-color={color}
         style:color={accent}>
-        <i class={categoryIcon(icon)} aria-hidden="true"></i>
+        <Icon icon={categoryIconDefinition(icon)} />
         {@render children()}
     </span>
 {:else}
@@ -28,6 +29,6 @@
         style:background-color={`color-mix(in oklab, ${color} 35%, white)`}
         style:border-color={color}
         style:color={accent}>
-        <i class={categoryIcon(icon)} aria-hidden="true"></i>
+        <Icon icon={categoryIconDefinition(icon)} />
     </span>
 {/if}

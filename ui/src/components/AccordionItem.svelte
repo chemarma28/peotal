@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
+    import Icon from "@ui/components/Icon.svelte";
     import { slide } from "svelte/transition";
 
     let { header, body } = $props();
@@ -14,7 +16,9 @@
     <button
         class="font-inherit outline-border-focus flex w-full cursor-pointer items-center justify-start gap-1 rounded-lg p-2 text-lg font-semibold focus-visible:outline-2 focus-visible:-outline-offset-2"
         onclick={toggle}>
-        <i class="fa fa-solid fa-angle-right transition-transform {!hidden ? 'rotate-90' : 'rotate-0'}"></i>
+        <Icon
+            icon={faAngleRight}
+            class="transition-transform {!hidden ? 'rotate-90' : 'rotate-0'}" />
         <span>{header}</span>
     </button>
 

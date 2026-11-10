@@ -1,6 +1,9 @@
 <script lang="ts">
+    import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+    import Icon from "@ui/components/Icon.svelte";
+
     type Props = {
-        icons: Record<string, string>;
+        icons: Record<string, IconDefinition>;
         value?: string;
         color?: string;
         label: string;
@@ -31,7 +34,7 @@
                 checked={value === key}
                 aria-label={key}
                 onchange={() => (value = key)} />
-            <i class={icon} aria-hidden="true"></i>
+            <Icon icon={icon} />
         </label>
     {/each}
 </div>

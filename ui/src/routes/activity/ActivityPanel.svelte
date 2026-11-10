@@ -1,7 +1,7 @@
 <script lang="ts">
     import Accordion from "@ui/components/Accordion.svelte";
     import AccordionItem from "@ui/components/AccordionItem.svelte";
-    import Badge from "@ui/components/Badge.svelte";
+    import CategoryIcon from "@ui/components/CategoryIcon.svelte";
     import Money from "@ui/components/Money.svelte";
     import { currencySymbol } from "@ui/currencies";
     import { _ } from "@ui/i18n";
@@ -74,10 +74,9 @@
                                     <td class="border-border-card/50 border-b-1 pl-2 text-left">
                                         <div class="flex gap-2">
                                             <div class="flex items-center">
-                                                <Badge
+                                                <CategoryIcon
                                                     color={transactionCategory?.color ?? "#a8b7d1"}
-                                                    icon={transactionCategory?.icon}>
-                                                </Badge>
+                                                    icon={transactionCategory?.icon} />
                                             </div>
 
                                             <div class="flex flex-col">
@@ -120,7 +119,8 @@
                                                     currency={total.currency}
                                                     amount={total.income} />
                                             {/if}
-
+                                        </div>
+                                        <div class="text-right">
                                             {#if total.expense > 0}
                                                 <Money
                                                     noColor

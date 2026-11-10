@@ -1,7 +1,9 @@
 <script lang="ts">
     import api from "@ui/api";
+    import { faGrip, faPenToSquare, faPlus } from "@fortawesome/free-solid-svg-icons";
     import Badge from "@ui/components/Badge.svelte";
     import Empty from "@ui/components/Empty.svelte";
+    import Icon from "@ui/components/Icon.svelte";
     import { showToast, ToastVariant } from "@ui/components/toasts";
     import { DEFAULT_CATEGORIES } from "@ui/categories/defaults";
     import { _ } from "@ui/i18n";
@@ -69,7 +71,7 @@
 
     $effect(() => {
         headerAction.set({
-            icon: "fa-solid fa-plus",
+            icon: faPlus,
             label: _("categories.button.add.category"),
             onClick: () => categoryViewRef.show(undefined, filter.record ?? TransactionType.EXPENSE),
         });
@@ -273,8 +275,8 @@
                 <div class="hidden lg:block">
                     <button
                         onclick={() => categoryViewRef.show(undefined, filter.record ?? TransactionType.EXPENSE)}
-                        class="primary">
-                        <i class="fa-solid fa-plus"></i>{_("categories.button.add.category")}
+                        class="primary inline-flex items-center gap-1">
+                        <Icon icon={faPlus} />{_("categories.button.add.category")}
                     </button>
                 </div>
             </div>
@@ -298,15 +300,14 @@
                                 {@attach draggable(index)}
                                 {@attach dropZone(index + 1)}
                                 class="border-border-card bg-bg-card flex items-center justify-between rounded-lg border-1 p-1">
-                                <div>
+                                <div class="flex items-center">
                                     {#if !filter.record}
-                                        <i
+                                        <Icon
                                             data-drag-handle
-                                            aria-hidden="true"
-                                            class="fa-solid fa-grip inline-block rotate-90 px-1 select-none {draggableIndex ===
-                                            index
+                                            icon={faGrip}
+                                            class="mx-1 size-4 shrink-0 rotate-90 select-none {draggableIndex === index
                                                 ? 'cursor-grabbing'
-                                                : 'cursor-grab'}"></i>
+                                                : 'cursor-grab'}" />
                                     {/if}
                                     <Badge color={category.color} icon={category.icon}>
                                         {category.name}
@@ -320,7 +321,7 @@
                                         class="icon"
                                         aria-label={_("categories.action.edit")}
                                         title={_("categories.action.edit")}>
-                                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                                        <Icon icon={faPenToSquare} />
                                     </button>
                                 </div>
                             </div>

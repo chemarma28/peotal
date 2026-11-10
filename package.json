@@ -27,6 +27,7 @@
     },
     "dependencies": {
         "@codeborne/i18n-json": "^0.3.7",
+        "@fontsource/noto-sans": "^5.3.0",
         "@fortawesome/fontawesome-free": "^7.3.1",
         "autonumeric": "^4.10.10",
         "svelte": "^5.55.5"

@@ -1,44 +1,18 @@
 @import "@fortawesome/fontawesome-free/css/all.min.css";
+
+@import "@fontsource/noto-sans/latin-300.css";
+@import "@fontsource/noto-sans/latin-400.css";
+@import "@fontsource/noto-sans/latin-400-italic.css";
+@import "@fontsource/noto-sans/latin-700.css";
+@import "@fontsource/noto-sans/latin-700-italic.css";
+
+@import "@fontsource/noto-sans/cyrillic-300.css";
+@import "@fontsource/noto-sans/cyrillic-400.css";
+@import "@fontsource/noto-sans/cyrillic-400-italic.css";
+@import "@fontsource/noto-sans/cyrillic-700.css";
+@import "@fontsource/noto-sans/cyrillic-700-italic.css";
+
 @import "tailwindcss";
-
-@font-face {
-    font-family: "Noto Sans";
-    src: url("./assets/NotoSans-Regular.ttf") format("truetype");
-    font-weight: 400;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Noto Sans";
-    src: url("./assets/NotoSans-Light.ttf") format("truetype");
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Noto Sans";
-    src: url("./assets/NotoSans-Bold.ttf") format("truetype");
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Noto Sans";
-    src: url("./assets/NotoSans-Italic.ttf") format("truetype");
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: "Noto Sans";
-    src: url("./assets/NotoSans-BoldItalic.ttf") format("truetype");
-    font-weight: 700;
-    font-style: italic;
-    font-display: swap;
-}
 
 @theme {
     --font-noto: "Noto Sans", sans-serif;

@@ -8,25 +8,24 @@
         id: string;
         children: Snippet;
         class?: string;
+        open?: boolean;
     };
 
-    let { id, class: className, children }: Props = $props();
-
-    let dangerOpen = $state(false);
+    let { id, class: className, children, open = $bindable(false) }: Props = $props();
 </script>
 
 <div class={className}>
     <button
         type="button"
         class="flex w-full items-center justify-between text-sm font-semibold"
-        aria-expanded={dangerOpen}
+        aria-expanded={open}
         aria-controls={id}
-        onclick={() => (dangerOpen = !dangerOpen)}>
+        onclick={() => (open = !open)}>
         <span>{_("forms.danger.title")}</span>
-        <Icon icon={faChevronDown} class="text-xs transition-transform {dangerOpen ? 'rotate-180' : ''}" />
+        <Icon icon={faChevronDown} class="text-xs transition-transform {open ? 'rotate-180' : ''}" />
     </button>
 
-    {#if dangerOpen}
+    {#if open}
         <div {id} class="mt-2">
             {@render children()}
         </div>

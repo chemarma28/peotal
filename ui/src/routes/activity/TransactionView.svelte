@@ -61,6 +61,7 @@
 
     let confirmingDelete = $state(false);
     let saving = $state(false);
+    let dangerOpen = $state(false);
 
     $effect(() => {
         if (category && operation && category.record.operation !== operation.record) {
@@ -75,12 +76,15 @@
         const selected = categories.find((o) => o.id === transaction.categoryId);
         category = selected ? { name: selected.name, record: selected } : undefined;
 
+        saving = false;
+        dangerOpen = false;
         confirmingDelete = false;
 
         dialogRef?.show();
     }
 
     export function close() {
+        dangerOpen = false;
         dialogRef?.close();
     }
 
@@ -185,7 +189,7 @@
         </InputField>
 
         {#if !isNew}
-            <DangerZone id="transaction-danger-zone" class="mt-1">
+            <DangerZone bind:open={dangerOpen} id="transaction-danger-zone" class="mt-1">
                 <button type="button" class="danger w-full" onclick={() => (confirmingDelete = true)}>
                     {_("transaction.action.delete")}
                 </button>

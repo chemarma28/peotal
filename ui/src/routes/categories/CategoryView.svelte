@@ -37,6 +37,7 @@
     let dialogRef = $state<Dialog>();
     let saving = $state(false);
     let confirmingDelete = $state(false);
+    let dangerOpen = $state(false);
     let draft = $state<Draft>(empty());
     let operation = $state<SelectOption<TransactionType> | undefined>();
 
@@ -71,12 +72,14 @@
 
         operation = operationOptions.find((o) => o.record === (source?.operation ?? defaultOperation));
         confirmingDelete = false;
+        dangerOpen = false;
         saving = false;
 
         dialogRef?.show();
     }
 
     export function close() {
+        dangerOpen = false;
         dialogRef?.close();
     }
 
@@ -191,7 +194,7 @@
         </div>
 
         {#if !isNew}
-            <DangerZone id="category-danger-zone" class="mt-1">
+            <DangerZone bind:open={dangerOpen} id="category-danger-zone" class="mt-1">
                 <button type="button" class="danger w-full" onclick={() => (confirmingDelete = true)}>
                     {_("categories.action.delete")}
                 </button>

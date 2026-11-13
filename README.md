@@ -11,11 +11,11 @@ production packaging, and some planned features are not ready yet.
 
 ## Requirements
 
-- JDK 21
+- JDK 21 or newer
 - Node.js 24+
 - npm
 
-`JAVA_HOME` must point to JDK 21.
+`JAVA_HOME` must point to JDK 21 or newer.
 
 ## Run in development
 

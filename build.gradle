@@ -5,15 +5,15 @@ plugins {
 
 version = "0.1.0"
 
-def requiredJava = JavaVersion.VERSION_21
+def minimumJava = JavaVersion.VERSION_21
 def currentJava = JavaVersion.current()
 
-if (currentJava != requiredJava) {
+if (currentJava.compareTo(minimumJava) < 0) {
     throw new GradleException(
-            "Peotal requires JDK 21. " +
+            "Peotal requires JDK 21 or newer. " +
             "Current Gradle JVM: ${currentJava} " +
             "(${System.getProperty('java.version')}, ${System.getProperty('java.home')}). " +
-            "Set JAVA_HOME to JDK 21 or configure Gradle JVM in your IDE."
+            "Set JAVA_HOME to JDK 21 or newer, or configure Gradle JVM in your IDE."
     )
 }
 

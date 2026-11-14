@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 
+import auth.AuthException;
 import categories.CategoryInUseException;
 import io.jooby.Extension;
 import io.jooby.Jooby;
@@ -18,6 +19,7 @@ import static io.jooby.StatusCode.BAD_REQUEST;
 import static io.jooby.StatusCode.CONFLICT;
 import static io.jooby.StatusCode.NOT_FOUND;
 import static io.jooby.StatusCode.SERVER_ERROR;
+import static io.jooby.StatusCode.UNAUTHORIZED;
 
 public class ExceptionHandler implements Extension {
 
@@ -29,6 +31,7 @@ public class ExceptionHandler implements Extension {
         it.errorCode(JsonParseException.class, BAD_REQUEST);
         it.errorCode(NoSuchElementException.class, NOT_FOUND);
         it.errorCode(CategoryInUseException.class, CONFLICT);
+        it.errorCode(AuthException.class, UNAUTHORIZED);
 
         it.error((ctx, cause, code) -> {
             if (!ctx.accept(MediaType.json)) {

@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS categories (
     color VARCHAR(7) NOT NULL,
     icon VARCHAR(64),
     ordinal INT NOT NULL DEFAULT 0,
-    
+
     CONSTRAINT ux_categories_id_operation UNIQUE (id, operation)
 );
 
@@ -21,3 +21,12 @@ CREATE TABLE IF NOT EXISTS transactions (
     currency VARCHAR(3) NOT NULL,
     CONSTRAINT category_transactions_operation_fk FOREIGN KEY (category_id, operation) REFERENCES categories (id, operation) ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS accounts (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(64) NOT NULL,
+    password_hash VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE UNIQUE INDEX ux_accounts_username ON accounts (username);

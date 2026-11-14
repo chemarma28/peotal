@@ -21,15 +21,15 @@ public abstract class RepositoryTest {
 
     @BeforeAll
     static void setUpDatabase() {
-        final Config db = ConfigFactory.parseResources("application.test.conf")
+        final Config config = ConfigFactory.parseResources("application.test.conf")
+                .withFallback(ConfigFactory.parseResources("application.conf"))
                 .withFallback(ConfigFactory.systemProperties())
-                .resolve()
-                .getConfig("db");
+                .resolve();
 
         final JdbcDataSource source = new JdbcDataSource();
-        source.setURL(db.getString("url"));
-        source.setUser(db.getString("user"));
-        source.setPassword(db.getString("password"));
+        source.setURL(config.getString("db.url"));
+        source.setUser(config.getString("db.user"));
+        source.setPassword(config.getString("db.password"));
 
         Flyway.configure()
                 .dataSource(source)

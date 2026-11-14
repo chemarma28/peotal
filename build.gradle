@@ -45,7 +45,7 @@ processResources {
 }
 
 application {
-    mainClass = 'Launcher'
+    mainClass = 'peotal.Launcher'
 }
 
 test {
@@ -82,6 +82,11 @@ dependencies {
     implementation "io.jooby:jooby-jdbi:${joobyVersion}"
     implementation "com.google.code.gson:gson:2.14.0"
     implementation "io.jooby:jooby-avaje-inject:${joobyVersion}"
+    
+    implementation "io.jsonwebtoken:jjwt-api:0.13.0"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:0.13.0"
+    implementation "io.jsonwebtoken:jjwt-gson:0.13.0"
+    implementation "at.favre.lib:bcrypt:0.10.2"
 	
     compileOnly "org.projectlombok:lombok:1.18.46"
 	annotationProcessor "org.projectlombok:lombok:1.18.46"
@@ -111,6 +116,9 @@ jar {
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude "application.dev.conf"
+    exclude "application.test.conf"
+    exclude "application.e2e.conf"
 }
 
 tasks.register("types", JavaExec) {

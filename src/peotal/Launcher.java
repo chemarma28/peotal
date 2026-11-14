@@ -1,3 +1,6 @@
+package peotal;
+
+import auth.AuthModule;
 import categories.CategoryController_;
 import db.DBModule;
 import io.jooby.Jooby;
@@ -14,13 +17,14 @@ public class Launcher extends Jooby {
         Jooby.runApp(args, Launcher::new);
     }
 
-    {        
+    {
         install(new DBModule());
         install(new FlywayModule());
         use(new TransactionalRequest());
         install(new JsonModule());
         install(new ExceptionHandler());
         install(AvajeInjectModule.of());
+        install(new AuthModule());
 
         mvc(new CategoryController_());
         mvc(new TransactionController_());

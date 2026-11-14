@@ -96,6 +96,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"
     testImplementation "org.assertj:assertj-core:3.27.7"
+    testImplementation "io.jooby:jooby-test:${joobyVersion}"
 
     jvm2dts "com.github.chemarma28:jvm2dts:b65f6646fa62b914a6e5798f2d083605cc409b1b"
 }

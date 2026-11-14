@@ -1,7 +1,5 @@
 package support;
 
-import java.util.UUID;
-
 import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.jdbi.v3.core.Handle;
@@ -10,7 +8,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import modules.Db;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
+import db.DBModule;
 
 public abstract class RepositoryTest {
 
@@ -20,8 +21,15 @@ public abstract class RepositoryTest {
 
     @BeforeAll
     static void setUpDatabase() {
+        final Config db = ConfigFactory.parseResources("application.test.conf")
+                .withFallback(ConfigFactory.systemProperties())
+                .resolve()
+                .getConfig("db");
+
         final JdbcDataSource source = new JdbcDataSource();
-        source.setURL("jdbc:h2:mem:test-" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
+        source.setURL(db.getString("url"));
+        source.setUser(db.getString("user"));
+        source.setPassword(db.getString("password"));
 
         Flyway.configure()
                 .dataSource(source)
@@ -29,16 +37,14 @@ public abstract class RepositoryTest {
                 .load()
                 .migrate();
 
-        jdbi = Db.create(source);
+        jdbi = Jdbi.create(source);
+        DBModule.registerBeanMappers(jdbi);
     }
 
     @BeforeEach
     void beginTransaction() {
         handle = jdbi.open();
         handle.begin();
-
-        handle.execute("DELETE FROM transactions");
-        handle.execute("DELETE FROM categories");
     }
 
     @AfterEach

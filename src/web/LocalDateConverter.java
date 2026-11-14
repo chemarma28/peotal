@@ -1,4 +1,4 @@
-package converters;
+package web;
 
 import static java.lang.String.format;
 import java.lang.reflect.Type;
@@ -15,20 +15,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import io.jooby.value.ConversionHint;
-import io.jooby.value.Converter;
-import io.jooby.value.Value;
-
-public class LocalDateConverter implements Converter, JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
-
-    @Override
-    public LocalDate convert(Type type, Value value, ConversionHint hint) {
-        if (type == LocalDate.class) {
-            return this.fromString(value.name(), value.value());
-        }
-
-        return null;
-    }
+public class LocalDateConverter implements JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
 
     @Override
     public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {

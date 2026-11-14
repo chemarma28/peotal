@@ -1,10 +1,11 @@
 import categories.CategoryController_;
+import db.DBModule;
 import io.jooby.Jooby;
 import io.jooby.avaje.inject.AvajeInjectModule;
+import io.jooby.flyway.FlywayModule;
 import io.jooby.jdbi.TransactionalRequest;
-import modules.ConverterModule;
-import modules.DBModule;
-import modules.ExceptionHandler;
+import web.ExceptionHandler;
+import web.JsonModule;
 import transactions.TransactionController_;
 
 public class Launcher extends Jooby {
@@ -13,13 +14,14 @@ public class Launcher extends Jooby {
         Jooby.runApp(args, Launcher::new);
     }
 
-    {
+    {        
         install(new DBModule());
-        install(new ConverterModule());
+        install(new FlywayModule());
+        use(new TransactionalRequest());
+        install(new JsonModule());
         install(new ExceptionHandler());
         install(AvajeInjectModule.of());
 
-        use(new TransactionalRequest());
         mvc(new CategoryController_());
         mvc(new TransactionController_());
     }

@@ -14,17 +14,15 @@
 
 {#snippet title(title: string, icon: IconDefinition, color: string)}
     <div class={`flex min-w-0 items-center gap-1 ${color}`}>
-        <Icon {icon} />
+        <Icon class="shrink-0" {icon} />
+
         <span class="truncate">{title}</span>
     </div>
 {/snippet}
 
-<div class="fixed top-0 left-[50%] z-50 flex -translate-x-[50%] flex-col gap-2 p-2" aria-live="assertive">
-    {#each $toasts as toast}
-        <div
-            role="status"
-            transition:fly
-            class="bg-bg-card border-border-card w-3xs max-w-3xs rounded-lg border-1 shadow-lg">
+<div class="fixed top-0 left-[50%] z-50 flex max-w-dvw -translate-x-[50%] flex-col gap-2 p-2" aria-live="assertive">
+    {#each $toasts as toast (toast.id)}
+        <div role="status" transition:fly class="bg-bg-card border-border-card rounded-lg border-1 shadow-lg">
             <div class="flex min-w-0 flex-col gap-2 p-2">
                 <div class="flex min-w-0 items-center justify-between text-nowrap">
                     {#if toast.variant === ToastVariant.SUCCESS}

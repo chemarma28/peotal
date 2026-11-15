@@ -22,15 +22,23 @@ export type ToastMessage = {
 
 export const toasts = writable<Array<Toast>>([]);
 
+let lastId = 0;
+
+function nextId(): number {
+    lastId = (lastId % 1000) + 1;
+
+    return lastId;
+}
+
 export function showToast(
     variant: ToastVariant,
     title: string,
     options?: { message?: ToastMessage; duration?: number },
 ): Toast {
-    const duration = options?.duration ?? 2500;
+    const duration = options?.duration ?? 3000;
 
     const toast: Toast = {
-        id: new Date().getTime(),
+        id: nextId(),
         variant: variant,
         title: title,
         message: options?.message,
@@ -48,5 +56,6 @@ export function showToast(
 }
 
 export function hideToast(toast: Toast) {
+    clearTimeout(toast.timer);
     toasts.update((toasts) => toasts.filter((x) => x.id !== toast.id));
 }

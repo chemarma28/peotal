@@ -134,8 +134,9 @@ tasks.register("types", JavaExec) {
     def classesDir = layout.buildDirectory.dir("classes/java/main")
 
     args "-data-only",
+         "-exclude", ".*LoginResult|.*AccountCredentials",
          "-classesDir", classesDir.get().asFile.absolutePath,
-         "categories", "transactions"
+         "categories", "transactions", "auth"
 
     standardOutput = new ByteArrayOutputStream()
 

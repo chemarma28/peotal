@@ -36,13 +36,14 @@ class Api {
             data = response.status == 204 ? await response.text() : await response.json();
         } catch (e) {
             console.error("Not a JSON", e);
-            throw { message: "errors.notJson" };
+            throw { status: response.status, message: "errors.notJson" };
         }
 
         if (response.status < 200 || response.status >= 400) {
-            data.message = data.message || data.reason;
-
-            throw data;
+            throw {
+                status: response.status,
+                message: data?.message || data?.reason,
+            };
         }
 
         return data;
@@ -51,7 +52,7 @@ class Api {
     private handleFetchFailure(error: any) {
         console.error(error);
 
-        throw error;
+        throw { error: error, message: "errors.network" };
     }
 
     get<T>(path: string): Promise<T> {

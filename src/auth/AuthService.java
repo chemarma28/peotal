@@ -25,20 +25,21 @@ public class AuthService {
     public record LoginResult(Account account, String token) {
     }
 
-    public LoginResult login(Handle handle, String username, String password) {
-        if (username == null || username.isBlank() || password == null || password.isEmpty()) {
+    public LoginResult login(Handle handle, Credentials creds) {
+        if (creds == null || creds.username == null || creds.username.isBlank() || creds.password == null
+                || creds.password.isEmpty()) {
             throw new IllegalArgumentException("username and password are required");
         }
 
         final AccountCredentials credentials;
 
         try {
-            credentials = accounts.findByUsername(handle, username).orElse(null);
+            credentials = accounts.findByUsername(handle, creds.username).orElse(null);
         } catch (IllegalArgumentException e) {
             throw new AuthException();
         }
 
-        if (credentials == null || !hasher.verify(password, credentials.passwordHash)) {
+        if (credentials == null || !hasher.verify(creds.password, credentials.passwordHash)) {
             throw new AuthException();
         }
 

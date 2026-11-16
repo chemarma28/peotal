@@ -1,10 +1,10 @@
 <script lang="ts">
-    import type { HTMLInputAttributes } from "svelte/elements";
+    import type { HTMLInputAttributes, HTMLInputTypeAttribute } from "svelte/elements";
     import FormField from "./FormField.svelte";
 
     type Props = {
         id: string;
-        type?: string;
+        type?: HTMLInputTypeAttribute;
         label: string;
         required?: boolean;
         value?: string;

@@ -32,14 +32,10 @@ public class AuthModule implements Extension {
                 env.getProperty("auth.bootstrap.password")));
 
         it.post("/api/auth/login", ctx -> {
-            final Credentials request = ctx.body(Credentials.class);
-
-            if (request == null) {
-                throw new IllegalArgumentException("username and password are required");
-            }
+            final Credentials creds = ctx.body(Credentials.class);
 
             final Handle handle = ctx.require(Handle.class);
-            final AuthService.LoginResult result = auth.login(handle, request.username, request.password);
+            final AuthService.LoginResult result = auth.login(handle, creds);
 
             final Cookie cookie = new Cookie("peotal_token", result.token())
                     .setHttpOnly(true)

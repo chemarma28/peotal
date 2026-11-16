@@ -7,7 +7,9 @@
     "auth": {
         "login": {
             "title": "Sign in",
-            "description": "Sign in to manage your income and expenses"
+            "description": "Sign in to manage your income and expenses",
+            "check": "Ensure you enter correct username and password",
+            "error": "Unexpected error. Please try again"
         }
     },
     "common": {

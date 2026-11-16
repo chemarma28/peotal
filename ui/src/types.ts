@@ -1,3 +1,7 @@
+// auth.Account
+export interface Account {id: number; username: string;}
+// auth.Credentials
+export interface Credentials {password: string; username: string;}
 // categories.Category
 export interface Category {color: string; icon?: string; id?: number; name: string; operation: TransactionType; ordinal: number;}
 // categories.CategorySummaries

@@ -16,9 +16,7 @@
     <button
         class="font-inherit outline-border-focus flex w-full cursor-pointer items-center justify-start gap-1 rounded-lg p-2 text-lg font-semibold focus-visible:outline-2 focus-visible:-outline-offset-2"
         onclick={toggle}>
-        <Icon
-            icon={faAngleRight}
-            class="transition-transform {!hidden ? 'rotate-90' : 'rotate-0'}" />
+        <Icon icon={faAngleRight} class="transition-transform {!hidden ? 'rotate-90' : 'rotate-0'}" />
         <span>{header}</span>
     </button>
 

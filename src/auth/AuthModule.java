@@ -48,5 +48,12 @@ public class AuthModule implements Extension {
 
             return result.account();
         });
+
+        it.get("/api/auth/me", ctx -> {
+            final String token = ctx.cookie("peotal_token").toOptional().orElseThrow(AuthException::new);
+
+            final Handle handle = ctx.require(Handle.class);
+            return auth.me(handle, token);
+        });
     }
 }

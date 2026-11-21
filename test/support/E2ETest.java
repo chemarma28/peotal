@@ -18,4 +18,16 @@ public class E2ETest {
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(body)))
                 .build();
     }
+
+    protected HttpRequest get(String serverPath, String url, String cookie) {
+        HttpRequest.Builder request = HttpRequest
+                .newBuilder(URI.create((serverPath.endsWith("/") ? serverPath : serverPath + "/") + url))
+                .GET();
+
+        if (cookie != null) {
+            request.header("Cookie", cookie);
+        }
+
+        return request.build();
+    }
 }

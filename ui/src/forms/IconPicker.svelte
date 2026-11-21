@@ -34,7 +34,7 @@
                 checked={value === key}
                 aria-label={key}
                 onchange={() => (value = key)} />
-            <Icon icon={icon} />
+            <Icon {icon} />
         </label>
     {/each}
 </div>

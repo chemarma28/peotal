@@ -1,4 +1,5 @@
 import type { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { createContext } from "svelte";
 
 export type HeaderAction = {
     icon: IconDefinition;
@@ -6,8 +7,6 @@ export type HeaderAction = {
     onClick: () => void;
 };
 
-export type HeaderActionStore = {
-    set: (action?: HeaderAction) => void;
-};
-
-export const HEADER_ACTION = Symbol("header-action");
+export const [headerActionHolder, setHeaderActionHolder] = createContext<{
+    bind: (action: HeaderAction | undefined) => void;
+}>();

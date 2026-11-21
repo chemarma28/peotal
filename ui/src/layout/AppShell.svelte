@@ -1,28 +1,22 @@
 <script lang="ts">
-    import type { Snippet } from "svelte";
-    import { setContext } from "svelte";
-    import { Link } from "svelte-routing";
-    import { faChartPie, faReceipt, faTags, type IconDefinition } from "@fortawesome/free-solid-svg-icons";
+    import { type IconDefinition } from "@fortawesome/free-solid-svg-icons";
     import Icon from "@ui/components/Icon.svelte";
-    import { HEADER_ACTION, type HeaderAction, type HeaderActionStore } from "@ui/layout/headerAction";
     import { _ } from "@ui/i18n";
+    import { type HeaderAction, setHeaderActionHolder } from "@ui/layout/headerAction";
+    import type { Snippet } from "svelte";
+    import { Link } from "svelte-routing";
 
     type Props = {
+        routes?: { to: string; icon: IconDefinition; label: string }[];
         children: Snippet;
     };
 
-    let { children }: Props = $props();
-
-    const routes = [
-        { to: "/", icon: faReceipt, label: "routes.activity" },
-        { to: "/categories", icon: faTags, label: "routes.categories" },
-        { to: "/budget", icon: faChartPie, label: "routes.budget" },
-    ];
+    let { routes, children }: Props = $props();
 
     let headerAction = $state<HeaderAction>();
 
-    setContext<HeaderActionStore>(HEADER_ACTION, {
-        set: (action?: HeaderAction) => {
+    setHeaderActionHolder({
+        bind: (action) => {
             headerAction = action;
         },
     });

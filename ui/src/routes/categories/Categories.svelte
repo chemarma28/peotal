@@ -11,10 +11,10 @@
     import type { SelectOption } from "@ui/forms/types";
     import Page from "@ui/layout/Page.svelte";
     import { TransactionType, type Category } from "@ui/types";
-    import { getContext, onDestroy, onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { flip } from "svelte/animate";
     import CategoryView from "./CategoryView.svelte";
-    import { HEADER_ACTION, type HeaderActionStore } from "@ui/layout/headerAction";
+    import { headerActionHolder } from "@ui/layout/headerAction";
 
     let categoryViewRef: CategoryView;
 
@@ -67,16 +67,14 @@
               : _("categories.empty.all.description"),
     );
 
-    const headerAction = getContext<HeaderActionStore>(HEADER_ACTION);
-
     $effect(() => {
-        headerAction.set({
+        headerActionHolder().bind({
             icon: faPlus,
             label: _("categories.button.add.category"),
             onClick: () => categoryViewRef.show(undefined, filter.record ?? TransactionType.EXPENSE),
         });
 
-        return () => headerAction.set(undefined);
+        return () => headerActionHolder().bind;
     });
 
     async function loadCategories() {

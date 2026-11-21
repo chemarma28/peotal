@@ -9,7 +9,7 @@
     import { type Category, type CategorySummaries, type Transaction, TransactionType } from "@ui/types";
     import Empty from "@ui/components/Empty.svelte";
     import { showToast, ToastVariant } from "@ui/components/toasts";
-    import { HEADER_ACTION, type HeaderActionStore } from "@ui/layout/headerAction";
+    import { headerActionHolder } from "@ui/layout/headerAction";
     import { _ } from "@ui/i18n";
     import Page from "@ui/layout/Page.svelte";
     import MonthPicker from "@ui/components/MonthPicker.svelte";
@@ -32,16 +32,14 @@
 
     let periodRequest = 0;
 
-    const headerAction = getContext<HeaderActionStore>(HEADER_ACTION);
-
     $effect(() => {
-        headerAction.set({
+        headerActionHolder().bind({
             icon: faPlus,
             label: _("activity.button.add.transaction"),
             onClick: () => transactionViewRef.show(),
         });
 
-        return () => headerAction.set(undefined);
+        return () => headerActionHolder().bind(undefined);
     });
 
     async function loadTransactions(from: Date, to: Date): Promise<Transaction[]> {

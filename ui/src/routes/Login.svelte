@@ -1,5 +1,6 @@
 <script lang="ts">
     import api from "@ui/api";
+    import { auth } from "@ui/auth";
     import { showToast, ToastVariant } from "@ui/components/toasts";
     import InputField from "@ui/forms/InputField.svelte";
     import { _ } from "@ui/i18n";
@@ -9,13 +10,16 @@
     let creds = $state<Credentials>({ username: "", password: "" });
     let showEnsureMessage = $state(false);
 
+    $effect(() => {
+        if ($auth) navigate("/", { replace: true });
+    });
+
     async function submit(e: SubmitEvent) {
         e.preventDefault();
 
         try {
-            await api.post<Account>("auth/login", creds);
-
-            navigate("/");
+            const account = await api.post<Account>("auth/login", creds);
+            auth.set(account);
         } catch (error) {
             const status = (error as { status?: number } | undefined)?.status;
             const message = (error as { message?: string } | undefined)?.message;

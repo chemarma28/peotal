@@ -9,12 +9,12 @@
     import { _ } from "@ui/i18n";
     import ToggleGroup from "@ui/forms/ToggleGroup.svelte";
     import type { SelectOption } from "@ui/forms/types";
+    import MainPageLayout from "@ui/layout/MainPageLayout.svelte";
     import Page from "@ui/layout/Page.svelte";
     import { TransactionType, type Category } from "@ui/types";
     import { onDestroy, onMount } from "svelte";
     import { flip } from "svelte/animate";
     import CategoryView from "./CategoryView.svelte";
-    import { headerActionHolder } from "@ui/layout/headerAction";
 
     let categoryViewRef: CategoryView;
 
@@ -66,16 +66,6 @@
               ? _("categories.empty.income.description")
               : _("categories.empty.all.description"),
     );
-
-    $effect(() => {
-        headerActionHolder().bind({
-            icon: faPlus,
-            label: _("categories.button.add.category"),
-            onClick: () => categoryViewRef.show(undefined, filter.record ?? TransactionType.EXPENSE),
-        });
-
-        return () => headerActionHolder().bind;
-    });
 
     async function loadCategories() {
         loading = true;
@@ -247,93 +237,101 @@
     </div>
 {/snippet}
 
-<Page width="narrow" title={_("routes.categories")} description={_("categories.description")}>
-    {#if loading}
-        <Empty loading />
-    {:else if loadError}
-        <Empty
-            header={_("categories.empty.loadError.header")}
-            description={_("categories.empty.loadError.description")}
-            actionLabel={_("categories.action.retry")}
-            onAction={loadCategories} />
-    {:else}
-        <section>
-            <div class="mb-4">
-                <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
-            </div>
-
-            <div class="mb-2 flex items-center justify-between gap-2">
-                <h2 id="categories-heading" class="text-lg font-semibold">
-                    {filter.record === TransactionType.EXPENSE
-                        ? _("categories.section.expenses")
-                        : filter.record === TransactionType.INCOME
-                          ? _("categories.section.income")
-                          : _("categories.section.all")}
-                </h2>
-
-                <div class="hidden lg:block">
-                    <button
-                        onclick={() => categoryViewRef.show(undefined, filter.record ?? TransactionType.EXPENSE)}
-                        class="primary inline-flex items-center gap-1">
-                        <Icon icon={faPlus} />{_("categories.button.add.category")}
-                    </button>
+<MainPageLayout
+    headerAction={{
+        icon: faPlus,
+        label: _("categories.button.add.category"),
+        onClick: () => categoryViewRef.show(undefined, filter.record ?? TransactionType.EXPENSE),
+    }}>
+    <Page width="narrow" title={_("routes.categories")} description={_("categories.description")}>
+        {#if loading}
+            <Empty loading />
+        {:else if loadError}
+            <Empty
+                header={_("categories.empty.loadError.header")}
+                description={_("categories.empty.loadError.description")}
+                actionLabel={_("categories.action.retry")}
+                onAction={loadCategories} />
+        {:else}
+            <section>
+                <div class="mb-4">
+                    <ToggleGroup styleClass="bg-bg-card" bind:chosen={filter} options={filterOptions}></ToggleGroup>
                 </div>
-            </div>
 
-            {#if categories.length === 0}
-                <Empty
-                    header={emptyHeader}
-                    description={emptyDescription}
-                    actionLabel={_("categories.action.createDefaults")}
-                    onAction={createDefaults}
-                    actionDisabled={creatingDefaults} />
-            {:else if visibleCategories.length}
-                <ul class="m-0 flex list-none flex-col p-0" role="list" aria-labelledby="categories-heading">
-                    <li aria-hidden="true">
-                        {@render placeholder(0)}
-                    </li>
+                <div class="mb-2 flex items-center justify-between gap-2">
+                    <h2 id="categories-heading" class="text-lg font-semibold">
+                        {filter.record === TransactionType.EXPENSE
+                            ? _("categories.section.expenses")
+                            : filter.record === TransactionType.INCOME
+                              ? _("categories.section.income")
+                              : _("categories.section.all")}
+                    </h2>
 
-                    {#each visibleCategories as category, index (category.id)}
-                        <li animate:flip={{ duration: 200 }}>
-                            <div
-                                {@attach draggable(index)}
-                                {@attach dropZone(index + 1)}
-                                class="border-border-card bg-bg-card flex items-center justify-between rounded-lg border-1 p-1">
-                                <div class="flex items-center">
-                                    {#if !filter.record}
-                                        <Icon
-                                            data-drag-handle
-                                            icon={faGrip}
-                                            class="mx-1 size-4 shrink-0 rotate-90 select-none {draggableIndex === index
-                                                ? 'cursor-grabbing'
-                                                : 'cursor-grab'}" />
-                                    {/if}
-                                    <Badge color={category.color} icon={category.icon}>
-                                        {category.name}
-                                    </Badge>
-                                </div>
+                    <div class="hidden lg:block">
+                        <button
+                            onclick={() => categoryViewRef.show(undefined, filter.record ?? TransactionType.EXPENSE)}
+                            class="primary inline-flex items-center gap-1">
+                            <Icon icon={faPlus} />{_("categories.button.add.category")}
+                        </button>
+                    </div>
+                </div>
 
-                                <div>
-                                    <button
-                                        type="button"
-                                        onclick={() => categoryViewRef?.show(category)}
-                                        class="icon"
-                                        aria-label={_("categories.action.edit")}
-                                        title={_("categories.action.edit")}>
-                                        <Icon icon={faPenToSquare} />
-                                    </button>
-                                </div>
-                            </div>
-
-                            {@render placeholder(index + 1)}
+                {#if categories.length === 0}
+                    <Empty
+                        header={emptyHeader}
+                        description={emptyDescription}
+                        actionLabel={_("categories.action.createDefaults")}
+                        onAction={createDefaults}
+                        actionDisabled={creatingDefaults} />
+                {:else if visibleCategories.length}
+                    <ul class="m-0 flex list-none flex-col p-0" role="list" aria-labelledby="categories-heading">
+                        <li aria-hidden="true">
+                            {@render placeholder(0)}
                         </li>
-                    {/each}
-                </ul>
-            {:else}
-                <Empty header={emptyHeader} description={emptyDescription} />
-            {/if}
-        </section>
-    {/if}
-</Page>
 
-<CategoryView bind:this={categoryViewRef} onSave={onCategorySaved} onDelete={onCategoryDeleted}></CategoryView>
+                        {#each visibleCategories as category, index (category.id)}
+                            <li animate:flip={{ duration: 200 }}>
+                                <div
+                                    {@attach draggable(index)}
+                                    {@attach dropZone(index + 1)}
+                                    class="border-border-card bg-bg-card flex items-center justify-between rounded-lg border-1 p-1">
+                                    <div class="flex items-center">
+                                        {#if !filter.record}
+                                            <Icon
+                                                data-drag-handle
+                                                icon={faGrip}
+                                                class="mx-1 size-4 shrink-0 rotate-90 select-none {draggableIndex ===
+                                                index
+                                                    ? 'cursor-grabbing'
+                                                    : 'cursor-grab'}" />
+                                        {/if}
+                                        <Badge color={category.color} icon={category.icon}>
+                                            {category.name}
+                                        </Badge>
+                                    </div>
+
+                                    <div>
+                                        <button
+                                            type="button"
+                                            onclick={() => categoryViewRef?.show(category)}
+                                            class="icon"
+                                            aria-label={_("categories.action.edit")}
+                                            title={_("categories.action.edit")}>
+                                            <Icon icon={faPenToSquare} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {@render placeholder(index + 1)}
+                            </li>
+                        {/each}
+                    </ul>
+                {:else}
+                    <Empty header={emptyHeader} description={emptyDescription} />
+                {/if}
+            </section>
+        {/if}
+    </Page>
+
+    <CategoryView bind:this={categoryViewRef} onSave={onCategorySaved} onDelete={onCategoryDeleted}></CategoryView>
+</MainPageLayout>

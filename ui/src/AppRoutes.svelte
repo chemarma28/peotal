@@ -1,6 +1,6 @@
 <script lang="ts">
     import { faChartPie, faReceipt, faTags } from "@fortawesome/free-solid-svg-icons";
-    import AppShell from "@ui/layout/AppShell.svelte";
+    import { setNavigationItems } from "@ui/layout/navigation";
     import Activity from "@ui/routes/activity/Activity.svelte";
     import Categories from "@ui/routes/categories/Categories.svelte";
     import Login from "@ui/routes/Login.svelte";
@@ -13,6 +13,8 @@
         { to: "/categories", icon: faTags, label: "routes.categories" },
         { to: "/budget", icon: faChartPie, label: "routes.budget" },
     ];
+
+    setNavigationItems(routes);
 
     let isLoginRoute = $state<boolean>(false);
     let location = useLocation();
@@ -32,9 +34,7 @@
     <Route path="/login"><Login /></Route>
 {:else}
     <Secure>
-        <AppShell {routes}>
-            <Route path="/"><Activity /></Route>
-            <Route path="/categories"><Categories /></Route>
-        </AppShell>
+        <Route path="/"><Activity /></Route>
+        <Route path="/categories"><Categories /></Route>
     </Secure>
 {/if}

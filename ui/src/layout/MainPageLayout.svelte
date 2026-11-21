@@ -2,24 +2,19 @@
     import { type IconDefinition } from "@fortawesome/free-solid-svg-icons";
     import Icon from "@ui/components/Icon.svelte";
     import { _ } from "@ui/i18n";
-    import { type HeaderAction, setHeaderActionHolder } from "@ui/layout/headerAction";
+    import { type HeaderAction } from "@ui/layout/headerAction";
+    import { getNavigationItems } from "@ui/layout/navigation";
     import type { Snippet } from "svelte";
     import { Link } from "svelte-routing";
 
     type Props = {
-        routes?: { to: string; icon: IconDefinition; label: string }[];
+        headerAction?: HeaderAction;
         children: Snippet;
     };
 
-    let { routes, children }: Props = $props();
+    let { headerAction, children }: Props = $props();
 
-    let headerAction = $state<HeaderAction>();
-
-    setHeaderActionHolder({
-        bind: (action) => {
-            headerAction = action;
-        },
-    });
+    const routes = getNavigationItems();
 </script>
 
 {#snippet sidebarLink(to: string, icon: IconDefinition, label: string)}

@@ -1,3 +1,5 @@
+import { _ } from "@ui/i18n";
+
 export const headers = {
     "Content-Type": "application/json; charset=UTF-8",
     Accept: "application/json",
@@ -36,7 +38,7 @@ class Api {
             data = response.status == 204 ? await response.text() : await response.json();
         } catch (e) {
             console.error("Not a JSON", e);
-            throw { status: response.status, message: "errors.notJson" };
+            throw { status: response.status, message: _("common.errors.notJson") };
         }
 
         if (response.status < 200 || response.status >= 400) {
@@ -52,7 +54,7 @@ class Api {
     private handleFetchFailure(error: any) {
         console.error(error);
 
-        throw { error: error, message: "errors.network" };
+        throw { error: error, message: _("common.errors.network")};
     }
 
     get<T>(path: string): Promise<T> {

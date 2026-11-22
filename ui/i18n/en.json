@@ -17,6 +17,7 @@
         "login": {
             "title": "Sign in",
             "description": "Sign in to manage your income and expenses",
+            "signIn": "Sign in",
             "check": "Ensure you enter correct username and password",
             "error": "Unexpected error. Please try again"
         }
@@ -24,7 +25,11 @@
     "common": {
         "close": "Close",
         "continue": "Continue",
-        "save": "Save"
+        "save": "Save",
+        "errors": {
+            "notJson": "The server malformed response",
+            "network": "The server connection lost"
+        }
     },
     "categories": {
         "description": "Manage expense and income categories",

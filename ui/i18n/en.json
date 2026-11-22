@@ -4,6 +4,15 @@
         "budget": "Budget",
         "categories": "Categories"
     },
+    "notFound": {
+        "title": "Not Found",
+        "description": "The requested content could not be found",
+        "instruction": "Check the URL in the address bar and try again",
+        "home": "Go home",
+        "authDescription": "You may not have access to this content",
+        "authInstruction": "Sign in or make sure you have access",
+        "signIn": "Sign in"
+    },
     "auth": {
         "login": {
             "title": "Sign in",

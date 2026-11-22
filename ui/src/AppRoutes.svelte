@@ -4,9 +4,9 @@
     import Activity from "@ui/routes/activity/Activity.svelte";
     import Categories from "@ui/routes/categories/Categories.svelte";
     import Login from "@ui/routes/Login.svelte";
-    import { Route, useLocation } from "svelte-routing";
-    import Secure from "./routes/Secure.svelte";
-    import { onDestroy } from "svelte";
+    import { Route } from "svelte-routing";
+    import { auth } from "./auth";
+    import NotFound from "./routes/NotFound.svelte";
 
     const routes = [
         { to: "/", icon: faReceipt, label: "routes.activity" },
@@ -15,26 +15,14 @@
     ];
 
     setNavigationItems(routes);
-
-    let isLoginRoute = $state<boolean>(false);
-    let location = useLocation();
-
-    const unsubscribe = location.subscribe((r) => {
-        isLoginRoute = r.pathname.endsWith("login");
-
-        return () => (isLoginRoute = false);
-    });
-
-    onDestroy(() => {
-        unsubscribe();
-    });
 </script>
 
-{#if isLoginRoute}
+{#if !$auth}
     <Route path="/login"><Login /></Route>
 {:else}
-    <Secure>
-        <Route path="/"><Activity /></Route>
-        <Route path="/categories"><Categories /></Route>
-    </Secure>
+    <Route path="/"><Activity /></Route>
+    <Route path="/categories"><Categories /></Route>
+    <Route path="/login"><Login /></Route>
 {/if}
+
+<Route><NotFound /></Route>

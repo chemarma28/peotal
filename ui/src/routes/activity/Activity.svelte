@@ -155,12 +155,7 @@
                         </div>
                     </div>
 
-                    {#if !visibleCategories.length}
-                        <Empty
-                            {loading}
-                            header={_("activity.empty.categories.header")}
-                            description={_("activity.empty.categories.description")} />
-                    {:else if visibleTransactions.length}
+                    {#if visibleTransactions.length}
                         <ActivityPanel
                             {categories}
                             transactions={visibleTransactions}

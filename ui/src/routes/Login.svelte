@@ -10,16 +10,14 @@
     let creds = $state<Credentials>({ username: "", password: "" });
     let showEnsureMessage = $state(false);
 
-    $effect(() => {
-        if ($auth) navigate("/", { replace: true });
-    });
-
     async function submit(e: SubmitEvent) {
         e.preventDefault();
 
         try {
             const account = await api.post<Account>("auth/login", creds);
             auth.set(account);
+
+            navigate("/", { replace: true });
         } catch (error) {
             const status = (error as { status?: number } | undefined)?.status;
             const message = (error as { message?: string } | undefined)?.message;

@@ -11,48 +11,47 @@ import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.jdbi.v3.core.Handle;
 
+import io.avaje.validation.groups.Default;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import support.ConstraintValidator;
+import support.ValidationGroups.Create;
 import transactions.TransactionType;
 
 @Singleton
 public class CategoryRepository {
 
-    public Category save(Handle handle, Category category) {
-        if (category.id == null) {
-            if (category.ordinal == null) {
-                category.ordinal = nextOrdinal(handle);
-            }
+    private final ConstraintValidator constraints;
 
-            final String q = """
-                        INSERT INTO categories (name, operation, color, icon, ordinal)
-                        VALUES (:name, :operation, :color, :icon, :ordinal)
-                    """;
+    @Inject
+    public CategoryRepository(ConstraintValidator constraints) {
+        this.constraints = constraints;
+    }
 
-            category.id = handle.createUpdate(q)
-                    .bindBean(category)
-                    .executeAndReturnGeneratedKeys("id")
-                    .mapTo(Long.class)
-                    .one();
-        } else {
-            if (category.ordinal == null) {
-                category.ordinal = find(handle, category.id).map(it -> it.ordinal).orElse(0);
-            }
-
-            final String q = """
-                        UPDATE categories
-                        SET name = :name, operation = :operation, color = :color, icon = :icon, ordinal = :ordinal
-                        WHERE id = :id
-                    """;
-
-            handle.createUpdate(q).bindBean(category).execute();
+    private Category requireUniqueName(Handle handle, Category category) {
+        if (existsByName(handle, category.operation, category.name, Optional.ofNullable(category.id).orElse(-1L))) {
+            throw new IllegalArgumentException(
+                    "category '%s' already exists for %s".formatted(category.name, category.operation));
         }
 
         return category;
+    }
+
+    public Category save(Handle handle, Category category) {
+        category.name = Optional.ofNullable(category.name).map(String::strip).orElse(null);
+        Category it = requireUniqueName(handle, category);
+
+        if (category.id == null) {
+            return create(handle, it);
+        }
+
+        return update(handle, category);
     }
 
     public List<Category> saveAll(Handle handle, List<Category> categories) {
@@ -61,6 +60,45 @@ public class CategoryRepository {
         }
 
         return categories;
+    }
+
+    private Category create(Handle handle, Category category) {
+        constraints.validate(category, Default.class, Create.class);
+
+        category.ordinal = Optional.ofNullable(category.ordinal).orElse(nextOrdinal(handle));
+
+        final String q = """
+                    INSERT INTO categories (name, operation, color, icon, ordinal)
+                    VALUES (:name, :operation, :color, :icon, :ordinal)
+                """;
+
+        category.id = handle.createUpdate(q)
+                .bindBean(category)
+                .executeAndReturnGeneratedKeys("id")
+                .mapTo(Long.class)
+                .one();
+
+        return category;
+    }
+
+    private Category update(Handle handle, Category category) {
+        final Category existing = find(handle, category.id).orElseThrow(NoSuchElementException::new);
+
+        constraints.validate(category);
+
+        if (existing.operation != category.operation && countTransactions(handle, category.id) > 0) {
+            throw new IllegalArgumentException("operation change is restricted for category used by transactions");
+        }
+
+        final String q = """
+                    UPDATE categories
+                    SET name = :name, operation = :operation, color = :color, icon = :icon, ordinal = :ordinal
+                    WHERE id = :id
+                """;
+
+        handle.createUpdate(q).bindBean(category).execute();
+
+        return category;
     }
 
     public List<Category> listAll(Handle handle) {
@@ -129,16 +167,14 @@ public class CategoryRepository {
                 .one();
     }
 
-    public boolean existsByName(Handle handle, TransactionType operation, String name, Long excludeId) {
-        final long excluded = excludeId == null ? -1 : excludeId;
-
+    public boolean existsByName(Handle handle, TransactionType operation, String name, long excludeId) {
         return handle.createQuery("""
                     SELECT COUNT(*) FROM categories
                     WHERE operation = :operation AND name = :name AND id <> :excludeId
                 """)
                 .bind("operation", operation.name())
                 .bind("name", name)
-                .bind("excludeId", excluded)
+                .bind("excludeId", excludeId)
                 .mapTo(Long.class)
                 .one() > 0;
     }

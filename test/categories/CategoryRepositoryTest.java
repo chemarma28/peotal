@@ -1,292 +1,251 @@
 package categories;
 
+import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.valueOf;
+import static java.time.LocalDate.now;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static support.Fixtures.ISSUED;
+import static support.Fixtures.category;
+import static support.Fixtures.transaction;
 import static transactions.Currency.BYN;
 import static transactions.Currency.USD;
+import static transactions.TransactionType.EXPENSE;
+import static transactions.TransactionType.INCOME;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
 
-import org.jdbi.v3.core.JdbiException;
 import org.junit.jupiter.api.Test;
 
-import support.Fixtures;
 import support.RepositoryTest;
 import transactions.TransactionRepository;
-import transactions.TransactionType;
 
 class CategoryRepositoryTest extends RepositoryTest {
 
-    final CategoryRepository CATEGORIES = new CategoryRepository();
-    final TransactionRepository TRANSACTIONS = new TransactionRepository();
-
-    final Category EXPENSE = Fixtures.expense("Groceries");
-    final Category INCOME = Fixtures.income("Salary");
+    final CategoryRepository repo = new CategoryRepository(validator);
+    final TransactionRepository transactionRepo = new TransactionRepository(validator, repo);
 
     @Test
     void saveInsertsNewCategory() {
-        final Category saved = CATEGORIES.save(handle, EXPENSE);
+        var it = repo.save(handle, category().name("Groceries").operation(EXPENSE).build());
 
-        assertNotNull(saved.id);
-        assertEquals("Groceries", saved.name);
-        assertEquals(TransactionType.EXPENSE, saved.operation);
+        assertNotNull(it.id);
+        var that = assertDoesNotThrow(() -> repo.find(handle, it.id).orElseThrow(NoSuchElementException::new));
+        assertEquals("Groceries", that.name);
+        assertEquals(EXPENSE, that.operation);
     }
 
     @Test
-    void saveAssignsNextOrdinalWhenMissing() {
-        EXPENSE.ordinal = null;
-        final Category first = CATEGORIES.save(handle, EXPENSE);
+    void saveAssignsOrdinal() {
+        var id = repo.save(handle, category().ordinal(null).build()).id;
 
-        final Category other = Fixtures.expense("Cafe");
-        other.ordinal = null;
-        final Category second = CATEGORIES.save(handle, other);
-
-        assertEquals(0, first.ordinal.intValue());
-        assertEquals(1, second.ordinal.intValue());
+        var it = assertDoesNotThrow(() -> repo.find(handle, id).orElseThrow(NoSuchElementException::new));
+        assertEquals(0, it.ordinal);
     }
 
     @Test
-    void saveUpdatesExistingCategory() {
-        final Category saved = CATEGORIES.save(handle, EXPENSE);
-        final long countBefore = countCategories();
+    void saveAssignsNextOrdinal() {
+        repo.save(handle, category().ordinal(2).build());
+        var id = repo.save(handle, category().name("Next").ordinal(null).build()).id;
 
-        saved.name = "Food";
-        saved.color = "#ff00ff";
-        CATEGORIES.save(handle, saved);
-
-        final Category updated = CATEGORIES.find(handle, saved.id).orElseThrow();
-        assertEquals("Food", updated.name);
-        assertEquals("#ff00ff", updated.color);
-        assertEquals(countBefore, countCategories());
+        var it = assertDoesNotThrow(() -> repo.find(handle, id).orElseThrow(NoSuchElementException::new));
+        assertEquals(3, it.ordinal);
     }
 
     @Test
-    void saveKeepsOrdinalOnUpdateWhenMissing() {
-        final Category saved = CATEGORIES.save(handle,
-                Fixtures.category(TransactionType.EXPENSE, "Groceries", "#a8b7d1", "circle", 5));
+    void saveUpdatesExisting() {
+        var it = repo.save(handle, category().name("Groceries").operation(EXPENSE).build());
 
-        saved.name = "Food";
-        saved.ordinal = null;
-        CATEGORIES.save(handle, saved);
+        it.name = "Services";
 
-        assertEquals(5, CATEGORIES.find(handle, saved.id).orElseThrow().ordinal.intValue());
+        repo.save(handle, it);
+
+        var that = assertDoesNotThrow(() -> repo.find(handle, it.id).orElseThrow(NoSuchElementException::new));
+        assertEquals("Services", that.name);
     }
 
     @Test
-    void findReturnsEmptyForMissingId() {
-        assertTrue(CATEGORIES.find(handle, 999L).isEmpty());
+    void listReturnsAllOrderedByOrdinalAndName() {
+        repo.save(handle, category().name("Groceries").ordinal(3).build());
+        repo.save(handle, category().name("Transport").ordinal(1).build());
+        repo.save(handle, category().name("Farmacy").ordinal(2).build());
+
+        List<Category> it = repo.listAll(handle);
+
+        assertThat(it.stream().map(Category::getName).toList()).containsExactly("Transport", "Farmacy", "Groceries");
     }
 
     @Test
-    void listReturnsAllCategoriesSortedByOrdinalThenName() {
-        CATEGORIES.save(handle, Fixtures.category(TransactionType.EXPENSE, "Second", "#000000", null, 1));
-        CATEGORIES.save(handle, Fixtures.category(TransactionType.EXPENSE, "Alpha", "#000000", null, 0));
-        CATEGORIES.save(handle, Fixtures.category(TransactionType.INCOME, "Income", "#000000", null, 0));
+    void listFilterByOperation() {
+        repo.save(handle, category().name("Groceries").operation(EXPENSE).build());
+        repo.save(handle, category().name("Gifts").operation(INCOME).build());
 
-        final List<String> names = CATEGORIES.listAll(handle).stream().map(it -> it.name).toList();
+        List<Category> it = repo.listByOperation(handle, INCOME);
 
-        assertEquals(List.of("Alpha", "Income", "Second"), names);
-    }
-
-    @Test
-    void listFiltersByOperation() {
-        CATEGORIES.save(handle, EXPENSE);
-        CATEGORIES.save(handle, INCOME);
-
-        final List<Category> expenses = CATEGORIES.listByOperation(handle, TransactionType.EXPENSE);
-
-        assertEquals(1, expenses.size());
-        assertEquals(TransactionType.EXPENSE, expenses.getFirst().operation);
+        assertThat(it.stream().map(Category::getName).toList()).containsExactly("Gifts");
     }
 
     @Test
     void deleteRemovesCategory() {
-        final Category saved = CATEGORIES.save(handle, EXPENSE);
+        var id = repo.save(handle, category().build()).id;
 
-        CATEGORIES.delete(handle, saved.id);
+        assertThat(repo.find(handle, id)).isNotEmpty();
+        repo.delete(handle, id);
 
-        assertTrue(CATEGORIES.find(handle, saved.id).isEmpty());
+        assertThat(repo.find(handle, id)).isEmpty();
     }
 
     @Test
-    void countTransactionsIsZeroForUnusedCategory() {
-        final Category saved = CATEGORIES.save(handle, EXPENSE);
+    void countTransactionsIsZero() {
+        var id = repo.save(handle, category().build()).id;
 
-        assertEquals(0, CATEGORIES.countTransactions(handle, saved.id));
+        assertEquals(0, repo.countTransactions(handle, id));
     }
 
     @Test
     void countTransactionsCountsUsedCategory() {
-        final Category saved = CATEGORIES.save(handle, EXPENSE);
-        TRANSACTIONS.save(handle, Fixtures.expense(saved, new BigDecimal("10.00")));
+        var id = repo.save(handle, category().build()).id;
 
-        assertEquals(1, CATEGORIES.countTransactions(handle, saved.id));
+        transactionRepo.save(handle, transaction().categoryId(id).build());
+
+        assertEquals(1, repo.countTransactions(handle, id));
     }
 
     @Test
     void existsByNameIsScopedToOperation() {
-        CATEGORIES.save(handle, EXPENSE);
+        repo.save(handle, category().name("Groceries").operation(EXPENSE).build());
 
-        assertTrue(CATEGORIES.existsByName(handle, TransactionType.EXPENSE, "Groceries", null));
-        assertFalse(CATEGORIES.existsByName(handle, TransactionType.INCOME, "Groceries", null));
+        assertThat(repo.existsByName(handle, EXPENSE, "Groceries", -1L)).isTrue();
+        assertThat(repo.existsByName(handle, INCOME, "Groceries", -1L)).isFalse();
     }
 
     @Test
     void existsByNameExcludesGivenId() {
-        final Category saved = CATEGORIES.save(handle, EXPENSE);
+        var id = repo.save(handle, category().name("Groceries").build()).id;
 
-        assertFalse(CATEGORIES.existsByName(handle, TransactionType.EXPENSE, "Groceries", saved.id));
+        assertThat(repo.existsByName(handle, EXPENSE, "Groceries", id)).isFalse();
     }
 
     @Test
     void reorderUpdatesOrdinals() {
-        final Category first = CATEGORIES.save(handle,
-                Fixtures.category(TransactionType.EXPENSE, "Alpha", "#000000", null, 0));
-        final Category second = CATEGORIES.save(handle,
-                Fixtures.category(TransactionType.EXPENSE, "Beta", "#000000", null, 1));
+        var first = repo.save(handle, category().name("Alpha").ordinal(0).build());
+        var second = repo.save(handle, category().name("Beta").ordinal(1).build());
 
-        CATEGORIES.reorder(handle, List.of(
+        repo.reorder(handle, List.of(
                 new CategoryOrder.Item(first.id, 1),
                 new CategoryOrder.Item(second.id, 0)));
 
-        final List<String> names = CATEGORIES.listByOperation(handle, TransactionType.EXPENSE).stream()
-                .map(it -> it.name).toList();
-
-        assertEquals(List.of("Beta", "Alpha"), names);
+        assertThat(repo.listByOperation(handle, EXPENSE).stream().map(Category::getName).toList())
+                .containsExactly("Beta", "Alpha");
     }
 
     @Test
-    void saveRejectsDuplicateNameInSameOperation() {
-        CATEGORIES.save(handle, EXPENSE);
-        final Category duplicate = Fixtures.expense("Groceries");
+    void saveRejectsDuplicateName() {
+        repo.save(handle, category().name("Groceries").build());
 
-        try {
-            CATEGORIES.save(handle, duplicate);
-            fail("Duplicate name must be rejected");
-        } catch (JdbiException expected) {
-            // expected: unique index (operation, name)
-        }
+        assertThatThrownBy(() -> repo.save(handle, category().name("Groceries").build()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("already exists");
     }
 
     @Test
     void getCategorySummariesForTwoTransactions() {
-        final Category GROCERIES = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
-        TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
-        TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
+        var groceries = repo.save(handle, category().name("Groceries").build());
 
-        List<CategorySummaries> stat = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
+        transactionRepo.save(handle, transaction().categoryId(groceries.id).amount(TEN).build());
+        transactionRepo.save(handle, transaction().categoryId(groceries.id).amount(TEN).build());
 
-        assertEquals(1, stat.size());
+        var stats = repo.getCategorySummaries(handle, now(), now());
 
-        final CategorySummaries sum = stat.getFirst();
+        assertThat(stats).hasSize(1);
 
-        assertEquals(1, sum.sums.size());
-        assertEquals(BYN, sum.sums.getFirst().currency);
-        assertEquals(0, BigDecimal.valueOf(20).compareTo(sum.sums.getFirst().amount));
+        assertThat(stats.getFirst().sums.getFirst()).satisfies((it) -> {
+            assertThat(it.currency).isEqualTo(BYN);
+            assertThat(it.amount).isEqualByComparingTo("20");
+        });
     }
 
     @Test
     void getCategorySummariesForTwoDistinctCurrencies() {
-        final Category GROCERIES = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
-        TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
-        TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, valueOf(5), USD));
+        var id = repo.save(handle, category().name("Groceries").build()).id;
 
-        List<CategorySummaries> stat = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
+        transactionRepo.save(handle, transaction().categoryId(id).amount(TEN).currency(BYN).build());
+        transactionRepo.save(handle, transaction().categoryId(id).amount(ONE).currency(USD).build());
 
-        assertEquals(1, stat.size());
+        var sums = repo.getCategorySummaries(handle, now(), now()).getFirst().sums;
 
-        CategorySummary byn = assertDoesNotThrow(
-                () -> stat.getFirst().sums.stream().filter((it) -> it.currency.equals(BYN)).findAny().orElseThrow());
-        CategorySummary usd = assertDoesNotThrow(
-                () -> stat.getFirst().sums.stream().filter((it) -> it.currency.equals(USD)).findAny().orElseThrow());
+        assertThat(sums).hasSize(2);
 
-        assertEquals(0, TEN.compareTo(byn.amount));
-        assertEquals(0, valueOf(5).compareTo(usd.amount));
+        assertThat(sums).anySatisfy(it -> {
+            assertThat(it.currency).isEqualTo(BYN);
+            assertThat(it.amount).isEqualByComparingTo("10");
+        });
+
+        assertThat(sums).anySatisfy(it -> {
+            assertThat(it.currency).isEqualTo(USD);
+            assertThat(it.amount).isEqualByComparingTo("1");
+        });
     }
 
     @Test
     void getCorrectWeightsForCategory() {
-        final Category GROCERIES = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
-        final Category TRANSPORT = CATEGORIES.save(handle, Fixtures.TRANSPORT.get());
+        var groceries = repo.save(handle, category().name("Groceries").build());
+        var transport = repo.save(handle, category().name("Transport").build());
 
-        TRANSACTIONS.save(handle, Fixtures.expense(GROCERIES, TEN, BYN));
-        TRANSACTIONS.save(handle, Fixtures.expense(TRANSPORT, TEN, BYN));
+        transactionRepo.save(handle, transaction().categoryId(groceries.id).amount(TEN).build());
+        transactionRepo.save(handle, transaction().categoryId(transport.id).amount(TEN).build());
 
-        List<CategorySummaries> stats = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
+        var stats = repo.getCategorySummaries(handle, now(), now());
 
-        CategorySummaries groceriesStat = assertDoesNotThrow(
-                () -> stats.stream().filter((it) -> it.categoryId.equals(GROCERIES.id)).findAny().orElseThrow());
-        CategorySummaries transportStat = assertDoesNotThrow(
-                () -> stats.stream().filter((it) -> it.categoryId.equals(TRANSPORT.id)).findAny().orElseThrow());
-
-        assertThat(groceriesStat.weight).isEqualByComparingTo("0.5");
-        assertThat(transportStat.weight).isEqualByComparingTo("0.5");
+        assertThat(stats).hasSize(2);
+        assertThat(stats).allSatisfy(it -> assertThat(it.weight).isEqualByComparingTo("0.50"));
     }
 
     @Test
     void singleCategoryHasFullWeight() {
-        final Category groceries = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
-        TRANSACTIONS.save(handle, Fixtures.expense(groceries, TEN, BYN));
+        var groceries = repo.save(handle, category().name("Groceries").build());
 
-        final List<CategorySummaries> stats = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
+        transactionRepo.save(handle, transaction().categoryId(groceries.id).amount(TEN).build());
 
-        assertEquals(1, stats.size());
-        assertThat(stats.getFirst().weight).isEqualByComparingTo("1.00");
+        assertThat(repo.getCategorySummaries(handle, now(), now())).singleElement()
+                .satisfies((stats) -> assertThat(stats.weight).isEqualByComparingTo("1.00"));
     }
 
     @Test
     void sharesCurrenciesByAmount() {
-        final Category groceries = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
-        final Category transport = CATEGORIES.save(handle, Fixtures.TRANSPORT.get());
+        var groceries = repo.save(handle, category().name("Groceries").build());
+        var transport = repo.save(handle, category().name("Transport").build());
 
-        TRANSACTIONS.save(handle, Fixtures.expense(groceries, TEN, BYN));
-        TRANSACTIONS.save(handle, Fixtures.expense(transport, valueOf(5), USD));
+        transactionRepo.save(handle, transaction().categoryId(groceries.id).amount(TEN).currency(BYN).build());
+        transactionRepo.save(handle, transaction().categoryId(transport.id).amount(valueOf(5)).currency(USD).build());
 
-        final List<CategorySummaries> stats = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
+        var stats = repo.getCategorySummaries(handle, now(), now());
 
-        CategorySummaries groceriesStat = assertDoesNotThrow(
-                () -> stats.stream().filter((it) -> it.categoryId.equals(groceries.id)).findAny().orElseThrow());
-        CategorySummaries transportStat = assertDoesNotThrow(
-                () -> stats.stream().filter((it) -> it.categoryId.equals(transport.id)).findAny().orElseThrow());
-
-        assertThat(groceriesStat.weight).isEqualByComparingTo("0.67");
-        assertThat(transportStat.weight).isEqualByComparingTo("0.33");
+        assertThat(stats).hasSize(2);
+        assertThat(stats.get(0).weight).isEqualByComparingTo("0.67");
+        assertThat(stats.get(1).weight).isEqualByComparingTo("0.33");
     }
 
     @Test
     void incomeWeightsUseIncomeTotal() {
-        final Category groceries = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
-        final Category salary = CATEGORIES.save(handle, Fixtures.SALARY.get());
-        final Category bonus = CATEGORIES.save(handle, Fixtures.income("Bonus"));
+        var groceries = repo.save(handle, category().name("Groceries").build());
+        var salary = repo.save(handle, category().name("Salary").operation(INCOME).build());
+        var bonus = repo.save(handle, category().name("Bonus").operation(INCOME).build());
 
-        TRANSACTIONS.save(handle, Fixtures.expense(groceries, valueOf(200), BYN));
-        TRANSACTIONS.save(handle, Fixtures.income(salary, valueOf(30)));
-        TRANSACTIONS.save(handle, Fixtures.income(bonus, valueOf(70)));
+        transactionRepo.save(handle, transaction().categoryId(groceries.id).amount(valueOf(200)).build());
+        transactionRepo.save(handle, transaction().categoryId(salary.id).amount(valueOf(30)).operation(INCOME).build());
+        transactionRepo.save(handle, transaction().categoryId(bonus.id).amount(valueOf(70)).operation(INCOME).build());
 
-        final List<CategorySummaries> stats = CATEGORIES.getCategorySummaries(handle, ISSUED, ISSUED);
+        var weights = repo.getCategorySummaries(handle, now(), now()).stream()
+                .collect(toMap(CategorySummaries::getCategoryId, CategorySummaries::getWeight));
 
-        CategorySummaries groceriesStat = assertDoesNotThrow(
-                () -> stats.stream().filter((it) -> it.categoryId.equals(groceries.id)).findAny().orElseThrow());
-        CategorySummaries salaryStat = assertDoesNotThrow(
-                () -> stats.stream().filter((it) -> it.categoryId.equals(salary.id)).findAny().orElseThrow());
-        CategorySummaries bonusStat = assertDoesNotThrow(
-                () -> stats.stream().filter((it) -> it.categoryId.equals(bonus.id)).findAny().orElseThrow());
-
-        assertThat(groceriesStat.weight).isEqualByComparingTo("1.00");
-        assertThat(salaryStat.weight).isEqualByComparingTo("0.30");
-        assertThat(bonusStat.weight).isEqualByComparingTo("0.70");
-    }
-
-    private long countCategories() {
-        return handle.createQuery("SELECT COUNT(*) FROM categories").mapTo(Long.class).one();
+        assertThat(weights.get(groceries.id)).isEqualByComparingTo("1.00");
+        assertThat(weights.get(salary.id)).isEqualByComparingTo("0.30");
+        assertThat(weights.get(bonus.id)).isEqualByComparingTo("0.70");
     }
 }

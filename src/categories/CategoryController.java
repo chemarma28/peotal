@@ -41,7 +41,9 @@ public class CategoryController {
         final Handle handle = ctx.require(Handle.class);
         final Category category = ctx.body(Category.class);
 
-        CategoryValidation.validateForCreate(handle, repository, category);
+        if (category.id != null) {
+            throw new IllegalArgumentException("id must not be set when creating a category");
+        }
 
         return repository.save(handle, category);
     }
@@ -55,8 +57,6 @@ public class CategoryController {
             throw new IllegalArgumentException("body is required");
         }
 
-        CategoryValidation.validateForBatch(handle, repository, batch.items);
-
         return repository.saveAll(handle, batch.items);
     }
 
@@ -68,10 +68,6 @@ public class CategoryController {
         if (category.id == null) {
             throw new IllegalArgumentException("id is required to update a category");
         }
-
-        final Category existing = repository.find(handle, category.id).orElseThrow(NoSuchElementException::new);
-
-        CategoryValidation.validateForUpdate(handle, repository, category, existing);
 
         return repository.save(handle, category);
     }

@@ -18,6 +18,7 @@ public abstract class RepositoryTest {
     private static Jdbi jdbi;
 
     protected Handle handle;
+    protected ConstraintValidator validator = new ConstraintValidator(new ValidationFactory().validator());
 
     @BeforeAll
     static void setUpDatabase() {

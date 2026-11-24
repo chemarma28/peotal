@@ -50,6 +50,10 @@ application {
 
 test {
     useJUnitPlatform()
+    // testLogging.showStandardStreams = true
+    // testLogging {
+    //    exceptionFormat = 'full'
+    // }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -82,6 +86,11 @@ dependencies {
     implementation "io.jooby:jooby-jdbi:${joobyVersion}"
     implementation "com.google.code.gson:gson:2.14.0"
     implementation "io.jooby:jooby-avaje-inject:${joobyVersion}"
+    implementation("io.avaje:avaje-validator:2.18") {
+        exclude group: "io.avaje", module: "avaje-validator-inject-plugin"
+        exclude group: "io.avaje", module: "avaje-validator-http-plugin"
+    }
+    implementation "jakarta.validation:jakarta.validation-api:3.1.1"
     
     implementation "io.jsonwebtoken:jjwt-api:0.13.0"
     runtimeOnly "io.jsonwebtoken:jjwt-impl:0.13.0"
@@ -91,6 +100,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.18.46"
 	annotationProcessor "org.projectlombok:lombok:1.18.46"
 
+    annotationProcessor "io.avaje:avaje-validator-generator:2.18"
     annotationProcessor "io.avaje:avaje-inject-generator:12.6"
     annotationProcessor "io.jooby:jooby-apt:${joobyVersion}"
 

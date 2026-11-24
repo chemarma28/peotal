@@ -6,7 +6,6 @@ import java.util.NoSuchElementException;
 
 import org.jdbi.v3.core.Handle;
 
-import categories.CategoryRepository;
 import io.jooby.Context;
 import io.jooby.annotation.DELETE;
 import io.jooby.annotation.GET;
@@ -21,12 +20,10 @@ import jakarta.inject.Singleton;
 public class TransactionController {
 
     private final TransactionRepository repository;
-    private final CategoryRepository categories;
 
     @Inject
-    public TransactionController(TransactionRepository repository, CategoryRepository categories) {
+    public TransactionController(TransactionRepository repository) {
         this.repository = repository;
-        this.categories = categories;
     }
 
     @GET("/transactions")
@@ -43,7 +40,9 @@ public class TransactionController {
         final Handle handle = ctx.require(Handle.class);
         final Transaction transaction = ctx.body(Transaction.class);
 
-        TransactionValidation.validateForCreate(handle, categories, transaction);
+        if (transaction.id != null) {
+            throw new IllegalArgumentException("id must not be set when creating a transaction");
+        }
 
         return repository.save(handle, transaction);
     }
@@ -53,9 +52,9 @@ public class TransactionController {
         final Handle handle = ctx.require(Handle.class);
         final Transaction transaction = ctx.body(Transaction.class);
 
-        TransactionValidation.validateForUpdate(handle, categories, transaction);
-
-        repository.find(handle, transaction.id).orElseThrow(NoSuchElementException::new);
+        if (transaction.id == null) {
+            throw new IllegalArgumentException("id is required to update a transaction");
+        }
 
         return repository.save(handle, transaction);
     }

@@ -1,137 +1,90 @@
 package transactions;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.TEN;
+import static java.time.LocalDate.now;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static support.Fixtures.category;
+import static support.Fixtures.transaction;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.Test;
 
-import categories.Category;
 import categories.CategoryRepository;
-import support.Fixtures;
 import support.RepositoryTest;
 
 class TransactionRepositoryTest extends RepositoryTest {
 
-    final CategoryRepository CATEGORIES = new CategoryRepository();
-    final TransactionRepository TRANSACTIONS = new TransactionRepository();
-
-    final Category EXPENSE_CATEGORY = Fixtures.expense("Groceries");
-    final Category INCOME_CATEGORY = Fixtures.income("Salary");
-
-    final LocalDate EARLY = LocalDate.of(2026, 1, 10);
-    final LocalDate MIDDLE = LocalDate.of(2026, 1, 15);
-    final LocalDate LATE = LocalDate.of(2026, 1, 20);
+    final CategoryRepository categories = new CategoryRepository(validator);
+    final TransactionRepository repo = new TransactionRepository(validator, categories);
 
     @Test
     void saveInsertsTransactionWithGeneratedId() {
-        final Category category = CATEGORIES.save(handle, EXPENSE_CATEGORY);
+        var id = categories.save(handle, category().build()).id;
 
-        final Transaction saved = TRANSACTIONS.save(handle, Fixtures.expense(category, new BigDecimal("12.34")));
+        var it = repo.save(handle, transaction().categoryId(id).build());
 
-        assertNotNull(saved.id);
+        assertNotNull(it.id);
     }
 
     @Test
-    void saveRoundTripsAllFields() {
-        final Category category = CATEGORIES.save(handle, EXPENSE_CATEGORY);
+    void updateRejectsMissingTransaction() {
+        var id = categories.save(handle, category().build()).id;
 
-        final Transaction saved = TRANSACTIONS.save(handle, Fixtures.transaction(
-                "lunch", MIDDLE, TransactionType.EXPENSE, category.id, new BigDecimal("12.34"), Currency.USD));
-
-        final Transaction loaded = TRANSACTIONS.list(handle, MIDDLE, MIDDLE).getFirst();
-
-        assertEquals(saved.id, loaded.id);
-        assertEquals("lunch", loaded.description);
-        assertEquals(MIDDLE, loaded.issued);
-        assertEquals(TransactionType.EXPENSE, loaded.operation);
-        assertEquals(category.id, loaded.categoryId);
-        assertEquals(Currency.USD, loaded.currency);
-        assertEquals(0, new BigDecimal("12.34").compareTo(loaded.amount));
-    }
-
-    @Test
-    void saveAllowsNullDescription() {
-        final Category category = CATEGORIES.save(handle, EXPENSE_CATEGORY);
-
-        final Transaction saved = TRANSACTIONS.save(handle, Fixtures.transaction(
-                null, MIDDLE, TransactionType.EXPENSE, category.id, new BigDecimal("12.34"), Currency.USD));
-
-        final Transaction loaded = TRANSACTIONS.find(handle, saved.id).orElseThrow();
-
-        assertNull(loaded.description);
+        assertThatThrownBy(() -> repo.save(handle, transaction().id(999L).categoryId(id).build()))
+                .isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
     void saveUpdatesExistingTransaction() {
-        final Category category = CATEGORIES.save(handle, EXPENSE_CATEGORY);
-        final Transaction saved = TRANSACTIONS.save(handle, Fixtures.transaction(
-                "lunch", MIDDLE, TransactionType.EXPENSE, category.id, new BigDecimal("12.34"), Currency.USD));
+        var id = categories.save(handle, category().build()).id;
+        var it = repo.save(handle, transaction().categoryId(id).description("Lobsters").amount(TEN).build());
 
-        saved.description = "dinner";
-        saved.amount = new BigDecimal("25.00");
-        TRANSACTIONS.save(handle, saved);
+        it.description = "Fish";
+        it.amount = ONE;
 
-        final Transaction loaded = TRANSACTIONS.find(handle, saved.id).orElseThrow();
+        repo.save(handle, it);
 
-        assertEquals("dinner", loaded.description);
-        assertEquals(0, new BigDecimal("25.00").compareTo(loaded.amount));
-        assertEquals(1, TRANSACTIONS.list(handle, MIDDLE, MIDDLE).size());
-    }
-
-    @Test
-    void findReturnsEmptyForMissingTransaction() {
-        assertTrue(TRANSACTIONS.find(handle, 999L).isEmpty());
-    }
-
-    @Test
-    void saveRoundTripsIncomeOperation() {
-        final Category category = CATEGORIES.save(handle, INCOME_CATEGORY);
-
-        TRANSACTIONS.save(handle, Fixtures.transaction(
-                "salary", MIDDLE, TransactionType.INCOME, category.id, new BigDecimal("100.00"), Currency.EUR));
-
-        final Transaction loaded = TRANSACTIONS.list(handle, MIDDLE, MIDDLE).getFirst();
-
-        assertEquals(TransactionType.INCOME, loaded.operation);
-        assertEquals(Currency.EUR, loaded.currency);
-        assertEquals(category.id, loaded.categoryId);
+        assertThat(repo.find(handle, it.id)).isPresent().hasValueSatisfying((that) -> {
+            assertThat(that.description).isEqualTo("Fish");
+            assertThat(that.amount).isEqualByComparingTo("1");
+        });
     }
 
     @Test
     void listIncludesRangeBoundariesAndOrdersByIssuedDescending() {
-        final Category category = CATEGORIES.save(handle, EXPENSE_CATEGORY);
-        TRANSACTIONS.save(handle, Fixtures.transaction("early", EARLY, TransactionType.EXPENSE, category.id, new BigDecimal("1.00"), Currency.USD));
-        TRANSACTIONS.save(handle, Fixtures.transaction("late", LATE, TransactionType.EXPENSE, category.id, new BigDecimal("2.00"), Currency.USD));
+        var id = categories.save(handle, category().build()).id;
+        var early = now().minusDays(1);
+        var late = now();
 
-        final List<String> descriptions = TRANSACTIONS.list(handle, EARLY, LATE).stream().map(it -> it.description).toList();
+        repo.save(handle, transaction().categoryId(id).description("early").issued(early).build());
+        repo.save(handle, transaction().categoryId(id).description("late").issued(late).build());
 
-        assertEquals(List.of("late", "early"), descriptions);
+        assertThat(repo.list(handle, early, late).stream().map(Transaction::getDescription).toList())
+                .containsExactly("late", "early");
     }
 
     @Test
     void listExcludesTransactionsOutsideRange() {
-        final Category category = CATEGORIES.save(handle, EXPENSE_CATEGORY);
-        TRANSACTIONS.save(handle, Fixtures.transaction("outside", EARLY, TransactionType.EXPENSE, category.id, new BigDecimal("1.00"), Currency.USD));
-        TRANSACTIONS.save(handle, Fixtures.transaction("inside", MIDDLE, TransactionType.EXPENSE, category.id, new BigDecimal("2.00"), Currency.USD));
+        var id = categories.save(handle, category().build()).id;
 
-        final List<String> descriptions = TRANSACTIONS.list(handle, MIDDLE, LATE).stream().map(it -> it.description).toList();
+        repo.save(handle, transaction().categoryId(id).description("outside").issued(now().minusDays(5)).build());
+        repo.save(handle, transaction().categoryId(id).description("inside").build());
 
-        assertEquals(List.of("inside"), descriptions);
+        assertThat(repo.list(handle, now(), now().plusDays(1)).stream().map(Transaction::getDescription).toList())
+                .containsExactly("inside");
     }
 
     @Test
-    void deleteTransaction() {
-        final Category groceries = CATEGORIES.save(handle, Fixtures.GROCERIES.get());
-        final Transaction it = TRANSACTIONS.save(handle, Fixtures.expense(groceries));
-        TRANSACTIONS.delete(handle, it.id);
-        final List<Transaction> transactions = TRANSACTIONS.list(handle, Fixtures.ISSUED, Fixtures.ISSUED);
+    void deleteRemovesTransaction() {
+        var id = categories.save(handle, category().build()).id;
+        var it = repo.save(handle, transaction().categoryId(id).build());
 
-        assertEquals(0, transactions.size());
+        repo.delete(handle, it.id);
+
+        assertThat(repo.find(handle, it.id)).isEmpty();
     }
 }

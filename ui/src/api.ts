@@ -54,7 +54,7 @@ class Api {
     private handleFetchFailure(error: any) {
         console.error(error);
 
-        throw { error: error, message: _("common.errors.network")};
+        throw { error: error, message: _("common.errors.network") };
     }
 
     get<T>(path: string): Promise<T> {

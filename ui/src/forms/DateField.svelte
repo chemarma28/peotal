@@ -1,14 +1,15 @@
 <script lang="ts">
+    import type { HTMLInputAttributes } from "svelte/elements";
     import InputField from "./InputField.svelte";
 
     type Props = {
         id: string;
         label: string;
-        required?: boolean;
         value?: string;
-    };
+        validator?: (value?: string) => string | undefined;
+    } & Omit<HTMLInputAttributes, "id" | "label" | "value">;
 
-    let { id, label, required, value = $bindable<string>() }: Props = $props();
+    let { id, label, value = $bindable<string>(), validator }: Props = $props();
 
     const format = {
         get string(): string {
@@ -23,4 +24,4 @@
     };
 </script>
 
-<InputField type="date" {id} {label} {required} bind:value={format.string}></InputField>
+<InputField type="date" {id} {label} bind:value={format.string} {validator}></InputField>

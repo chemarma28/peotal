@@ -1,6 +1,8 @@
 <script lang="ts">
+    import { faWarning } from "@fortawesome/free-solid-svg-icons";
     import api from "@ui/api";
     import Dialog from "@ui/components/Dialog.svelte";
+    import Icon from "@ui/components/Icon.svelte";
     import { showToast, ToastVariant } from "@ui/components/toasts";
     import CurrencyField from "@ui/forms/CurrencyField.svelte";
     import DangerZone from "@ui/forms/DangerZone.svelte";
@@ -151,7 +153,17 @@
     {#if !confirmingDelete}
         <ToggleGroup bind:chosen={operation} options={operationOptions}></ToggleGroup>
 
-        <DateField id="date" label={_("transaction.labels.issued")} bind:value={transaction.issued} />
+        <DateField
+            id="date"
+            label={_("transaction.labels.issued")}
+            bind:value={transaction.issued}
+            validator={(issued) => {
+                if (!issued) return;
+
+                const now = new Date().toIsoDate();
+
+                if (now.localeCompare(issued) < 0) return _("forms.date.pastOrPresent");
+            }} />
 
         <SelectField
             id="category"
@@ -162,11 +174,13 @@
             options={categoryOptions}
             key={(o) => o.record.id}
             bind:chosen={category}
-            validator={(value) => (value ? "" : _("transaction.errors.category"))}>
+            validator={(value) => (value ? "" : _("forms.select.undefined"))}>
         </SelectField>
 
         {#if !hasCategories}
-            <p class="text-sm text-red-700">{_("transaction.errors.noCategory")}</p>
+            <div class="flex items-center gap-1 text-sm text-yellow-700">
+                <Icon icon={faWarning} /> <span>{_("transaction.errors.noCategory")}</span>
+            </div>
         {/if}
 
         <CurrencyField

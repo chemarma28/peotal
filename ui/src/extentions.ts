@@ -51,8 +51,6 @@ Array.prototype.groupingBy = function <T>(
     return result;
 };
 
-const pad = (value: number): string => String(value).padStart(2, "0");
-
 Date.prototype.toIsoDate = function (): string {
-    return `${this.getFullYear()}-${pad(this.getMonth() + 1)}-${pad(this.getDate())}`;
+    return `${this.getFullYear()}-${(this.getMonth() + 1).toString().padStart(2, "0")}-${this.getDate().toString().padStart(2, "0")}`;
 };

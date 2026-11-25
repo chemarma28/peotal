@@ -162,7 +162,6 @@
             "description": "Optional note"
         },
         "errors": {
-            "category": "Please select an option",
             "currency": "The value must be greater than 0",
             "noCategory": "Create a category for this transaction type first"
         },
@@ -184,6 +183,9 @@
     "forms": {
         "select": {
             "undefined": "Select an option"
+        },
+        "date": {
+            "pastOrPresent": "Must be a date in the past or in the present"
         },
         "danger": {
             "title": "More"
